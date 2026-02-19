@@ -1,0 +1,3440 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_17.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jake's Watch List</title>
+<style>
+/* ═══════════════════════════════════════════════
+   60% BLACK  |  30% WHITE  |  10% GOLD
+   Font: Times New Roman throughout
+   Classy · Minimalist · Cinematic
+═══════════════════════════════════════════════ */
+:root{
+  /* 60% — primary black */
+  --black:#000000;
+  --black-90:#0d0d0d;
+  --black-80:#141414;
+  --black-70:#1a1a1a;
+  /* 30% — secondary white */
+  --white:#ffffff;
+  --white-80:rgba(255,255,255,.8);
+  --white-50:rgba(255,255,255,.5);
+  --white-20:rgba(255,255,255,.2);
+  --white-08:rgba(255,255,255,.08);
+  --white-04:rgba(255,255,255,.04);
+  /* 10% — tertiary gold */
+  --gold:#c9a84c;
+  --gold-dim:rgba(201,168,76,.35);
+  --gold-faint:rgba(201,168,76,.12);
+  /* functional */
+  --border:rgba(255,255,255,.1);
+  --border-gold:rgba(201,168,76,.3);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* Times New Roman everywhere */
+body{
+  background:var(--black);
+  color:var(--white);
+  font-family:"Times New Roman",Times,serif;
+  overflow-x:hidden;
+  min-height:100vh;
+  font-size:16px;
+  line-height:1.6;
+}
+
+/* ── HEADER (30% white elements on 60% black) ── */
+header{
+  position:sticky;top:0;z-index:200;
+  background:var(--black);
+  border-bottom:1px solid var(--border);
+}
+.header-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:58px;padding:0 2.5rem;
+}
+.logo{
+  font-family:"Times New Roman",Times,serif;
+  font-size:1.2rem;font-weight:700;letter-spacing:.08em;
+  color:var(--white);text-decoration:none;text-transform:uppercase;
+}
+.logo span{color:var(--gold)}
+.nav-tabs{display:flex;gap:0}
+.nav-tab{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--white-50);background:none;border:none;cursor:pointer;
+  padding:.5rem 1.1rem;transition:color .2s;position:relative;
+}
+.nav-tab:hover{color:var(--white)}
+.nav-tab.active{color:var(--white)}
+.nav-tab.active::after{
+  content:'';position:absolute;bottom:-1px;left:1.1rem;right:1.1rem;
+  height:1px;background:var(--gold);
+}
+
+/* ── PAGES ── */
+.page{display:none;min-height:calc(100vh - 58px);animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════════════
+   HOME PAGE — ultra minimal, Claude-inspired
+══════════════════════════════════════════ */
+.home-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:flex-start;
+  min-height:calc(100vh - 58px);
+  padding:5rem 2rem 4rem;
+}
+.home-question{
+  font-family:"Times New Roman",Times,serif;
+  font-size:clamp(1.6rem,3.5vw,2.4rem);
+  font-weight:400;
+  color:var(--white);
+  text-align:center;
+  margin-bottom:2.2rem;
+  letter-spacing:.02em;
+}
+.home-question em{color:var(--gold);font-style:italic}
+
+/* Search box */
+.search-wrap{width:100%;max-width:620px;position:relative}
+.search-box{
+  display:flex;align-items:stretch;
+  background:var(--black-80);
+  border:1px solid var(--border);
+  transition:border-color .2s;
+  border-radius:24px;
+  overflow:hidden;
+}
+.search-box:focus-within{border-color:var(--white-50)}
+.search-input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--white);
+  font-family:"Times New Roman",Times,serif;
+  font-size:1rem;
+  padding:1rem 1.2rem;
+  letter-spacing:.02em;
+}
+.search-input::placeholder{color:var(--white-20)}
+.search-btn{
+  background:var(--gold);border:none;
+  color:var(--black);
+  font-family:"Times New Roman",Times,serif;
+  font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;
+  padding:.9rem 1.5rem;cursor:pointer;transition:opacity .2s;
+  white-space:nowrap;font-weight:700;
+}
+.search-btn:hover{opacity:.85}
+
+/* Dropdown results */
+.search-results{
+  position:absolute;top:100%;left:0;right:0;
+  background:var(--black-90);
+  border:1px solid var(--border);border-top:none;
+  display:none;z-index:100;
+  max-height:420px;overflow-y:auto;
+}
+.sri{
+  display:flex;align-items:center;gap:1rem;
+  padding:.9rem 1.2rem;
+  border-bottom:1px solid var(--white-08);
+  transition:background .15s;
+}
+.sri:last-child{border-bottom:none}
+.sri:hover{background:var(--white-04)}
+.sri-poster{
+  width:32px;height:46px;
+  background:var(--black-70);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;overflow:hidden;
+}
+.sri-poster img{width:100%;height:100%;object-fit:cover;display:block;}
+.sri-info{flex:1;min-width:0}
+.sri-title{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.95rem;color:var(--white);font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.sri-meta{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.72rem;color:var(--white-50);margin-top:.15rem;
+  letter-spacing:.02em;
+}
+.sri-status{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;letter-spacing:.05em;
+  color:var(--gold);font-style:italic;
+  flex-shrink:0;padding-right:.3rem;
+}
+.sri-btns{display:flex;gap:.4rem;flex-shrink:0}
+.sri-btn{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid;padding:.3rem .7rem;cursor:pointer;
+  transition:all .18s;background:none;
+}
+.sri-btn.w{border-color:var(--gold-dim);color:var(--gold)}
+.sri-btn.w:hover{background:var(--gold);color:var(--black);border-color:var(--gold)}
+.sri-btn.s{border-color:var(--border);color:var(--white-50)}
+.sri-btn.s:hover{border-color:var(--white-50);color:var(--white);background:var(--white-08)}
+.sri-add-row{
+  padding:.8rem 1.2rem;
+  border-top:1px solid var(--white-08);
+  display:flex;align-items:center;gap:.8rem;
+  background:var(--black-70);
+}
+.sri-add-hint{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.78rem;font-style:italic;color:var(--white-50);flex:1;
+}
+.sri-add-btn{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--gold-dim);color:var(--gold);
+  background:none;padding:.3rem .8rem;cursor:pointer;transition:all .2s;
+}
+.sri-add-btn:hover{background:var(--gold);color:var(--black);border-color:var(--gold)}
+
+/* ── Shared section styles ── */
+.sec-head{margin-bottom:2rem}
+.sec-label{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.5rem;
+}
+.sec-title{
+  font-family:"Times New Roman",Times,serif;
+  font-size:clamp(1.4rem,3vw,1.9rem);
+  font-weight:700;color:var(--white);letter-spacing:.02em;
+}
+.page-inner{max-width:1200px;margin:0 auto;padding:3rem 2.5rem}
+
+/* ── DATABASE page ── */
+.tab-switcher{display:flex;border-bottom:1px solid var(--border);margin-bottom:2rem}
+.tsb{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.65rem 1.4rem;background:none;border:none;
+  color:var(--white-50);cursor:pointer;transition:color .2s;position:relative;
+}
+.tsb:hover{color:var(--white)}
+.tsb.active{color:var(--white)}
+.tsb.active::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;
+  height:1px;background:var(--gold);
+}
+.db-sub{display:none}.db-sub.active{display:block}
+
+.db-controls{display:flex;align-items:center;gap:.7rem;margin-bottom:2rem;flex-wrap:wrap;justify-content:flex-end}
+.db-search-wrap{position:relative;display:flex;align-items:center}
+.db-search-icon{
+  width:32px;height:32px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .3s;background:none;color:var(--white-50);
+  border-radius:4px;
+}
+.db-search-icon:hover{border-color:var(--white-50);color:var(--white)}
+.db-search{
+  width:0;opacity:0;background:none;border:none;border-bottom:1px solid var(--border);
+  color:var(--white);font-family:"Times New Roman",Times,serif;
+  font-size:.9rem;padding:.5rem 0;outline:none;
+  transition:all .3s;letter-spacing:.02em;margin-left:.5rem;
+}
+.db-search.expanded{width:200px;opacity:1}
+.db-search::placeholder{color:var(--white-20)}
+.db-search:focus{border-color:var(--white-50)}
+.db-search{
+  flex:1;min-width:180px;
+  background:none;border:none;border-bottom:1px solid var(--border);
+  color:var(--white);
+  font-family:"Times New Roman",Times,serif;
+  font-size:.9rem;padding:.5rem 0;outline:none;
+  transition:border-color .2s;letter-spacing:.02em;
+}
+.db-search::placeholder{color:var(--white-20)}
+.db-search:focus{border-color:var(--white-50)}
+.db-filter{
+  background:none;border:1px solid var(--border);
+  color:var(--white-50);
+  font-family:"Times New Roman",Times,serif;
+  font-size:.72rem;letter-spacing:.08em;
+  padding:.45rem .8rem;outline:none;cursor:pointer;
+  transition:border-color .2s;
+}
+.db-filter:hover,.db-filter:focus{border-color:var(--white-50);color:var(--white)}
+.db-filter option{background:var(--black-80);color:var(--white)}
+.sort-arrow{font-size:.7rem;opacity:.3;margin-left:.25rem;}
+.rec-poster-img{width:100%;height:100%;position:absolute;inset:0;}
+.rec-poster-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.active-arrow{opacity:1;color:var(--gold);}
+thead th:hover .sort-arrow{opacity:.7;}
+.db-sort{
+  background:none;border:1px solid var(--border);
+  color:var(--white-50);
+  font-family:"Times New Roman",Times,serif;
+  font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.42rem .8rem;cursor:pointer;transition:all .2s;
+}
+.db-sort:hover,.db-sort.active{border-color:var(--gold-dim);color:var(--gold)}
+
+/* Table */
+.movies-table{width:100%;border-collapse:collapse}
+.movies-table th{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--white-50);border-bottom:1px solid var(--border);
+  padding:.7rem 1rem;text-align:left;font-weight:400;
+}
+.movies-table td{
+  padding:.85rem 1rem;
+  border-bottom:1px solid var(--white-04);
+  vertical-align:middle;
+}
+.movies-table tr:hover td{background:var(--white-04)}
+.mt-rank{
+  font-family:"Times New Roman",Times,serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--white-20);text-align:center;
+}
+.mt-rank.gold-rank{color:var(--gold)}
+.mt-poster{
+  width:30px;height:44px;background:var(--black-70);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:.95rem;
+  overflow:hidden;flex-shrink:0;
+}
+.mt-poster img{width:100%;height:100%;object-fit:cover;display:block;}
+.mt-title{font-family:"Times New Roman",Times,serif;font-size:.95rem;font-weight:700;color:var(--white);letter-spacing:.01em}
+.mt-year{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-50);margin-top:.15rem}
+.mt-genre{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--gold-dim);
+  padding:.15rem .5rem;display:inline-block;
+}
+.mt-date{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-50)}
+.mt-stars{display:flex;gap:.05rem}
+.mt-star{font-size:.72rem;color:var(--gold)}.mt-star.e{color:var(--white-20)}
+.mt-actions{display:flex;gap:.3rem;align-items:center}
+
+/* Top 10% elite row */
+@keyframes shimmer{
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+.elite-row td:first-child{
+  border-left:2px solid var(--gold);
+}
+.elite-row{
+  background:linear-gradient(90deg,rgba(201,168,76,0.06) 0%,transparent 60%) !important;
+}
+.elite-row:hover td{
+  background:linear-gradient(90deg,rgba(201,168,76,0.1) 0%,rgba(255,255,255,0.04) 60%) !important;
+}
+.elite-rank{
+  color:var(--gold) !important;
+  font-weight:700;
+}
+.mt-btn{
+  background:none;border:1px solid var(--border);
+  color:var(--white-50);font-size:.6rem;
+  width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .18s;
+}
+.mt-btn:hover{border-color:var(--white-50);color:var(--white)}
+.mt-btn.d:hover{border-color:rgba(200,60,60,.5);color:#e06060}
+
+/* Watchlist grid */
+.wl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--border)}
+.wl-card{background:var(--black);transition:background .2s}
+.wl-card:hover{background:var(--white-04)}
+.wl-poster{
+  height:200px;background:var(--black-80);
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+  border-bottom:1px solid var(--border);overflow:hidden;
+}
+.wl-poster img{width:100%;height:100%;object-fit:cover;display:block;}
+.wl-body{padding:.9rem}
+.wl-title{font-family:"Times New Roman",Times,serif;font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.25rem;line-height:1.3}
+.wl-meta{font-family:"Times New Roman",Times,serif;font-size:.68rem;color:var(--white-50);margin-bottom:.7rem}
+.wl-btns{display:flex;gap:.35rem}
+.wl-btn{
+  flex:1;font-family:"Times New Roman",Times,serif;
+  font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.38rem;border:1px solid;background:none;cursor:pointer;transition:all .18s;text-align:center;
+}
+.wl-btn.w{border-color:var(--gold-dim);color:var(--gold)}
+.wl-btn.w:hover{background:var(--gold);color:var(--black);border-color:var(--gold)}
+.wl-btn.r{border-color:var(--border);color:var(--white-50)}
+.wl-btn.r:hover{border-color:rgba(200,60,60,.4);color:#e06060}
+
+/* ── RANKINGS page ── */
+.rank-page{max-width:800px;margin:0 auto;padding:3rem 2.5rem}
+.rank-list{display:flex;flex-direction:column;gap:1px;background:var(--border)}
+.rank-item{
+  display:flex;align-items:center;gap:1.2rem;
+  background:var(--black);padding:.95rem 1.2rem;
+  transition:background .2s;
+}
+.rank-item:hover{background:var(--white-04)}
+.rank-num{
+  font-family:"Times New Roman",Times,serif;
+  font-size:1.8rem;font-weight:700;
+  color:var(--white-20);width:42px;text-align:center;flex-shrink:0;line-height:1;
+  cursor:pointer;transition:color .2s;
+}
+.rank-num:hover{color:var(--white-50)}
+.rank-num.t3{color:var(--gold)}
+.rank-num.t3:hover{color:var(--gold)}
+.rank-poster{
+  width:36px;height:52px;background:var(--black-80);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;
+  overflow:hidden;
+}
+.rank-poster img{width:100%;height:100%;object-fit:cover;display:block;}
+.rank-info{flex:1}
+.rank-title{font-family:"Times New Roman",Times,serif;font-size:1rem;font-weight:700;color:var(--white);letter-spacing:.01em}
+.rank-meta{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-50);margin-top:.2rem}
+.rsp{display:flex;gap:.18rem;margin-top:.35rem}
+.rsp-star{font-size:.9rem;cursor:pointer;color:var(--white-20);transition:color .15s;user-select:none}
+.rsp-star.lit{color:var(--gold)}
+.rank-arrows{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.rank-ab{
+  background:none;border:1px solid var(--border);
+  color:var(--white-20);width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:.6rem;transition:all .18s;
+}
+.rank-ab:hover:not(:disabled){border-color:var(--white-50);color:var(--white)}
+.rank-ab:disabled{opacity:.2;cursor:not-allowed}
+.rank-remove{
+  background:none;border:1px solid var(--border);
+  color:var(--white-20);width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:.65rem;transition:all .2s;
+  margin-top:4px;
+}
+.rank-remove:hover{
+  border-color:rgba(200,60,60,.5);
+  color:#e06060;
+  background:rgba(200,60,60,.08);
+}
+
+/* ── STATS / INSIGHTS page ── */
+.stats-page{max-width:1200px;margin:0 auto;padding:3rem 2.5rem}
+.stats-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:3rem}
+.stat-card{
+  background:var(--black);padding:2rem 1.5rem;text-align:center;
+  border-bottom:2px solid transparent;transition:all .25s;
+}
+.stat-card:hover{background:var(--white-04);border-bottom-color:var(--gold)}
+.sc-num{
+  font-family:"Times New Roman",Times,serif;
+  font-size:3rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:.4rem;
+}
+.sc-label{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--white-50);
+}
+.genre-chart{border:1px solid var(--border);padding:2rem;margin-bottom:2.5rem}
+.gbr{display:flex;align-items:center;gap:1.2rem;margin-bottom:.85rem}
+.gbr-label{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--white-50);width:90px;text-align:right;flex-shrink:0;
+}
+.gbr-track{flex:1;height:1px;background:var(--border);position:relative}
+.gbr-fill{
+  position:absolute;top:0;left:0;height:100%;
+  background:var(--gold);transition:width 1.2s ease;
+}
+.gbr-count{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.88rem;color:var(--white-50);width:28px;text-align:right;flex-shrink:0;
+}
+.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.ins-card{background:var(--black);padding:1.8rem;transition:background .2s}
+.ins-card:hover{background:var(--white-04)}
+.ins-badge{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.8rem;display:block;
+}
+.ins-text{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.95rem;font-style:italic;color:var(--white-80);line-height:1.75;font-weight:400;
+}
+.ins-text strong{color:var(--gold);font-style:normal;font-weight:700}
+
+/* ── Actor list ── */
+.actor-row{
+  border-bottom:1px solid var(--border);
+  transition:background .18s;
+}
+.actor-row:last-child{border-bottom:none}
+.actor-row:hover{background:var(--white-04)}
+.actor-header{
+  display:flex;align-items:center;gap:1rem;
+  padding:.85rem 1rem;cursor:pointer;
+}
+.actor-name{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.95rem;font-weight:700;color:var(--white);flex:1;
+}
+.actor-count{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.8rem;color:var(--gold);letter-spacing:.06em;
+  white-space:nowrap;
+}
+.actor-chevron{
+  font-size:.55rem;color:var(--white-20);transition:transform .2s;
+  margin-left:.5rem;
+}
+.actor-chevron.open{transform:rotate(180deg)}
+.actor-films{
+  display:none;padding:.2rem 1rem 1rem 1rem;
+}
+.actor-films.open{display:block}
+.actor-film-pill{
+  display:inline-block;
+  font-family:"Times New Roman",Times,serif;
+  font-size:.7rem;letter-spacing:.04em;
+  color:var(--white-50);
+  border:1px solid var(--border);
+  padding:.2rem .65rem;margin:.25rem .25rem 0 0;
+  transition:border-color .15s,color .15s;
+}
+.actor-film-pill:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.9);
+  z-index:500;display:none;align-items:center;justify-content:center;padding:1.5rem;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--black-80);border:1px solid var(--border);
+  max-width:460px;width:100%;padding:2.5rem;position:relative;
+}
+.modal-x{
+  position:absolute;top:1rem;right:1.2rem;background:none;border:none;
+  color:var(--white-50);font-size:1rem;cursor:pointer;transition:color .2s;
+  font-family:"Times New Roman",Times,serif;
+}
+.modal-x:hover{color:var(--white)}
+.modal-title{
+  font-family:"Times New Roman",Times,serif;
+  font-size:1.35rem;font-weight:700;color:var(--white);
+  margin-bottom:.25rem;letter-spacing:.02em;
+}
+.modal-meta{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.75rem;color:var(--white-50);margin-bottom:1.8rem;
+  letter-spacing:.04em;
+}
+.modal-lbl{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--white-50);margin-bottom:.4rem;display:block;
+}
+.modal-input{
+  width:100%;background:none;
+  border:none;border-bottom:1px solid var(--border);
+  color:var(--white);
+  font-family:"Times New Roman",Times,serif;
+  font-size:.95rem;padding:.5rem 0;outline:none;margin-bottom:1.4rem;
+  transition:border-color .2s;letter-spacing:.02em;
+}
+.modal-input:focus{border-color:var(--white-50)}
+.modal-input option{background:var(--black-80)}
+.modal-date{
+  width:100%;background:none;
+  border:none;border-bottom:1px solid var(--border);
+  color:var(--white);
+  font-family:"Times New Roman",Times,serif;
+  font-size:.95rem;padding:.5rem 0;outline:none;margin-bottom:1.4rem;
+  color-scheme:dark;transition:border-color .2s;
+}
+.modal-date:focus{border-color:var(--white-50)}
+.modal-stars{display:flex;gap:.5rem;margin-bottom:1.8rem}
+.ms{font-size:1.6rem;cursor:pointer;color:var(--white-20);transition:all .18s;user-select:none}
+.ms.lit{color:var(--gold)}.ms:hover{transform:scale(1.1)}
+.modal-save{
+  width:100%;background:var(--gold);border:none;
+  color:var(--black);
+  font-family:"Times New Roman",Times,serif;
+  font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:.9rem;cursor:pointer;transition:opacity .2s;font-weight:700;
+}
+.modal-save:hover{opacity:.85}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;
+  background:var(--black-80);border:1px solid var(--border);
+  border-left:2px solid var(--gold);
+  color:var(--white-80);
+  font-family:"Times New Roman",Times,serif;
+  font-style:italic;font-size:.9rem;
+  padding:.8rem 1.4rem;z-index:9000;
+  transform:translateY(60px);opacity:0;transition:all .3s;max-width:300px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── EMPTY STATES ── */
+.empty{text-align:center;padding:4rem 2rem}
+.empty-icon{font-size:2rem;margin-bottom:.8rem;display:block;opacity:.2}
+.empty-title{
+  font-family:"Times New Roman",Times,serif;
+  font-size:1.1rem;color:var(--white-50);font-style:italic;margin-bottom:.4rem;
+}
+.empty-text{font-family:"Times New Roman",Times,serif;font-size:.8rem;color:var(--white-20);font-style:italic}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .stats-cards{grid-template-columns:repeat(2,1fr)}
+  .insights-grid{grid-template-columns:1fr}
+  .wl-grid{grid-template-columns:repeat(2,1fr)}
+  .header-inner{padding:0 1.2rem}
+  .nav-tab{padding:.5rem .65rem;font-size:.65rem;letter-spacing:.08em}
+  .rank-page,.page-inner,.stats-page{padding:2rem 1.2rem}
+}
+
+/* ══════════════════════════════════════════
+   CLAUDE RECOMMENDATION AGENT
+══════════════════════════════════════════ */
+#agent-section {
+  width:100%;
+  max-width:900px;
+  margin:3.5rem auto 0;
+  padding:0 2rem;
+}
+.agent-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:1.5rem;
+}
+.agent-label-group {
+  display:flex;
+  flex-direction:column;
+  gap:.3rem;
+}
+.agent-label {
+  font-size:.7rem;
+  letter-spacing:.2em;
+  color:var(--gold);
+  text-transform:uppercase;
+  font-family:"Times New Roman",Times,serif;
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+.agent-label-dot {
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--gold);
+  animation:agent-pulse-dot 2.5s ease-in-out infinite;
+}
+@keyframes agent-pulse-dot {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.4;transform:scale(.7)}
+}
+.agent-title {
+  font-size:1.2rem;
+  font-weight:700;
+  color:var(--white);
+  letter-spacing:.02em;
+  font-family:"Times New Roman",Times,serif;
+}
+.agent-refresh-btn {
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  border:1px solid var(--border-gold);
+  color:var(--gold);
+  background:none;
+  padding:.5rem 1rem;
+  cursor:pointer;
+  transition:all .2s;
+  white-space:nowrap;
+}
+.agent-refresh-btn:hover {
+  background:var(--gold);
+  color:var(--black);
+}
+.agent-refresh-btn:disabled {
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+/* Rec cards — 3×2 grid */
+#agent-cards {
+  display:grid;
+  grid-template-columns:repeat(3,160px);
+  gap:1.5rem 1.4rem;
+  justify-content:flex-start;
+}
+
+/* Loading skeleton */
+.agent-loading {
+  display:grid;
+  grid-template-columns:repeat(3,160px);
+  gap:1.5rem 1.4rem;
+  width:100%;
+}
+.agent-skeleton {
+  width:160px;
+  flex-shrink:0;
+}
+.agent-skeleton-poster {
+  width:160px;height:240px;
+  background:var(--black-70);
+  border:1px solid var(--border);
+  margin-bottom:.75rem;
+  position:relative;
+  overflow:hidden;
+}
+.agent-skeleton-poster::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.04) 50%,transparent 100%);
+  animation:agent-shimmer 1.8s infinite;
+}
+@keyframes agent-shimmer {
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(100%)}
+}
+.agent-skeleton-line {
+  height:10px;background:var(--black-70);margin-bottom:.5rem;border-radius:2px;
+}
+
+/* Individual rec card */
+.rec-card {
+  width:160px;
+  flex-shrink:0;
+  position:relative;
+}
+.rec-poster-wrap {
+  width:160px;height:240px;
+  background:#111;
+  border:1px solid rgba(255,255,255,.08);
+  overflow:hidden;
+  position:relative;
+  margin-bottom:.75rem;
+  transition:border-color .2s;
+}
+.rec-card:hover .rec-poster-wrap {
+  border-color:var(--gold-dim);
+}
+.rec-poster-wrap img {
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.rec-poster-fallback {
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;background:#0a0a0a;
+}
+.rec-badge {
+  position:absolute;top:0;left:0;
+  background:rgba(201,168,76,.92);
+  color:#000;
+  font-size:.55rem;
+  letter-spacing:.1em;
+  padding:.22rem .48rem;
+  text-transform:uppercase;
+  font-weight:700;
+  font-family:"Times New Roman",Times,serif;
+  max-width:155px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.rec-dismiss {
+  position:absolute;top:.4rem;right:.4rem;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:rgba(0,0,0,.75);
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.5);
+  font-size:.8rem;
+  line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:all .18s;
+  padding:0;
+  font-family:sans-serif;
+}
+.rec-dismiss:hover {
+  background:rgba(201,168,76,.85);
+  color:#000;
+  border-color:transparent;
+}
+.rec-info {
+  font-family:"Times New Roman",Times,serif;
+}
+.rec-title {
+  font-size:.82rem;
+  color:rgba(255,255,255,.9);
+  margin-bottom:.25rem;
+  line-height:1.3;
+  letter-spacing:.01em;
+  font-weight:700;
+}
+.rec-year {
+  font-size:.68rem;
+  color:rgba(255,255,255,.35);
+  margin-bottom:.5rem;
+  letter-spacing:.04em;
+}
+.rec-why {
+  font-size:.67rem;
+  color:rgba(255,255,255,.45);
+  line-height:1.45;
+  font-style:italic;
+  margin-bottom:.6rem;
+}
+.rec-meta-row {
+  font-size:.62rem;
+  color:rgba(255,255,255,.3);
+  letter-spacing:.04em;
+  margin-bottom:.35rem;
+  line-height:1.4;
+}
+.rec-accolade {
+  font-size:.6rem;
+  color:rgba(201,168,76,.6);
+  letter-spacing:.05em;
+  font-style:italic;
+  margin-bottom:.6rem;
+  line-height:1.4;
+}
+.rec-actions {
+  display:flex;gap:.4rem;margin-top:.4rem;
+}
+.rec-btn {
+  font-family:"Times New Roman",Times,serif;
+  font-size:.6rem;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  border:1px solid;
+  padding:.28rem .6rem;
+  cursor:pointer;
+  transition:all .18s;
+  background:none;
+  flex:1;
+  text-align:center;
+}
+.rec-btn.add {
+  border-color:var(--gold-dim);
+  color:var(--gold);
+}
+.rec-btn.add:hover {
+  background:var(--gold);
+  color:var(--black);
+  border-color:var(--gold);
+}
+.rec-btn.add.saved {
+  border-color:var(--white-20);
+  color:var(--white-50);
+  cursor:default;
+}
+.rec-btn.dismiss-sm {
+  border-color:var(--border);
+  color:var(--white-20);
+}
+.rec-btn.dismiss-sm:hover {
+  border-color:var(--white-50);
+  color:var(--white-50);
+}
+
+/* Agent error state */
+.agent-error {
+  font-family:"Times New Roman",Times,serif;
+  font-size:.85rem;
+  color:var(--white-50);
+  font-style:italic;
+  padding:1.5rem 0;
+}
+
+/* Divider between sections */
+.home-divider {
+  width:100%;
+  max-width:900px;
+  margin:3rem auto 0;
+  border:none;
+  border-top:1px solid var(--border);
+}
+
+/* Tooltip for rec card — hover details panel */
+.rec-tooltip {
+  display:none;
+  position:absolute;
+  bottom:calc(100% + .5rem);
+  left:50%;
+  transform:translateX(-50%);
+  width:220px;
+  background:var(--black-80);
+  border:1px solid var(--border-gold);
+  padding:.75rem;
+  z-index:50;
+  pointer-events:none;
+}
+.rec-card:hover .rec-tooltip {display:block}
+
+@media(max-width:768px){
+  #agent-cards{grid-template-columns:repeat(2,140px);gap:1rem;}
+  #agent-section{padding:0 1rem}
+  .rec-card{width:140px}
+  .rec-poster-wrap{width:140px;height:210px}
+}
+</style>
+<style id="claude-agent-animation-styles">
+      @keyframes claude-pulse {
+        0% {
+          box-shadow: 
+            inset 0 0 10px rgba(217, 119, 87, 0.5),
+            inset 0 0 20px rgba(217, 119, 87, 0.3),
+            inset 0 0 30px rgba(217, 119, 87, 0.1);
+        }
+        50% {
+          box-shadow: 
+            inset 0 0 15px rgba(217, 119, 87, 0.7),
+            inset 0 0 25px rgba(217, 119, 87, 0.5),
+            inset 0 0 35px rgba(217, 119, 87, 0.2);
+        }
+        100% {
+          box-shadow: 
+            inset 0 0 10px rgba(217, 119, 87, 0.5),
+            inset 0 0 20px rgba(217, 119, 87, 0.3),
+            inset 0 0 30px rgba(217, 119, 87, 0.1);
+        }
+      }
+    </style></head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="https://jakeswatchlist.netlify.app/#" class="logo" onclick="showPage(&#39;home&#39;);return false">Jake's <span>Watch</span> List</a>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage(&#39;home&#39;)">Home</button>
+      <button class="nav-tab" onclick="showPage(&#39;database&#39;)">Movies</button>
+      <button class="nav-tab" onclick="showPage(&#39;rankings&#39;)">Rank</button>
+      <button class="nav-tab" onclick="showPage(&#39;stats&#39;)">Insights</button>
+    </div>
+  </div>
+</header>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="home-wrap">
+    <p class="home-question">What are you <em>watching?</em></p>
+    <div class="search-wrap">
+      <div class="search-box">
+        <input class="search-input" id="searchInput" type="text" placeholder="Search any film" autocomplete="off">
+        <button class="search-btn" onclick="doSearch()">Search</button>
+      </div>
+      <div class="search-results" id="searchResults" style="display: none;"></div>
+    </div>
+
+    <!-- RECENTLY WATCHED -->
+    <div id="recently-watched-section" style="margin-top:3rem;text-align:center;width:100%;max-width:900px;">
+      <p style="font-size:0.7rem;letter-spacing:0.2em;color:rgba(201,168,76,0.6);text-transform:uppercase;margin-bottom:1.5rem;font-family:inherit;">Recently Watched</p>
+      <div id="rw-tiles" style="display:flex;gap:1.5rem;justify-content:center;align-items:flex-start;width:100%;max-width:620px;margin:0 auto;">
+      <div style="width:160px;text-align:left;">
+        <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
+          <img id="rw-poster-0" src="./index_files/MV5BMzBkZmQ0NjMtNTZlMy00ZjdlLTg5ODUtYWFlNGM0YzE3MTg0XkEyXkFqcGc@._V1_SX400.jpg" alt="One Battle After Another" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-0&#39;).style.display=&#39;flex&#39;;">
+          <div id="rw-fb-0" style="position: absolute; inset: 0px; display: none; align-items: center; justify-content: center; font-size: 3rem; background: rgb(10, 10, 10);">🎬</div>
+          
+        </div>
+        <div style="font-size:0.82rem;color:rgba(255,255,255,0.9);margin-bottom:0.25rem;line-height:1.3;letter-spacing:0.01em;">One Battle After Another</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;">
+          <span>Feb 15, 2026</span>
+          <span style="color:rgba(201,168,76,0.7);">#8</span>
+        </div>
+      </div>
+      <div style="width:160px;text-align:left;">
+        <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
+          <img id="rw-poster-1" src="./index_files/MV5BOGZjNDlkMTYtMTJkZi00OTkzLWI4NDEtYTA2ODQyMjcwYTdlXkEyXkFqcGc@._V1_SX400.jpg" alt="Mission: Impossible" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-1&#39;).style.display=&#39;flex&#39;;">
+          <div id="rw-fb-1" style="position: absolute; inset: 0px; display: none; align-items: center; justify-content: center; font-size: 3rem; background: rgb(10, 10, 10);">🎬</div>
+          
+        </div>
+        <div style="font-size:0.82rem;color:rgba(255,255,255,0.9);margin-bottom:0.25rem;line-height:1.3;letter-spacing:0.01em;">Mission: Impossible</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;">
+          <span>Feb 13, 2026</span>
+          <span style="color:rgba(201,168,76,0.7);">#21</span>
+        </div>
+      </div>
+      <div style="width:160px;text-align:left;">
+        <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
+          <img id="rw-poster-2" src="./index_files/MV5BZDZhZmI1ZTUtYWI3NC00NTMwLTk3NWMtNDc0OGNjM2I0ZjlmXkEyXkFqcGc@._V1_SX400.jpg" alt="Before Sunrise" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-2&#39;).style.display=&#39;flex&#39;;">
+          <div id="rw-fb-2" style="position: absolute; inset: 0px; display: none; align-items: center; justify-content: center; font-size: 3rem; background: rgb(10, 10, 10);">🎬</div>
+          <div style="position:absolute;top:0;left:0;background:rgba(201,168,76,0.9);color:#000;font-size:0.6rem;letter-spacing:0.12em;padding:0.25rem 0.5rem;text-transform:uppercase;font-weight:600;">#1 All Time</div>
+        </div>
+        <div style="font-size:0.82rem;color:rgba(255,255,255,0.9);margin-bottom:0.25rem;line-height:1.3;letter-spacing:0.01em;">Before Sunrise</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;">
+          <span>Feb 12, 2026</span>
+          <span style="color:rgba(201,168,76,0.7);">#1</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- CLAUDE RECOMMENDATION AGENT -->
+    <hr class="home-divider">
+    <section id="agent-section">
+      <div class="agent-header">
+        <div class="agent-label-group">
+          <div class="agent-label">
+            <span class="agent-label-dot"></span>
+            Claude
+          </div>
+          <div class="agent-title">Recommended to Watch</div>
+        </div>
+        <button class="agent-refresh-btn" id="agentRefreshBtn" onclick="loadAgentRecs()">
+          ↻ &nbsp; Refresh
+        </button>
+      </div>
+
+      <div id="agent-cards"><div class="agent-error" style="grid-column:1/-1;">
+         Could not load recommendations. <a href="javascript:loadAgentRecs()" style="color:var(--gold);text-decoration:underline;">Try again</a>
+       </div></div>
+    </section>
+
+  </div>
+</div>
+
+<!-- MY FILMS -->
+<div id="page-database" class="page">
+  <div class="page-inner">
+    <div class="sec-head" style="margin-bottom:1.5rem">
+      <div class="sec-label">The Complete Record</div>
+      <div class="sec-title">My Movies</div>
+    </div>
+    <div class="tab-switcher">
+      <button class="tsb active" onclick="switchTab(&#39;watched&#39;,this)">✓ &nbsp; Watched</button>
+      <button class="tsb" onclick="switchTab(&#39;watchlist&#39;,this)">◎ &nbsp; Watch List</button>
+    </div>
+    <div class="db-sub active" id="sub-watched">
+      <div class="db-controls">
+        <div class="db-search-wrap">
+          <button class="db-search-icon" onclick="toggleSearch()" title="Search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+          <input class="db-search" id="dbSearch" type="text" placeholder="Search films..." oninput="renderTable()">
+        </div>
+        <select class="db-filter" id="dbDateWatched" onchange="renderTable()"><option value="">Date Watched</option><option value="2026-02">February 2026</option><option value="2026-01">January 2026</option></select>
+        <select class="db-filter" id="dbReleaseYear" onchange="renderTable()"><option value="">Release Year</option><option value="2025">2025</option><option value="2024">2024</option><option value="2013">2013</option><option value="2010">2010</option><option value="2009">2009</option><option value="2006">2006</option><option value="2005">2005</option><option value="2003">2003</option><option value="2001">2001</option><option value="1999">1999</option><option value="1996">1996</option><option value="1995">1995</option><option value="1989">1989</option><option value="1988">1988</option></select>
+        <select class="db-filter" id="dbGenre" onchange="renderTable()"><option value="">All Genres</option><option value="Action">Action</option><option value="Comedy">Comedy</option><option value="Comedy-Drama">Comedy-Drama</option><option value="Drama">Drama</option><option value="Horror">Horror</option><option value="Romance">Romance</option><option value="Thriller">Thriller</option><option value="War">War</option></select>
+        <select class="db-filter" id="dbDirector" onchange="renderTable()"><option value="">All Directors</option><option value="Alejandro Amenábar">Alejandro Amenábar</option><option value="Anthony Minghella">Anthony Minghella</option><option value="Brian De Palma">Brian De Palma</option><option value="Charles Crichton">Charles Crichton</option><option value="Doug Liman">Doug Liman</option><option value="Herbert Ross">Herbert Ross</option><option value="Jay Roach">Jay Roach</option><option value="Jean-Pierre Jeunet">Jean-Pierre Jeunet</option><option value="John Carney">John Carney</option><option value="Josh Safdie">Josh Safdie</option><option value="Louis Leterrier">Louis Leterrier</option><option value="Marc Forster">Marc Forster</option><option value="Martin Scorsese">Martin Scorsese</option><option value="Mary Bronstein">Mary Bronstein</option><option value="Mike Figgis">Mike Figgis</option><option value="Paul Thomas Anderson">Paul Thomas Anderson</option><option value="Quentin Tarantino">Quentin Tarantino</option><option value="Richard Curtis">Richard Curtis</option><option value="Richard Linklater">Richard Linklater</option><option value="Roger Michell">Roger Michell</option><option value="Sean Baker">Sean Baker</option><option value="Wes Anderson">Wes Anderson</option><option value="Woody Allen">Woody Allen</option></select>
+      </div>
+      <table class="movies-table">
+        <thead><tr id="tableHead">
+          <th style="width:46px;cursor:pointer;" onclick="colSort(&#39;rank&#39;)" id="th-rank">Rank <span class="sort-arrow active-arrow">↑</span></th>
+          <th style="width:44px"></th>
+          <th style="cursor:pointer;" onclick="colSort(&#39;alpha&#39;)" id="th-alpha">Title <span class="sort-arrow">↕</span></th>
+          <th style="cursor:pointer;" onclick="colSort(&#39;genre&#39;)" id="th-genre">Genre <span class="sort-arrow">↕</span></th>
+          <th style="cursor:pointer;" onclick="colSort(&#39;director&#39;)" id="th-director">Director <span class="sort-arrow">↕</span></th>
+          <th style="cursor:pointer;" onclick="colSort(&#39;year&#39;)" id="th-year">Year <span class="sort-arrow">↕</span></th>
+          <th style="cursor:pointer;" onclick="colSort(&#39;date&#39;)" id="th-date">Date Watched <span class="sort-arrow">↕</span></th>
+          
+        </tr></thead>
+        <tbody id="tableBody"><tr class="elite-row">
+      <td><div class="mt-rank elite-rank">1</div></td>
+      <td><div id="p-1" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZDZhZmI1ZTUtYWI3NC00NTMwLTk3NWMtNDc0OGNjM2I0ZjlmXkEyXkFqcGc@._V1_SX342.jpg" alt="Before Sunrise" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Before Sunrise</div></td>
+      <td><span class="mt-genre">Romance</span></td>
+      <td><div class="mt-year">Richard Linklater</div></td>
+      <td><div class="mt-year">1995</div></td>
+      <td><div class="mt-date">Feb 12, 2026</div></td>
+      
+    </tr><tr class="elite-row">
+      <td><div class="mt-rank elite-rank">2</div></td>
+      <td><div id="p-2" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZjY3YWI5OTMtYTdlNy00ZTZiLWEwYjItN2M1MGVkMDM4ZDExXkEyXkFqcGc@._V1_SX342.jpg" alt="Notting Hill" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Notting Hill</div></td>
+      <td><span class="mt-genre">Romance</span></td>
+      <td><div class="mt-year">Roger Michell</div></td>
+      <td><div class="mt-year">1999</div></td>
+      <td><div class="mt-date">Jan 26, 2026</div></td>
+      
+    </tr><tr class="elite-row">
+      <td><div class="mt-rank elite-rank">3</div></td>
+      <td><div id="p-3" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYThiN2M0NTItODRmNC00NDhlLWFiYTgtMWM2YTEyYzI3ZTY1XkEyXkFqcGc@._V1_SX342.jpg" alt="Anora" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Anora</div></td>
+      <td><span class="mt-genre">Drama</span></td>
+      <td><div class="mt-year">Sean Baker</div></td>
+      <td><div class="mt-year">2024</div></td>
+      <td><div class="mt-date">Jan 18, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">4</div></td>
+      <td><div id="p-4" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BNzFmZjZhOTktYWIxZS00YzM1LWEzNmQtMDM2YjlhYmI2MDVlXkEyXkFqcGc@._V1_SX342.jpg" alt="Stranger Than Fiction" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Stranger Than Fiction</div></td>
+      <td><span class="mt-genre">Comedy-Drama</span></td>
+      <td><div class="mt-year">Marc Forster</div></td>
+      <td><div class="mt-year">2006</div></td>
+      <td><div class="mt-date">Jan 8, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">5</div></td>
+      <td><div id="p-5" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZTNhODBkODAtNDllYy00YTg1LWJmNDUtYjgzMzEzOWQ0YWNjXkEyXkFqcGc@._V1_SX342.jpg" alt="The Others" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">The Others</div></td>
+      <td><span class="mt-genre">Horror</span></td>
+      <td><div class="mt-year">Alejandro Amenábar</div></td>
+      <td><div class="mt-year">2001</div></td>
+      <td><div class="mt-date">Jan 16, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">6</div></td>
+      <td><div id="p-6" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BOTNmYzY0MWQtZGZmNy00Y2Y4LWFmMDQtMTZjYTdiYzEwZGQ2XkEyXkFqcGc@._V1_SX342.jpg" alt="Amélie" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Amélie</div></td>
+      <td><span class="mt-genre">Romance</span></td>
+      <td><div class="mt-year">Jean-Pierre Jeunet</div></td>
+      <td><div class="mt-year">2001</div></td>
+      <td><div class="mt-date">Jan 5, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">7</div></td>
+      <td><div id="p-7" class="mt-poster"></div></td>
+      <td><div class="mt-title">Bugonia</div></td>
+      <td><span class="mt-genre">Comedy</span></td>
+      <td><div class="mt-year">John Carney</div></td>
+      <td><div class="mt-year">2025</div></td>
+      <td><div class="mt-date">Jan 23, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">8</div></td>
+      <td><div id="p-8" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMzBkZmQ0NjMtNTZlMy00ZjdlLTg5ODUtYWFlNGM0YzE3MTg0XkEyXkFqcGc@._V1_SX342.jpg" alt="One Battle After Another" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">One Battle After Another</div></td>
+      <td><span class="mt-genre">War</span></td>
+      <td><div class="mt-year">Paul Thomas Anderson</div></td>
+      <td><div class="mt-year">2025</div></td>
+      <td><div class="mt-date">Feb 15, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">9</div></td>
+      <td><div id="p-9" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZTRhYjI1MTItMWYwMi00MjY5LWI1OTktMzQwNzA3MWJlN2QyXkEyXkFqcGc@._V1_SX342.jpg" alt="Marty Supreme" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Marty Supreme</div></td>
+      <td><span class="mt-genre">Drama</span></td>
+      <td><div class="mt-year">Josh Safdie</div></td>
+      <td><div class="mt-year">2025</div></td>
+      <td><div class="mt-date">Jan 10, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">10</div></td>
+      <td><div id="p-10" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BODZhMWJlNjYtNDExNC00MTIzLTllM2ItOGQ2NGVjNDQ3MzkzXkEyXkFqcGc@._V1_SX342.jpg" alt="Inglourious Basterds" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Inglourious Basterds</div></td>
+      <td><span class="mt-genre">War</span></td>
+      <td><div class="mt-year">Quentin Tarantino</div></td>
+      <td><div class="mt-year">2009</div></td>
+      <td><div class="mt-date">Jan 3, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">11</div></td>
+      <td><div id="p-11" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYWRlZjcwYTgtYWJkOS00MGYwLTk3Y2ItNmU4NTg5Nzg2YTQ2XkEyXkFqcGc@._V1_SX342.jpg" alt="Love Actually" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Love Actually</div></td>
+      <td><span class="mt-genre">Romance</span></td>
+      <td><div class="mt-year">Richard Curtis</div></td>
+      <td><div class="mt-year">2003</div></td>
+      <td><div class="mt-date">Jan 21, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">12</div></td>
+      <td><div id="p-12" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BNDg3MDM5NTI0MF5BMl5BanBnXkFtZTcwNDY0NDk0NA@@._V1_SX342.jpg" alt="Leaving Las Vegas" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Leaving Las Vegas</div></td>
+      <td><span class="mt-genre">Drama</span></td>
+      <td><div class="mt-year">Mike Figgis</div></td>
+      <td><div class="mt-year">1995</div></td>
+      <td><div class="mt-date">Feb 1, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">13</div></td>
+      <td><div id="p-13" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BN2FjNWExYzEtY2YzOC00YjNlLTllMTQtNmIwM2Q1YzBhOWM1XkEyXkFqcGc@._V1_SX342.jpg" alt="Shutter Island" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Shutter Island</div></td>
+      <td><span class="mt-genre">Thriller</span></td>
+      <td><div class="mt-year">Martin Scorsese</div></td>
+      <td><div class="mt-year">2010</div></td>
+      <td><div class="mt-date">Feb 5, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">14</div></td>
+      <td><div id="p-14" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYzliNTEyYjEtNGE3Mi00ZDIzLTg1NzYtZDBhNTQ5ZDVkMmM3XkEyXkFqcGc@._V1_SX342.jpg" alt="The Roses" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">The Roses</div></td>
+      <td><span class="mt-genre">Comedy-Drama</span></td>
+      <td><div class="mt-year">Jay Roach</div></td>
+      <td><div class="mt-year">2025</div></td>
+      <td><div class="mt-date">Jan 2, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">15</div></td>
+      <td><div id="p-15" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMjE4MTYyOWYtYjBjNy00NjBiLThhYWEtNzQ2MmE4MzY4ZGI2XkEyXkFqcGc@._V1_SX342.jpg" alt="Steel Magnolias" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Steel Magnolias</div></td>
+      <td><span class="mt-genre">Drama</span></td>
+      <td><div class="mt-year">Herbert Ross</div></td>
+      <td><div class="mt-year">1989</div></td>
+      <td><div class="mt-date">Feb 6, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">16</div></td>
+      <td><div id="p-16" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMTY0NDY3MDMxN15BMl5BanBnXkFtZTcwOTM5NzMzOQ@@._V1_SX342.jpg" alt="Now You See Me" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Now You See Me</div></td>
+      <td><span class="mt-genre">Thriller</span></td>
+      <td><div class="mt-year">Louis Leterrier</div></td>
+      <td><div class="mt-year">2013</div></td>
+      <td><div class="mt-date">Jan 19, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">17</div></td>
+      <td><div id="p-17" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BNjFhZDg1ZmEtYmI0Ny00MjM3LWIxNzItMzU1MzczZTljMTkxXkEyXkFqcGc@._V1_SX342.jpg" alt="A Fish Called Wanda" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">A Fish Called Wanda</div></td>
+      <td><span class="mt-genre">Comedy</span></td>
+      <td><div class="mt-year">Charles Crichton</div></td>
+      <td><div class="mt-year">1988</div></td>
+      <td><div class="mt-date">Jan 16, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">18</div></td>
+      <td><div id="p-18" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZTc1MzFlMjEtMzkyNC00NDgyLThjMjMtMzQzZGI5YjUyNzU5XkEyXkFqcGc@._V1_SX342.jpg" alt="The Royal Tenenbaums" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">The Royal Tenenbaums</div></td>
+      <td><span class="mt-genre">Comedy-Drama</span></td>
+      <td><div class="mt-year">Wes Anderson</div></td>
+      <td><div class="mt-year">2001</div></td>
+      <td><div class="mt-date">Jan 4, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">19</div></td>
+      <td><div id="p-19" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYzI2ZmU3MWMtZmRlMi00ZmVlLTkwMDMtZmI1YTg4YzcwMDE0XkEyXkFqcGc@._V1_SX342.jpg" alt="The Talented Mr. Ripley" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">The Talented Mr. Ripley</div></td>
+      <td><span class="mt-genre">Thriller</span></td>
+      <td><div class="mt-year">Anthony Minghella</div></td>
+      <td><div class="mt-year">1999</div></td>
+      <td><div class="mt-date">Jan 11, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">20</div></td>
+      <td><div id="p-20" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMTUxMzcxNzQzOF5BMl5BanBnXkFtZTcwMzQxNjUyMw@@._V1_SX342.jpg" alt="Mr. &amp; Mrs. Smith" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Mr. &amp; Mrs. Smith</div></td>
+      <td><span class="mt-genre">Action</span></td>
+      <td><div class="mt-year">Doug Liman</div></td>
+      <td><div class="mt-year">2005</div></td>
+      <td><div class="mt-date">Jan 23, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">21</div></td>
+      <td><div id="p-21" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BOGZjNDlkMTYtMTJkZi00OTkzLWI4NDEtYTA2ODQyMjcwYTdlXkEyXkFqcGc@._V1_SX342.jpg" alt="Mission: Impossible" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Mission: Impossible</div></td>
+      <td><span class="mt-genre">Action</span></td>
+      <td><div class="mt-year">Brian De Palma</div></td>
+      <td><div class="mt-year">1996</div></td>
+      <td><div class="mt-date">Feb 13, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">22</div></td>
+      <td><div id="p-22" class="mt-poster"></div></td>
+      <td><div class="mt-title">If I Had Legs I'd Kick You</div></td>
+      <td><span class="mt-genre">Drama</span></td>
+      <td><div class="mt-year">Mary Bronstein</div></td>
+      <td><div class="mt-year">2025</div></td>
+      <td><div class="mt-date">Jan 29, 2026</div></td>
+      
+    </tr><tr class="">
+      <td><div class="mt-rank">23</div></td>
+      <td><div id="p-23" class="mt-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMTc0ODk5MzEyMV5BMl5BanBnXkFtZTcwMzI0MDY1OQ@@._V1_SX342.jpg" alt="Blue Jasmine" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div></td>
+      <td><div class="mt-title">Blue Jasmine</div></td>
+      <td><span class="mt-genre">Drama</span></td>
+      <td><div class="mt-year">Woody Allen</div></td>
+      <td><div class="mt-year">2013</div></td>
+      <td><div class="mt-date">Feb 4, 2026</div></td>
+      
+    </tr></tbody>
+      </table>
+      <div id="watchedEmpty" class="empty" style="display:none">
+        <span class="empty-icon">🎬</span>
+        <div class="empty-title">No films logged yet</div>
+        <div class="empty-text">Search for a film on the Home page and mark it as watched</div>
+      </div>
+    </div>
+    <div class="db-sub" id="sub-watchlist">
+      <div class="wl-grid" id="wlGrid"></div>
+      <div id="wlEmpty" class="empty" style="display: block;">
+        <span class="empty-icon">◎</span>
+        <div class="empty-title">Your watch list is empty</div>
+        <div class="empty-text">Save films from the Home page to watch later</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RANKINGS -->
+<div id="page-rankings" class="page">
+  <div class="rank-page">
+    <div class="sec-head" style="margin-bottom:.8rem">
+      <div class="sec-label">Your Definitive Order</div>
+      <div class="sec-title">All-Time Rankings</div>
+    </div>
+    <p style="font-size:.88rem;font-style:italic;color:var(--white-50);margin-bottom:1.8rem">Use the arrows to reorder films. Click the stars to rate them.</p>
+    <div class="rank-list" id="rankList"><div class="rank-item">
+      <div class="rank-num t3" onclick="editRank(45,1)" title="Click to edit rank">1</div>
+      <div id="p-47" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZDZhZmI1ZTUtYWI3NC00NTMwLTk3NWMtNDc0OGNjM2I0ZjlmXkEyXkFqcGc@._V1_SX342.jpg" alt="Before Sunrise" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Before Sunrise</div>
+        <div class="rank-meta">1995 · Romance · Richard Linklater</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(45,&#39;up&#39;)" disabled="">▲</button>
+        <button class="rank-ab" onclick="moveRank(45,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Before Sunrise from your list?&#39;))removeW(45)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num t3" onclick="editRank(39,2)" title="Click to edit rank">2</div>
+      <div id="p-48" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZjY3YWI5OTMtYTdlNy00ZTZiLWEwYjItN2M1MGVkMDM4ZDExXkEyXkFqcGc@._V1_SX342.jpg" alt="Notting Hill" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Notting Hill</div>
+        <div class="rank-meta">1999 · Romance · Roger Michell</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(39,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(39,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Notting Hill from your list?&#39;))removeW(39)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num t3" onclick="editRank(34,3)" title="Click to edit rank">3</div>
+      <div id="p-49" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYThiN2M0NTItODRmNC00NDhlLWFiYTgtMWM2YTEyYzI3ZTY1XkEyXkFqcGc@._V1_SX342.jpg" alt="Anora" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Anora</div>
+        <div class="rank-meta">2024 · Drama · Sean Baker</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(34,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(34,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Anora from your list?&#39;))removeW(34)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(29,4)" title="Click to edit rank">4</div>
+      <div id="p-50" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BNzFmZjZhOTktYWIxZS00YzM1LWEzNmQtMDM2YjlhYmI2MDVlXkEyXkFqcGc@._V1_SX342.jpg" alt="Stranger Than Fiction" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Stranger Than Fiction</div>
+        <div class="rank-meta">2006 · Comedy-Drama · Marc Forster</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(29,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(29,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Stranger Than Fiction from your list?&#39;))removeW(29)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(33,5)" title="Click to edit rank">5</div>
+      <div id="p-51" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZTNhODBkODAtNDllYy00YTg1LWJmNDUtYjgzMzEzOWQ0YWNjXkEyXkFqcGc@._V1_SX342.jpg" alt="The Others" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Others</div>
+        <div class="rank-meta">2001 · Horror · Alejandro Amenábar</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(33,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(33,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Others from your list?&#39;))removeW(33)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(28,6)" title="Click to edit rank">6</div>
+      <div id="p-52" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BOTNmYzY0MWQtZGZmNy00Y2Y4LWFmMDQtMTZjYTdiYzEwZGQ2XkEyXkFqcGc@._V1_SX342.jpg" alt="Amélie" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Amélie</div>
+        <div class="rank-meta">2001 · Romance · Jean-Pierre Jeunet</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(28,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(28,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Amélie from your list?&#39;))removeW(28)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(38,7)" title="Click to edit rank">7</div>
+      <div id="p-53" class="rank-poster"></div>
+      <div class="rank-info">
+        <div class="rank-title">Bugonia</div>
+        <div class="rank-meta">2025 · Comedy · John Carney</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(38,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(38,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Bugonia from your list?&#39;))removeW(38)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(47,8)" title="Click to edit rank">8</div>
+      <div id="p-54" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMzBkZmQ0NjMtNTZlMy00ZjdlLTg5ODUtYWFlNGM0YzE3MTg0XkEyXkFqcGc@._V1_SX342.jpg" alt="One Battle After Another" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">One Battle After Another</div>
+        <div class="rank-meta">2025 · War · Paul Thomas Anderson</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(47,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(47,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove One Battle After Another from your list?&#39;))removeW(47)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(30,9)" title="Click to edit rank">9</div>
+      <div id="p-55" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZTRhYjI1MTItMWYwMi00MjY5LWI1OTktMzQwNzA3MWJlN2QyXkEyXkFqcGc@._V1_SX342.jpg" alt="Marty Supreme" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Marty Supreme</div>
+        <div class="rank-meta">2025 · Drama · Josh Safdie</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(30,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(30,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Marty Supreme from your list?&#39;))removeW(30)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(26,10)" title="Click to edit rank">10</div>
+      <div id="p-56" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BODZhMWJlNjYtNDExNC00MTIzLTllM2ItOGQ2NGVjNDQ3MzkzXkEyXkFqcGc@._V1_SX342.jpg" alt="Inglourious Basterds" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Inglourious Basterds</div>
+        <div class="rank-meta">2009 · War · Quentin Tarantino</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(26,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(26,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Inglourious Basterds from your list?&#39;))removeW(26)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(36,11)" title="Click to edit rank">11</div>
+      <div id="p-57" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYWRlZjcwYTgtYWJkOS00MGYwLTk3Y2ItNmU4NTg5Nzg2YTQ2XkEyXkFqcGc@._V1_SX342.jpg" alt="Love Actually" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Love Actually</div>
+        <div class="rank-meta">2003 · Romance · Richard Curtis</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(36,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(36,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Love Actually from your list?&#39;))removeW(36)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(41,12)" title="Click to edit rank">12</div>
+      <div id="p-58" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BNDg3MDM5NTI0MF5BMl5BanBnXkFtZTcwNDY0NDk0NA@@._V1_SX342.jpg" alt="Leaving Las Vegas" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Leaving Las Vegas</div>
+        <div class="rank-meta">1995 · Drama · Mike Figgis</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(41,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(41,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Leaving Las Vegas from your list?&#39;))removeW(41)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(43,13)" title="Click to edit rank">13</div>
+      <div id="p-59" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BN2FjNWExYzEtY2YzOC00YjNlLTllMTQtNmIwM2Q1YzBhOWM1XkEyXkFqcGc@._V1_SX342.jpg" alt="Shutter Island" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Shutter Island</div>
+        <div class="rank-meta">2010 · Thriller · Martin Scorsese</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(43,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(43,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Shutter Island from your list?&#39;))removeW(43)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(25,14)" title="Click to edit rank">14</div>
+      <div id="p-60" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYzliNTEyYjEtNGE3Mi00ZDIzLTg1NzYtZDBhNTQ5ZDVkMmM3XkEyXkFqcGc@._V1_SX342.jpg" alt="The Roses" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Roses</div>
+        <div class="rank-meta">2025 · Comedy-Drama · Jay Roach</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(25,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(25,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Roses from your list?&#39;))removeW(25)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(44,15)" title="Click to edit rank">15</div>
+      <div id="p-61" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMjE4MTYyOWYtYjBjNy00NjBiLThhYWEtNzQ2MmE4MzY4ZGI2XkEyXkFqcGc@._V1_SX342.jpg" alt="Steel Magnolias" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Steel Magnolias</div>
+        <div class="rank-meta">1989 · Drama · Herbert Ross</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(44,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(44,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Steel Magnolias from your list?&#39;))removeW(44)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(35,16)" title="Click to edit rank">16</div>
+      <div id="p-62" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMTY0NDY3MDMxN15BMl5BanBnXkFtZTcwOTM5NzMzOQ@@._V1_SX342.jpg" alt="Now You See Me" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Now You See Me</div>
+        <div class="rank-meta">2013 · Thriller · Louis Leterrier</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(35,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(35,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Now You See Me from your list?&#39;))removeW(35)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(32,17)" title="Click to edit rank">17</div>
+      <div id="p-63" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BNjFhZDg1ZmEtYmI0Ny00MjM3LWIxNzItMzU1MzczZTljMTkxXkEyXkFqcGc@._V1_SX342.jpg" alt="A Fish Called Wanda" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">A Fish Called Wanda</div>
+        <div class="rank-meta">1988 · Comedy · Charles Crichton</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(32,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(32,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove A Fish Called Wanda from your list?&#39;))removeW(32)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(27,18)" title="Click to edit rank">18</div>
+      <div id="p-64" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BZTc1MzFlMjEtMzkyNC00NDgyLThjMjMtMzQzZGI5YjUyNzU5XkEyXkFqcGc@._V1_SX342.jpg" alt="The Royal Tenenbaums" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Royal Tenenbaums</div>
+        <div class="rank-meta">2001 · Comedy-Drama · Wes Anderson</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(27,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(27,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Royal Tenenbaums from your list?&#39;))removeW(27)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(31,19)" title="Click to edit rank">19</div>
+      <div id="p-65" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BYzI2ZmU3MWMtZmRlMi00ZmVlLTkwMDMtZmI1YTg4YzcwMDE0XkEyXkFqcGc@._V1_SX342.jpg" alt="The Talented Mr. Ripley" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Talented Mr. Ripley</div>
+        <div class="rank-meta">1999 · Thriller · Anthony Minghella</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(31,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(31,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Talented Mr. Ripley from your list?&#39;))removeW(31)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(37,20)" title="Click to edit rank">20</div>
+      <div id="p-66" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMTUxMzcxNzQzOF5BMl5BanBnXkFtZTcwMzQxNjUyMw@@._V1_SX342.jpg" alt="Mr. &amp; Mrs. Smith" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Mr. &amp; Mrs. Smith</div>
+        <div class="rank-meta">2005 · Action · Doug Liman</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(37,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(37,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Mr. &amp; Mrs. Smith from your list?&#39;))removeW(37)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(46,21)" title="Click to edit rank">21</div>
+      <div id="p-67" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BOGZjNDlkMTYtMTJkZi00OTkzLWI4NDEtYTA2ODQyMjcwYTdlXkEyXkFqcGc@._V1_SX342.jpg" alt="Mission: Impossible" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Mission: Impossible</div>
+        <div class="rank-meta">1996 · Action · Brian De Palma</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(46,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(46,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Mission: Impossible from your list?&#39;))removeW(46)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(40,22)" title="Click to edit rank">22</div>
+      <div id="p-68" class="rank-poster"></div>
+      <div class="rank-info">
+        <div class="rank-title">If I Had Legs I'd Kick You</div>
+        <div class="rank-meta">2025 · Drama · Mary Bronstein</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(40,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(40,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove If I Had Legs I\&#39;d Kick You from your list?&#39;))removeW(40)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(42,23)" title="Click to edit rank">23</div>
+      <div id="p-69" class="rank-poster"><img src="file:///Users/jakecomito/Downloads/index_files/MV5BMTc0ODk5MzEyMV5BMl5BanBnXkFtZTcwMzI0MDY1OQ@@._V1_SX342.jpg" alt="Blue Jasmine" style="width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0;" onerror="this.style.opacity=0"></div>
+      <div class="rank-info">
+        <div class="rank-title">Blue Jasmine</div>
+        <div class="rank-meta">2013 · Drama · Woody Allen</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(42,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(42,&#39;down&#39;)" disabled="">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Blue Jasmine from your list?&#39;))removeW(42)" title="Remove">✕</button>
+      </div>
+    </div></div>
+    <div id="rankEmpty" class="empty" style="display:none">
+      <span class="empty-icon">🏆</span>
+      <div class="empty-title">No films to rank yet</div>
+      <div class="empty-text">Mark films as watched to add them here</div>
+    </div>
+  </div>
+</div>
+
+<!-- INSIGHTS -->
+<div id="page-stats" class="page">
+  <div class="stats-page">
+    <div class="sec-head" style="margin-bottom:2rem">
+      <div class="sec-label">Your Cinema Story</div>
+      <div class="sec-title">Watching Insights</div>
+    </div>
+    <div class="stats-cards" id="statsCards"><div class="stat-card"><span class="sc-icon">🎬</span><div class="sc-num" style="font-size:inherit">23</div><div class="sc-label">Films Watched</div></div><div class="stat-card"><span class="sc-icon">📅</span><div class="sc-num" style="font-size:inherit">23</div><div class="sc-label">This Year</div></div><div class="stat-card"><span class="sc-icon">🏆</span><div class="sc-num" style="font-size:.85rem">Before Sunrise</div><div class="sc-label">Top Ranked</div></div><div class="stat-card"><span class="sc-icon">◎</span><div class="sc-num" style="font-size:inherit">0</div><div class="sc-label">On Watch List</div></div></div>
+    <div class="genre-chart" style="margin-bottom:2rem">
+      <div class="sec-label" style="margin-bottom:1.3rem">Genre Breakdown</div>
+      <div id="genreBars">
+    <div class="gbr">
+      <div class="gbr-label">Drama</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:100%"></div></div>
+      <div class="gbr-count">6</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Romance</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:67%"></div></div>
+      <div class="gbr-count">4</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Comedy-Drama</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:50%"></div></div>
+      <div class="gbr-count">3</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Thriller</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:50%"></div></div>
+      <div class="gbr-count">3</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Comedy</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:33%"></div></div>
+      <div class="gbr-count">2</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">War</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:33%"></div></div>
+      <div class="gbr-count">2</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Action</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:33%"></div></div>
+      <div class="gbr-count">2</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Horror</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:17%"></div></div>
+      <div class="gbr-count">1</div>
+    </div></div>
+    </div>
+    <div class="sec-label" style="margin-bottom:1.3rem">Fun Facts</div>
+    <div class="insights-grid" id="insightsGrid">
+    <div class="ins-card">
+      <div class="ins-badge">Favourite Face</div>
+      <div class="ins-text"><strong>Gwyneth Paltrow</strong> has appeared in <strong>3</strong> films you've watched — clearly a face you trust.</div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-badge">Genre Taste</div>
+      <div class="ins-text"><strong>26%</strong> of your films are <strong>Drama</strong>. You have a distinct appetite for this kind of cinema.</div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-badge">Era Explorer</div>
+      <div class="ins-text">Your taste spans from <strong>1988</strong> to <strong>2025</strong> — a <strong>37</strong>-year sweep of cinema history.</div>
+    </div>
+    <div class="ins-card">
+      <div class="ins-badge">This Year</div>
+      <div class="ins-text">You've watched <strong>23</strong> films in 2026 so far. The projector never goes dark.</div>
+    </div></div>
+    <div style="margin-top:2.5rem">
+      <div class="sec-label" style="margin-bottom:1.3rem">Actor Appearances</div>
+      <div id="actorList"><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Gwyneth Paltrow</div>
+        <div class="actor-count">3 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Alec Baldwin</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Brad Pitt</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mr. &amp; Mrs. Smith <span style="opacity:.5">2005</span></span><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Cate Blanchett</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Emma Thompson</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Hugh Grant</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Julia Roberts</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Leonardo DiCaprio</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mark Ruffalo</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">A$AP Rocky</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">If I Had Legs I'd Kick You <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Allison Janney</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Andy Samberg</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Angelina Jolie</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mr. &amp; Mrs. Smith <span style="opacity:.5">2005</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Anjelica Huston</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Audrey Tautou</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Amélie <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ben Kingsley</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ben Stiller</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Benedict Cumberbatch</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Benicio del Toro</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Bobby Cannavale</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Christoph Waltz</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Christopher Eccleston</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Others <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Colin Firth</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Conan O'Brien</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">If I Had Legs I'd Kick You <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Daryl Hannah</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Dave Franco</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Diane Kruger</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Dolly Parton</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Dustin Hoffman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Elisabeth Shue</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Leaving Las Vegas <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Emma Chambers</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Emmanuelle Béart</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ethan Hawke</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Before Sunrise <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Fionnula Flanagan</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Others <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Fran Drescher</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Gene Hackman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Gina McKee</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Glen Powell</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Bugonia <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Hugh Bonneville</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Isla Fisher</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jamie Lee Curtis</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jean Reno</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jesse Eisenberg</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">John Cleese</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jon Voight</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jude Law</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Julian Sands</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Leaving Las Vegas <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Julie Delpy</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Before Sunrise <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Karren Karagulian</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Anora <span style="opacity:.5">2024</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Kate McKinnon</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Keira Knightley</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Kevin Kline</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Liam Neeson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Luke Wilson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Maggie Gyllenhaal</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Martine McCutcheon</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mathieu Kassovitz</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Amélie <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Matt Damon</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mélanie Laurent</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Michael Palin</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Michelle Williams</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mikey Madison</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Anora <span style="opacity:.5">2024</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ncuti Gatwa</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Nicolas Cage</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Leaving Las Vegas <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Nicole Kidman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Others <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Odessa A'zion</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Olivia Colman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Olympia Dukakis</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Owen Wilson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Queen Latifah</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Regina Hall</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Rhys Ifans</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Rose Byrne</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">If I Had Legs I'd Kick You <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Rufus</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Amélie <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sally Field</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sally Hawkins</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sean Penn</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Shirley MacLaine</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sydney Sweeney</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Bugonia <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Teyana Taylor</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Tim McInnerny</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Timothée Chalamet</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Tom Cruise</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Tyler, the Creator</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Vince Vaughn</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mr. &amp; Mrs. Smith <span style="opacity:.5">2005</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ving Rhames</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Will Ferrell</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Woody Harrelson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Yura Borisov</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Anora <span style="opacity:.5">2024</span></span></div>
+    </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Log watched film / Add new film -->
+<div class="modal-overlay" id="watchedModal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-title" id="mTitle">Film Title</div>
+    <div class="modal-meta" id="mMeta"></div>
+
+    <!-- Fields only shown when adding a brand-new film -->
+    <div id="mNewFields" style="display:none">
+      <label class="modal-lbl">Year</label>
+      <input class="modal-input" type="number" id="mYear" placeholder="e.g. 2024" min="1888" max="2030">
+      <label class="modal-lbl">Genre</label>
+      <input class="modal-input" type="text" id="mGenre" placeholder="e.g. Romance, Thriller, Drama…">
+      <label class="modal-lbl">Director</label>
+      <input class="modal-input" type="text" id="mDirector" placeholder="e.g. Richard Linklater">
+    </div>
+
+    <label class="modal-lbl">Date Watched</label>
+    <input class="modal-date" type="date" id="mDate">
+    <button class="modal-save" id="mSaveBtn" onclick="saveWatched()">Log This Film</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════ FILM DATABASE ══════════
+const FILMS=[
+  // ── Classic Archive ──
+  {id:1,t:"Sunset Boulevard",y:1950,g:"Drama",e:"🎬",d:"Billy Wilder",a:["Gloria Swanson","William Holden","Erich von Stroheim"]},
+  {id:2,t:"Casablanca",y:1942,g:"Romance",e:"🌹",d:"Michael Curtiz",a:["Humphrey Bogart","Ingrid Bergman","Paul Henreid"]},
+  {id:3,t:"Rear Window",y:1954,g:"Thriller",e:"🔦",d:"Alfred Hitchcock",a:["James Stewart","Grace Kelly","Raymond Burr"]},
+  {id:4,t:"All About Eve",y:1950,g:"Drama",e:"🎭",d:"Joseph L. Mankiewicz",a:["Bette Davis","Anne Baxter","George Sanders"]},
+  {id:5,t:"Double Indemnity",y:1944,g:"Film Noir",e:"🌃",d:"Billy Wilder",a:["Fred MacMurray","Barbara Stanwyck","Edward G. Robinson"]},
+  {id:6,t:"Singin' in the Rain",y:1952,g:"Musical",e:"🎷",d:"Stanley Donen",a:["Gene Kelly","Debbie Reynolds","Donald O'Connor"]},
+  {id:7,t:"Ben-Hur",y:1959,g:"Epic",e:"🏛️",d:"William Wyler",a:["Charlton Heston","Jack Hawkins","Stephen Boyd"]},
+  {id:8,t:"Vertigo",y:1958,g:"Thriller",e:"🌀",d:"Alfred Hitchcock",a:["James Stewart","Kim Novak","Barbara Bel Geddes"]},
+  {id:9,t:"Some Like It Hot",y:1959,g:"Comedy",e:"💃",d:"Billy Wilder",a:["Marilyn Monroe","Tony Curtis","Jack Lemmon"]},
+  {id:10,t:"Roman Holiday",y:1953,g:"Romance",e:"🛵",d:"William Wyler",a:["Audrey Hepburn","Gregory Peck","Eddie Albert"]},
+  {id:11,t:"To Have and Have Not",y:1944,g:"Romance",e:"⚓",d:"Howard Hawks",a:["Humphrey Bogart","Lauren Bacall","Walter Brennan"]},
+  {id:12,t:"Breakfast at Tiffany's",y:1961,g:"Romance",e:"💎",d:"Blake Edwards",a:["Audrey Hepburn","George Peppard","Patricia Neal"]},
+  {id:13,t:"Notorious",y:1946,g:"Thriller",e:"🍾",d:"Alfred Hitchcock",a:["Cary Grant","Ingrid Bergman","Claude Rains"]},
+  {id:14,t:"The Philadelphia Story",y:1940,g:"Comedy",e:"🥂",d:"George Cukor",a:["Cary Grant","Katharine Hepburn","James Stewart"]},
+  {id:15,t:"Laura",y:1944,g:"Film Noir",e:"🖼️",d:"Otto Preminger",a:["Gene Tierney","Dana Andrews","Clifton Webb"]},
+  {id:16,t:"An Affair to Remember",y:1957,g:"Romance",e:"🗼",d:"Leo McCarey",a:["Cary Grant","Deborah Kerr","Richard Denning"]},
+  {id:17,t:"The Big Sleep",y:1946,g:"Film Noir",e:"🔍",d:"Howard Hawks",a:["Humphrey Bogart","Lauren Bacall","Martha Vickers"]},
+  {id:18,t:"Sabrina",y:1954,g:"Romance",e:"🌷",d:"Billy Wilder",a:["Audrey Hepburn","Humphrey Bogart","William Holden"]},
+  {id:19,t:"The Maltese Falcon",y:1941,g:"Film Noir",e:"🦅",d:"John Huston",a:["Humphrey Bogart","Mary Astor","Peter Lorre"]},
+  {id:20,t:"A Streetcar Named Desire",y:1951,g:"Drama",e:"🚃",d:"Elia Kazan",a:["Marlon Brando","Vivien Leigh","Kim Hunter"]},
+  {id:21,t:"Gone with the Wind",y:1939,g:"Epic",e:"🌅",d:"Victor Fleming",a:["Vivien Leigh","Clark Gable","Olivia de Havilland"]},
+  {id:22,t:"Rebecca",y:1940,g:"Thriller",e:"🕯️",d:"Alfred Hitchcock",a:["Laurence Olivier","Joan Fontaine","George Sanders"]},
+  {id:23,t:"Gentlemen Prefer Blondes",y:1953,g:"Musical",e:"✨",d:"Howard Hawks",a:["Marilyn Monroe","Jane Russell","Charles Coburn"]},
+  {id:24,t:"The Women",y:1939,g:"Comedy",e:"💄",d:"George Cukor",a:["Norma Shearer","Joan Crawford","Rosalind Russell"]},
+  // ── Jake's 2026 Films ──
+  {id:25,t:"The Roses",y:2025,g:"Comedy-Drama",e:"🌸",d:"Jay Roach",a:["Benedict Cumberbatch","Olivia Colman","Andy Samberg","Kate McKinnon","Allison Janney","Ncuti Gatwa"]},
+  {id:26,t:"Inglourious Basterds",y:2009,g:"War",e:"🎖️",d:"Quentin Tarantino",a:["Brad Pitt","Christoph Waltz","Mélanie Laurent","Diane Kruger"]},
+  {id:27,t:"The Royal Tenenbaums",y:2001,g:"Comedy-Drama",e:"🎾",d:"Wes Anderson",a:["Gene Hackman","Anjelica Huston","Ben Stiller","Gwyneth Paltrow","Luke Wilson","Owen Wilson"]},
+  {id:28,t:"Amélie",y:2001,g:"Romance",e:"🎠",d:"Jean-Pierre Jeunet",a:["Audrey Tautou","Mathieu Kassovitz","Rufus"]},
+  {id:29,t:"Stranger Than Fiction",y:2006,g:"Comedy-Drama",e:"📖",d:"Marc Forster",a:["Will Ferrell","Maggie Gyllenhaal","Dustin Hoffman","Emma Thompson","Queen Latifah"]},
+  {id:30,t:"Marty Supreme",y:2025,g:"Drama",e:"🏓",d:"Josh Safdie",a:["Timothée Chalamet","Gwyneth Paltrow","Odessa A'zion","Tyler, the Creator","Fran Drescher"]},
+  {id:31,t:"The Talented Mr. Ripley",y:1999,g:"Thriller",e:"🎭",d:"Anthony Minghella",a:["Matt Damon","Gwyneth Paltrow","Jude Law","Cate Blanchett"]},
+  {id:32,t:"A Fish Called Wanda",y:1988,g:"Comedy",e:"🐟",d:"Charles Crichton",a:["John Cleese","Jamie Lee Curtis","Kevin Kline","Michael Palin"]},
+  {id:33,t:"The Others",y:2001,g:"Horror",e:"👻",d:"Alejandro Amenábar",a:["Nicole Kidman","Fionnula Flanagan","Christopher Eccleston"]},
+  {id:34,t:"Anora",y:2024,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"]},
+  {id:35,t:"Now You See Me",y:2013,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"]},
+  {id:36,t:"Love Actually",y:2003,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Keira Knightley","Colin Firth","Emma Thompson","Liam Neeson","Martine McCutcheon"]},
+  {id:37,t:"Mr. & Mrs. Smith",y:2005,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"]},
+  {id:38,t:"Bugonia",y:2025,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"]},
+  {id:39,t:"Notting Hill",y:1999,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"]},
+  {id:40,t:"If I Had Legs I'd Kick You",y:2025,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"]},
+  {id:41,t:"Leaving Las Vegas",y:1995,g:"Drama",e:"🎰",d:"Mike Figgis",a:["Nicolas Cage","Elisabeth Shue","Julian Sands"]},
+  {id:42,t:"Blue Jasmine",y:2013,g:"Drama",e:"💙",d:"Woody Allen",a:["Cate Blanchett","Alec Baldwin","Sally Hawkins","Bobby Cannavale"]},
+  {id:43,t:"Shutter Island",y:2010,g:"Thriller",e:"🏚️",d:"Martin Scorsese",a:["Leonardo DiCaprio","Mark Ruffalo","Ben Kingsley","Michelle Williams"]},
+  {id:44,t:"Steel Magnolias",y:1989,g:"Drama",e:"🌺",d:"Herbert Ross",a:["Sally Field","Dolly Parton","Shirley MacLaine","Olympia Dukakis","Daryl Hannah","Julia Roberts"]},
+  {id:45,t:"Before Sunrise",y:1995,g:"Romance",e:"🌄",d:"Richard Linklater",a:["Ethan Hawke","Julie Delpy"]},
+  {id:46,t:"Mission: Impossible",y:1996,g:"Action",e:"💣",d:"Brian De Palma",a:["Tom Cruise","Jon Voight","Emmanuelle Béart","Jean Reno","Ving Rhames"]},
+  {id:47,t:"One Battle After Another",y:2025,g:"War",e:"⚔️",d:"Paul Thomas Anderson",a:["Leonardo DiCaprio","Sean Penn","Benicio del Toro","Regina Hall","Teyana Taylor"]},
+];
+
+// Ranking order (1=best): Before Sunrise, Notting Hill, Anora, Stranger Than Fiction,
+// The Others, Amélie, Bugonia, One Battle After Another, Marty Supreme, Inglourious Basterds,
+// Love Actually, Leaving Las Vegas, Shutter Island, The Roses, Steel Magnolias,
+// Now You See Me, A Fish Called Wanda, The Royal Tenenbaums, The Talented Mr. Ripley,
+// Mr. & Mrs. Smith, Mission: Impossible, If I Had Legs I'd Kick You, Blue Jasmine
+
+// ══════════ POSTER SYSTEM ══════════
+const IMDB_IDS = {
+  // Jake's 2026 films
+  "The Roses":                    "tt31973693",
+  "Inglourious Basterds":         "tt0361748",
+  "The Royal Tenenbaums":         "tt0265666",
+  "Amélie":                       "tt0211915",
+  "Stranger Than Fiction":        "tt0420223",
+  "Marty Supreme":                "tt32916440",
+  "The Talented Mr. Ripley":      "tt0134119",
+  "A Fish Called Wanda":          "tt0095159",
+  "The Others":                   "tt0230600",
+  "Anora":                        "tt28607951",
+  "Now You See Me":               "tt1670345",
+  "Love Actually":                "tt0314331",
+  "Mr. & Mrs. Smith":             "tt0356910",
+  "Bugonia":                      "tt14236818",
+  "Notting Hill":                 "tt0125439",
+  "If I Had Legs I'd Kick You":   "tt14231344",
+  "Leaving Las Vegas":            "tt0113627",
+  "Blue Jasmine":                 "tt2334873",
+  "Shutter Island":               "tt1130884",
+  "Steel Magnolias":              "tt0098384",
+  "Before Sunrise":               "tt0112471",
+  "Mission: Impossible":          "tt0117060",
+  "One Battle After Another":     "tt30144839",
+  // Classic archive
+  "Sunset Boulevard":             "tt0043014",
+  "Casablanca":                   "tt0034583",
+  "Rear Window":                  "tt0047396",
+  "All About Eve":                "tt0042192",
+  "Double Indemnity":             "tt0036775",
+  "Singin' in the Rain":          "tt0045152",
+  "Ben-Hur":                      "tt0052618",
+  "Vertigo":                      "tt0052357",
+  "Some Like It Hot":             "tt0053291",
+  "Roman Holiday":                "tt0046250",
+  "To Have and Have Not":         "tt0037382",
+  "Breakfast at Tiffany's":       "tt0054698",
+  "Notorious":                    "tt0038787",
+  "The Philadelphia Story":       "tt0032904",
+  "Laura":                        "tt0037008",
+  "An Affair to Remember":        "tt0050105",
+  "The Big Sleep":                "tt0038355",
+  "Sabrina":                      "tt0047437",
+  "The Maltese Falcon":           "tt0033870",
+  "A Streetcar Named Desire":     "tt0044081",
+  "Gone with the Wind":           "tt0031381",
+  "Rebecca":                      "tt0032976",
+  "Gentlemen Prefer Blondes":     "tt0045810",
+  "The Women":                    "tt0032143",
+};
+const _posterCache = {};
+async function fetchPoster(title) {
+  if (_posterCache[title]) return _posterCache[title];
+  const imdb = IMDB_IDS[title];
+  if (!imdb) return null;
+  try {
+    const res = await fetch(`https://www.omdbapi.com/?i=${imdb}&apikey=trilogy`);
+    const data = await res.json();
+    const url = (data.Poster && data.Poster !== 'N/A') ? data.Poster.replace('SX300','SX342') : null;
+    _posterCache[title] = url;
+    return url;
+  } catch(e) { return null; }
+}
+let _pIdx=0;
+function posterEl(title, cssClass) {
+  const id = 'p-' + (++_pIdx);
+  setTimeout(async () => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const url = await fetchPoster(title);
+    if (url) {
+      el.innerHTML = `<img src="${url}" alt="${title}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity=0">`;
+    }
+  }, 0);
+  return `<div id="${id}" class="${cssClass}"></div>`;
+}
+
+const SEED_W=[
+  {id:45,d:"2026-02-12",r:5,rank:1},   // Before Sunrise
+  {id:39,d:"2026-01-26",r:5,rank:2},   // Notting Hill
+  {id:34,d:"2026-01-18",r:5,rank:3},   // Anora
+  {id:29,d:"2026-01-08",r:5,rank:4},   // Stranger Than Fiction
+  {id:33,d:"2026-01-16",r:4,rank:5},   // The Others
+  {id:28,d:"2026-01-05",r:4,rank:6},   // Amélie
+  {id:38,d:"2026-01-23",r:4,rank:7},   // Bugonia
+  {id:47,d:"2026-02-15",r:4,rank:8},   // One Battle After Another
+  {id:30,d:"2026-01-10",r:4,rank:9},   // Marty Supreme
+  {id:26,d:"2026-01-03",r:4,rank:10},  // Inglourious Basterds
+  {id:36,d:"2026-01-21",r:4,rank:11},  // Love Actually
+  {id:41,d:"2026-02-01",r:3,rank:12},  // Leaving Las Vegas
+  {id:43,d:"2026-02-05",r:3,rank:13},  // Shutter Island
+  {id:25,d:"2026-01-02",r:3,rank:14},  // The Roses
+  {id:44,d:"2026-02-06",r:3,rank:15},  // Steel Magnolias
+  {id:35,d:"2026-01-19",r:3,rank:16},  // Now You See Me
+  {id:32,d:"2026-01-16",r:3,rank:17},  // A Fish Called Wanda
+  {id:27,d:"2026-01-04",r:2,rank:18},  // The Royal Tenenbaums
+  {id:31,d:"2026-01-11",r:2,rank:19},  // The Talented Mr. Ripley
+  {id:37,d:"2026-01-23",r:2,rank:20},  // Mr. & Mrs. Smith
+  {id:46,d:"2026-02-13",r:2,rank:21},  // Mission: Impossible
+  {id:40,d:"2026-01-29",r:1,rank:22},  // If I Had Legs I'd Kick You
+  {id:42,d:"2026-02-04",r:1,rank:23},  // Blue Jasmine
+];
+const SEED_WL=[3,8,12];
+
+// ══════════ STATE ══════════
+let W=JSON.parse(localStorage.getItem('jwl3_w')||'null')||[...SEED_W];
+let WL=JSON.parse(localStorage.getItem('jwl3_wl')||'null')||[...SEED_WL];
+let curSort='rank', mId=null;
+
+function save(){localStorage.setItem('jwl3_w',JSON.stringify(W));localStorage.setItem('jwl3_wl',JSON.stringify(WL))}
+function film(id){return FILMS.find(f=>f.id===id)}
+function isW(id){return W.some(w=>w.id===id)}
+function isWL(id){return WL.includes(id)}
+function nextRank(){return W.length?Math.max(...W.map(w=>w.rank||0))+1:1}
+
+// ══════════ NAV ══════════
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const pages=['home','database','rankings','stats'];
+  document.querySelectorAll('.nav-tab')[pages.indexOf(p)]?.classList.add('active');
+  const r={home:()=>{},database:()=>{renderTable();renderWL()},rankings:renderRankings,stats:renderStats};
+  r[p]?.();
+}
+
+// ══════════ TMDB CONFIG ══════════
+// Paste your TMDB API Read Access Token below (starts with eyJ...)
+const TMDB_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZGQyMjQ2Yjg2MTk0OWEzYTczZTA4NzQ2OGViZGNjNCIsIm5iZiI6MTc3MTMzNzU0Mi4xOTUwMDAyLCJzdWIiOiI2OTk0Nzc0NjdmODg0Yjg2NjZmYTQxOTIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.RgckON7ZCsStLt35llNu5aJxTiF2fbJYNKWlpT-5dTY';
+const TMDB_BASE  = 'https://api.themoviedb.org/3';
+const TMDB_IMG   = 'https://image.tmdb.org/t/p/w92';
+
+// Genre ID → name map (TMDB)
+const TMDB_GENRES = {
+  28:'Action',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',
+  99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',
+  27:'Horror',10402:'Music',9648:'Mystery',10749:'Romance',878:'Sci-Fi',
+  10770:'TV Movie',53:'Thriller',10752:'War',37:'Western'
+};
+
+// ══════════ SEARCH ══════════
+let searchDebounce=null;
+const tmdbReady=()=>TMDB_TOKEN && TMDB_TOKEN!=='YOUR_TMDB_TOKEN_HERE';
+
+document.getElementById('searchInput').addEventListener('input',e=>{
+  const v=e.target.value.trim();
+  if(!v){hideResults();return}
+  clearTimeout(searchDebounce);
+  searchDebounce=setTimeout(()=>doSearch(v),320);
+});
+document.getElementById('searchInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){clearTimeout(searchDebounce);doSearch(document.getElementById('searchInput').value.trim())}
+  if(e.key==='Escape')hideResults();
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))hideResults()});
+
+function doSearch(q){
+  if(!q)q=document.getElementById('searchInput').value.trim();
+  if(!q)return;
+  if(tmdbReady()) searchTMDB(q);
+  else searchLocal(q);
+}
+
+// ── TMDB live search ──
+async function searchTMDB(q){
+  const el=document.getElementById('searchResults');
+  el.style.display='block';
+  el.innerHTML=`<div style="padding:1rem 1.2rem;font-style:italic;color:var(--white-50);font-size:.88rem">Searching…</div>`;
+  try {
+    const res=await fetch(`${TMDB_BASE}/search/movie?query=${encodeURIComponent(q)}&include_adult=false&language=en-US&page=1`,{
+      headers:{Authorization:`Bearer ${TMDB_TOKEN}`,'Content-Type':'application/json'}
+    });
+    if(!res.ok)throw new Error('TMDB error '+res.status);
+    const data=await res.json();
+    renderTMDBResults(data.results||[], q);
+  } catch(err){
+    console.warn('TMDB failed, falling back to local',err);
+    searchLocal(q);
+  }
+}
+
+function renderTMDBResults(results, q){
+  const el=document.getElementById('searchResults');
+  if(!results.length){
+    el.innerHTML=`<div style="padding:1rem 1.2rem;font-style:italic;color:var(--white-50);font-size:.88rem;text-align:center">No results found for "${q}"</div>`;
+    return;
+  }
+  el.innerHTML=results.slice(0,10).map(m=>{
+    // Check if already in our local DB by TMDB id
+    const local=FILMS.find(f=>f.tmdbId===m.id);
+    const fId=local?.id;
+    const watched=fId&&isW(fId);
+    const onWL=fId&&isWL(fId);
+    const year=m.release_date?m.release_date.slice(0,4):'';
+    const genre=(m.genre_ids||[]).map(id=>TMDB_GENRES[id]).filter(Boolean)[0]||'';
+    const poster=m.poster_path
+      ?`<img src="${TMDB_IMG}${m.poster_path}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.innerHTML='🎬'">`
+      :'🎬';
+
+    if(watched){
+      return `<div class="sri">
+        <div class="sri-poster">${poster}</div>
+        <div class="sri-info">
+          <div class="sri-title">${m.title}</div>
+          <div class="sri-meta">${year}${genre?' · '+genre:''}</div>
+        </div>
+        <span class="sri-status">✓ Watched</span>
+        <div class="sri-btns"><button class="sri-btn w" onclick="openModal(${fId})" style="opacity:.7">Edit</button></div>
+      </div>`;
+    }
+    // Encode movie data for the add function
+    const safe=JSON.stringify({id:m.id,t:m.title,y:parseInt(year)||0,g:genre,poster:m.poster_path||''}).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    return `<div class="sri">
+      <div class="sri-poster">${poster}</div>
+      <div class="sri-info">
+        <div class="sri-title">${m.title}</div>
+        <div class="sri-meta">${year}${genre?' · '+genre:''}</div>
+      </div>
+      ${onWL?`<span class="sri-status" style="color:var(--white-50)">◎ Saved</span>`:''}
+      <div class="sri-btns">
+        <button class="sri-btn w" onclick="openModalTMDB('${safe}')">+ Watched</button>
+        ${!onWL?`<button class="sri-btn s" onclick="addWLTMDB('${safe}')">Save</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Add a TMDB film to local FILMS array (if not already there) ──
+function tmdbToLocal(data){
+  // data: {id, t, y, g, poster}
+  let local=FILMS.find(f=>f.tmdbId===data.id);
+  if(!local){
+    // Also check by title+year
+    local=FILMS.find(f=>f.t.toLowerCase()===data.t.toLowerCase()&&f.y===data.y);
+  }
+  if(!local){
+    const newId=Math.max(...FILMS.map(f=>f.id))+1;
+    local={id:newId,t:data.t,y:data.y,g:data.g||'Drama',e:'🎬',d:'',a:[],tmdbId:data.id,poster:data.poster};
+    FILMS.push(local);
+  }
+  return local;
+}
+
+function openModalTMDB(safeJson){
+  const data=JSON.parse(safeJson.replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
+  const local=tmdbToLocal(data);
+  openModal(local.id);
+}
+
+function addWLTMDB(safeJson){
+  const data=JSON.parse(safeJson.replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
+  const local=tmdbToLocal(data);
+  if(!isWL(local.id)&&!isW(local.id)){
+    WL.push(local.id);save();
+    showToast(`"${local.t}" added to your watch list`);
+    hideResults();
+  }
+}
+
+// ── Local fallback search (used when no API key) ──
+function searchLocal(q){
+  const lq=q.toLowerCase();
+  const res=FILMS.filter(f=>f.t.toLowerCase().includes(lq)||f.g.toLowerCase().includes(lq)||(f.d&&f.d.toLowerCase().includes(lq))||f.a.some(a=>a.toLowerCase().includes(lq)));
+  const el=document.getElementById('searchResults');
+  el.style.display='block';
+  let html='';
+
+  if(!tmdbReady()){
+    html+=`<div style="padding:.6rem 1.2rem;font-size:.68rem;letter-spacing:.08em;color:var(--gold);border-bottom:1px solid var(--border);font-style:italic">
+      ⚠ Searching local archive only — add your TMDB token for full search
+    </div>`;
+  }
+
+  if(res.length){
+    html+=res.slice(0,10).map(f=>{
+      const watched=isW(f.id),onWL=isWL(f.id);
+      return `<div class="sri">
+        ${posterEl(f.t,'sri-poster')}
+        <div class="sri-info">
+          <div class="sri-title">${f.t}</div>
+          <div class="sri-meta">${f.y}${f.g?' · '+f.g:''}${f.d?' · '+f.d:''}</div>
+        </div>
+        ${watched?`<span class="sri-status">✓ Watched</span><div class="sri-btns"><button class="sri-btn w" onclick="openModal(${f.id})" style="opacity:.7">Edit</button></div>`:`
+        <div class="sri-btns">
+          <button class="sri-btn w" onclick="openModal(${f.id})">+ Watched</button>
+          ${onWL?`<button class="sri-btn s" disabled style="opacity:.4">Saved</button>`:`<button class="sri-btn s" onclick="addWL(${f.id})">Save</button>`}
+        </div>`}
+      </div>`;
+    }).join('');
+  } else {
+    html+=`<div style="padding:1rem 1.2rem;font-style:italic;color:var(--white-50);font-size:.88rem;text-align:center">No results for "${q}"</div>`;
+  }
+  el.innerHTML=html;
+}
+
+function hideResults(){document.getElementById('searchResults').style.display='none'}
+
+// ══════════ WATCHLIST ══════════
+function addWL(id){
+  if(!isWL(id)&&!isW(id)){
+    WL.push(id);save();
+    showToast(`"${film(id)?.t}" added to your watch list`);
+    hideResults();
+  }
+}
+function removeWL(id){WL=WL.filter(x=>x!==id);save();renderWL();showToast('Removed from watch list')}
+
+// ══════════ MODAL ══════════
+let mIsNew=false;
+
+function openModal(id){
+  mId=id;mIsNew=false;
+  const f=film(id);
+  document.getElementById('mTitle').textContent=f.t;
+  document.getElementById('mMeta').textContent=`${f.y} · ${f.g} · Dir. ${f.d}`;
+  document.getElementById('mDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('mNewFields').style.display='none';
+  document.getElementById('mSaveBtn').textContent='Log This Film';
+  document.getElementById('watchedModal').classList.add('open');
+  hideResults();
+}
+
+function openAddModal(title){
+  mId=null;mIsNew=true;
+  document.getElementById('mTitle').textContent='Add New Film';
+  document.getElementById('mMeta').textContent='This film isn\'t in the archive yet — fill in the details below.';
+  document.getElementById('mNewFields').style.display='block';
+  // Pre-fill title in director field as hint, clear all
+  const yearEl=document.getElementById('mYear');
+  const genreEl=document.getElementById('mGenre');
+  const dirEl=document.getElementById('mDirector');
+  yearEl.value='';genreEl.value='';dirEl.value='';
+  // Put the searched title as the modal title
+  document.getElementById('mTitle').textContent=title||'Add New Film';
+  document.getElementById('mDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('mSaveBtn').textContent='Add & Log This Film';
+  document.getElementById('watchedModal').classList.add('open');
+  hideResults();
+}
+function closeModal(){document.getElementById('watchedModal').classList.remove('open');mId=null}
+document.getElementById('watchedModal').addEventListener('click',e=>{if(e.target===document.getElementById('watchedModal'))closeModal()});
+
+function saveWatched(){
+  const date=document.getElementById('mDate').value||new Date().toISOString().split('T')[0];
+
+  if(mIsNew){
+    // Add a brand-new film to the FILMS array
+    const title=document.getElementById('mTitle').textContent;
+    const year=parseInt(document.getElementById('mYear').value)||new Date().getFullYear();
+    const genre=document.getElementById('mGenre').value||'Drama';
+    const director=document.getElementById('mDirector').value||'Unknown';
+    const newId=Math.max(...FILMS.map(f=>f.id))+1;
+    FILMS.push({id:newId,t:title,y:year,g:genre,e:'🎬',d:director,a:[]});
+    W.push({id:newId,d:date,rank:nextRank()});
+    save();
+    showToast(`"${title}" added to your diary`);
+    closeModal();
+    return;
+  }
+
+  if(!mId)return;
+  if(isW(mId)){
+    const w=W.find(x=>x.id===mId);
+    w.d=date;
+  } else {
+    W.push({id:mId,d:date,rank:nextRank()});
+    WL=WL.filter(x=>x!==mId);
+  }
+  save();
+  showToast(`"${film(mId)?.t}" logged to your diary`);
+  closeModal();
+}
+
+// ══════════ REMOVE WATCHED ══════════
+function removeW(id){W=W.filter(w=>w.id!==id);save();showToast('Removed from diary');renderTable();renderRankings();renderFacts()}
+
+// ══════════ RANKINGS ══════════
+function moveRank(id,dir){
+  const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
+  const i=sorted.findIndex(w=>w.id===id);
+  const j=dir==='up'?i-1:i+1;
+  if(j<0||j>=sorted.length)return;
+  const tmp=sorted[i].rank;sorted[i].rank=sorted[j].rank;sorted[j].rank=tmp;
+  save();renderRankings();
+}
+
+function editRank(id,currentRank){
+  const newRank=prompt(`Change rank for this film (1-${W.length}):`,currentRank);
+  if(!newRank||newRank==currentRank)return;
+  const num=parseInt(newRank);
+  if(isNaN(num)||num<1||num>W.length){
+    alert('Please enter a valid rank between 1 and '+W.length);
+    return;
+  }
+  // Find the film
+  const w=W.find(x=>x.id===id);
+  if(!w)return;
+  const oldRank=w.rank;
+  // Shift other ranks
+  W.forEach(x=>{
+    if(x.id===id){
+      x.rank=num;
+    } else if(oldRank<num && x.rank>oldRank && x.rank<=num){
+      x.rank--;
+    } else if(oldRank>num && x.rank>=num && x.rank<oldRank){
+      x.rank++;
+    }
+  });
+  save();renderRankings();renderTable();
+}
+
+// ══════════ SORT ══════════
+function setSort(s,btn){
+  curSort=s;
+  document.querySelectorAll('.db-sort').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderTable();
+}
+let sortDir={}; // tracks asc/desc per column
+function colSort(col){
+  if(curSort===col){
+    sortDir[col] = sortDir[col]==='asc' ? 'desc' : 'asc';
+  } else {
+    sortDir[col] = (col==='date'||col==='year') ? 'desc' : 'asc';
+  }
+  curSort=col;
+  ['rank','alpha','genre','director','year','date'].forEach(c=>{
+    const th=document.getElementById('th-'+c);
+    if(!th)return;
+    const arrow=th.querySelector('.sort-arrow');
+    if(c===col){
+      arrow.textContent = sortDir[col]==='asc' ? '↑' : '↓';
+      arrow.classList.add('active-arrow');
+    } else {
+      arrow.textContent='↕';
+      arrow.classList.remove('active-arrow');
+    }
+  });
+  renderTable();
+}
+
+// ══════════ SEARCH TOGGLE ══════════
+function toggleSearch(){
+  const search=document.getElementById('dbSearch');
+  if(search.classList.contains('expanded')){
+    if(!search.value){
+      search.classList.remove('expanded');
+      search.blur();
+    }
+  } else {
+    search.classList.add('expanded');
+    setTimeout(()=>search.focus(),100);
+  }
+}
+
+// ══════════ DB TAB ══════════
+function switchTab(tab,btn){
+  document.querySelectorAll('.tsb').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.db-sub').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sub-'+tab).classList.add('active');
+  if(tab==='watchlist')renderWL();
+}
+
+// ══════════ RENDER TABLE ══════════
+function renderTable(){
+  const q=(document.getElementById('dbSearch').value||'').toLowerCase();
+  const genre=document.getElementById('dbGenre').value;
+  const director=document.getElementById('dbDirector').value;
+  const dateWatched=document.getElementById('dbDateWatched').value;
+  const releaseYear=document.getElementById('dbReleaseYear').value;
+  
+  let list=W.slice();
+  if(q)list=list.filter(w=>{const f=film(w.id);return f&&(f.t.toLowerCase().includes(q)||f.g.toLowerCase().includes(q)||f.d.toLowerCase().includes(q))});
+  if(genre)list=list.filter(w=>film(w.id)?.g===genre);
+  if(director)list=list.filter(w=>film(w.id)?.d===director);
+  if(dateWatched)list=list.filter(w=>w.d&&w.d.substring(0,7)===dateWatched);
+  if(releaseYear)list=list.filter(w=>film(w.id)?.y==releaseYear);
+  if(curSort==='date'){
+    const dir=sortDir['date']==='asc'?1:-1;
+    list.sort((a,b)=>dir*(new Date(a.d)-new Date(b.d)));
+  } else if(curSort==='rank'){
+    const dir=sortDir['rank']==='desc'?-1:1;
+    list.sort((a,b)=>dir*(a.rank-b.rank));
+  } else if(curSort==='alpha'){
+    const dir=sortDir['alpha']==='desc'?-1:1;
+    list.sort((a,b)=>dir*(film(a.id)?.t.localeCompare(film(b.id)?.t||'')||0));
+  } else if(curSort==='genre'){
+    const dir=sortDir['genre']==='desc'?-1:1;
+    list.sort((a,b)=>dir*(film(a.id)?.g.localeCompare(film(b.id)?.g||'')||0));
+  } else if(curSort==='director'){
+    const dir=sortDir['director']==='desc'?-1:1;
+    list.sort((a,b)=>dir*(film(a.id)?.d.localeCompare(film(b.id)?.d||'')||0));
+  } else if(curSort==='year'){
+    const dir=sortDir['year']==='desc'?-1:1;
+    list.sort((a,b)=>dir*((film(a.id)?.y||0)-(film(b.id)?.y||0)));
+  }
+
+  const genres=[...new Set(W.map(w=>film(w.id)?.g).filter(Boolean))].sort();
+  const gf=document.getElementById('dbGenre');const cv=gf.value;
+  gf.innerHTML='<option value="">All Genres</option>'+genres.map(g=>`<option value="${g}"${g===cv?' selected':''}>${g}</option>`).join('');
+
+  const directors=[...new Set(W.map(w=>film(w.id)?.d).filter(Boolean))].sort();
+  const df=document.getElementById('dbDirector');const dv=df.value;
+  df.innerHTML='<option value="">All Directors</option>'+directors.map(d=>`<option value="${d}"${d===dv?' selected':''}>${d}</option>`).join('');
+
+  // Populate Date Watched (Month Year format)
+  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dates=[...new Set(W.map(w=>w.d?w.d.substring(0,7):'').filter(Boolean))].sort().reverse();
+  const dwf=document.getElementById('dbDateWatched');const dwv=dwf.value;
+  dwf.innerHTML='<option value="">Date Watched</option>'+dates.map(d=>{
+    const[year,month]=d.split('-');
+    const label=`${monthNames[parseInt(month)-1]} ${year}`;
+    return `<option value="${d}"${d===dwv?' selected':''}>${label}</option>`;
+  }).join('');
+
+  // Populate Release Year
+  const years=[...new Set(W.map(w=>film(w.id)?.y).filter(Boolean))].sort((a,b)=>b-a);
+  const ryf=document.getElementById('dbReleaseYear');const ryv=ryf.value;
+  ryf.innerHTML='<option value="">Release Year</option>'+years.map(y=>`<option value="${y}"${y==ryv?' selected':''}>${y}</option>`).join('');
+
+  const tbody=document.getElementById('tableBody');
+  if(!list.length){tbody.innerHTML='';document.getElementById('watchedEmpty').style.display='block';return}
+  document.getElementById('watchedEmpty').style.display='none';
+  const sortedAll=W.slice().sort((a,b)=>a.rank-b.rank);
+  const isRankSort = curSort==='rank';
+  const top10Cutoff = isRankSort ? Math.max(1, Math.ceil(W.length * 0.1)) : 0;
+  tbody.innerHTML=list.map(w=>{
+    const f=film(w.id);if(!f)return'';
+    const rank=sortedAll.findIndex(x=>x.id===w.id)+1;
+    const isElite = isRankSort && rank <= top10Cutoff;
+    return `<tr class="${isElite?'elite-row':''}">
+      <td><div class="mt-rank${isElite?' elite-rank':''}">${rank}</div></td>
+      <td>${posterEl(f.t,'mt-poster')}</td>
+      <td><div class="mt-title">${f.t}</div></td>
+      <td><span class="mt-genre">${f.g}</span></td>
+      <td><div class="mt-year">${f.d}</div></td>
+      <td><div class="mt-year">${f.y}</div></td>
+      <td><div class="mt-date">${fmtDate(w.d)}</div></td>
+      
+    </tr>`;
+  }).join('');
+}
+
+// ══════════ RENDER WATCHLIST ══════════
+function renderWL(){
+  const el=document.getElementById('wlGrid');
+  if(!WL.length){el.innerHTML='';document.getElementById('wlEmpty').style.display='block';return}
+  document.getElementById('wlEmpty').style.display='none';
+  el.innerHTML=WL.map(id=>{
+    const f=film(id);if(!f)return'';
+    return `<div class="wl-card">
+      ${posterEl(f.t,'wl-poster')}
+      <div class="wl-body">
+        <div class="wl-title">${f.t}</div>
+        <div class="wl-meta">${f.y} · ${f.g}</div>
+        <div class="wl-btns">
+          <button class="wl-btn w" onclick="openModal(${f.id})">✓ Watched</button>
+          <button class="wl-btn r" onclick="removeWL(${f.id})">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════ RENDER RANKINGS ══════════
+function renderRankings(){
+  const el=document.getElementById('rankList');
+  if(!W.length){el.innerHTML='';document.getElementById('rankEmpty').style.display='block';return}
+  document.getElementById('rankEmpty').style.display='none';
+  const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
+  el.innerHTML=sorted.map((w,i)=>{
+    const f=film(w.id);if(!f)return'';
+    const rank=i+1;
+    return `<div class="rank-item">
+      <div class="rank-num${rank<=3?' t3':''}" onclick="editRank(${f.id},${rank})" title="Click to edit rank">${rank}</div>
+      ${posterEl(f.t,'rank-poster')}
+      <div class="rank-info">
+        <div class="rank-title">${f.t}</div>
+        <div class="rank-meta">${f.y} · ${f.g} · ${f.d}</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(${f.id},'up')"${rank===1?' disabled':''}>▲</button>
+        <button class="rank-ab" onclick="moveRank(${f.id},'down')"${rank===sorted.length?' disabled':''}>▼</button>
+        <button class="rank-remove" onclick="if(confirm('Remove ${f.t.replace(/'/g,"\\'")} from your list?'))removeW(${f.id})" title="Remove">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════ RENDER RECS ══════════
+function renderRecs(){
+  const el=document.getElementById('recsGrid');
+  const wIds=W.map(w=>w.id);
+  const available=FILMS.filter(f=>!wIds.includes(f.id)&&!WL.includes(f.id));
+  let recs=[];
+  if(W.length){
+    const gc={},dc={};
+    W.forEach(w=>{const f=film(w.id);if(f){gc[f.g]=(gc[f.g]||0)+1;dc[f.d]=(dc[f.d]||0)+1}});
+    const tg=Object.entries(gc).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+    const td=Object.entries(dc).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+    const scored=available.map(f=>{
+      let sc=0,reason="A classic you shouldn't miss";
+      if(td[0]&&f.d===td[0]){sc+=3;reason=`You love ${f.d}'s work`}
+      else if(tg.includes(f.g)&&tg.indexOf(f.g)===0){sc+=2;reason=`More of the ${f.g} films you enjoy`}
+      else if(tg.includes(f.g)){sc+=1;reason=`Another great ${f.g} film`}
+      return{...f,sc,reason};
+    }).sort((a,b)=>b.sc-a.sc||(Math.random()-.5));
+    recs=scored.slice(0,3);
+  } else {
+    recs=available.slice(0,3).map(f=>({...f,reason:"A golden age classic to start with"}));
+  }
+  if(!recs.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.95rem;grid-column:1/-1;text-align:center;padding:2rem">You\'ve explored the entire archive — a true cinephile!</div>';return}
+  el.innerHTML=recs.map(f=>`
+    <div class="rec-card">
+      <div class="rec-poster" style="position:relative;overflow:hidden;">
+        ${posterEl(f.t,'rec-poster-img')}
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 50%)"></div>
+        <span class="rec-badge">Recommended</span>
+      </div>
+      <div class="rec-year">${f.y}</div>
+      <div class="rec-title">${f.t}</div>
+      <div class="rec-genre">${f.g} &nbsp;·&nbsp; ${f.d}</div>
+      <div class="rec-reason">${f.reason}</div>
+      <div class="rec-actions">
+        <button class="rec-btn w" onclick="openModal(${f.id})">✓ Watched</button>
+        <button class="rec-btn s" onclick="addWL(${f.id})">+ Save</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════ RENDER FACTS ══════════
+function renderFacts(){
+  const strip=document.getElementById('factsStrip');
+  if(!W.length){strip.style.display='none';return}
+  strip.style.display='block';
+  const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
+  const yr=new Date().getFullYear().toString();
+  const thisYr=films.filter(w=>w.d?.startsWith(yr));
+  const gc={},dc={},ac={};
+  films.forEach(w=>{
+    gc[w.f.g]=(gc[w.f.g]||0)+1;
+    dc[w.f.d]=(dc[w.f.d]||0)+1;
+    w.f.a.forEach(a=>ac[a]=(ac[a]||0)+1);
+  });
+  const tg=Object.entries(gc).sort((a,b)=>b[1]-a[1])[0];
+  const td=Object.entries(dc).sort((a,b)=>b[1]-a[1])[0];
+  const ta=Object.entries(ac).sort((a,b)=>b[1]-a[1])[0];
+  const tgPct=tg?Math.round(tg[1]/films.length*100):0;
+  const facts=[
+    {icon:'🎬',stat:films.length,text:'films in your diary'},
+    tgPct?{icon:'🎭',stat:tgPct+'%',text:`of your films are ${tg[0]}`}:{icon:'📅',stat:thisYr.length,text:'films this year'},
+    td&&td[1]>1?{icon:'🎩',stat:td[1],text:`films by ${td[0].split(' ').pop()}`}:{icon:'📅',stat:thisYr.length,text:'films this year'},
+    ta&&ta[1]>1?{icon:'🌟',stat:ta[1],text:`films featuring ${ta[0].split(' ')[0]}`}:{icon:'🎬',stat:films.length,text:'films logged'},
+  ];
+  document.getElementById('factsGrid').innerHTML=facts.map(f=>`
+    <div class="fact-card">
+      <span class="fact-icon">${f.icon}</span>
+      <div class="fact-stat">${f.stat}</div>
+      <div class="fact-text">${f.text}</div>
+    </div>`).join('');
+}
+
+// ══════════ RENDER STATS ══════════
+function renderStats(){
+  const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
+  const yr=new Date().getFullYear().toString();
+  document.getElementById('statsCards').innerHTML=[
+    {icon:'🎬',n:films.length,l:'Films Watched'},
+    {icon:'📅',n:films.filter(w=>w.d?.startsWith(yr)).length,l:'This Year'},
+    {icon:'🏆',n:W.length?film(W.slice().sort((a,b)=>a.rank-b.rank)[0].id)?.t:'–',l:'Top Ranked'},
+    {icon:'◎',n:WL.length,l:'On Watch List'},
+  ].map(s=>`<div class="stat-card"><span class="sc-icon">${s.icon}</span><div class="sc-num" style="font-size:${typeof s.n==='string'&&s.n.length>6?'.85rem':'inherit'}">${s.n}</div><div class="sc-label">${s.l}</div></div>`).join('');
+
+  const gc={};
+  films.forEach(w=>gc[w.f.g]=(gc[w.f.g]||0)+1);
+  const gs=Object.entries(gc).sort((a,b)=>b[1]-a[1]);
+  const mx=gs[0]?.[1]||1;
+  document.getElementById('genreBars').innerHTML=gs.length?gs.map(([g,c])=>`
+    <div class="gbr">
+      <div class="gbr-label">${g}</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:${Math.round(c/mx*100)}%"></div></div>
+      <div class="gbr-count">${c}</div>
+    </div>`).join(''):'<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see your genre breakdown</div>';
+
+  document.getElementById('insightsGrid').innerHTML=buildInsights(films).map(i=>`
+    <div class="ins-card">
+      <div class="ins-badge">${i.badge}</div>
+      <div class="ins-text">${i.text}</div>
+    </div>`).join('')||'<div class="ins-card"><div class="ins-text" style="text-align:center;opacity:.6">Watch more films to unlock insights</div></div>';
+
+  renderActors(films);
+}
+
+function buildInsights(films){
+  const ins=[];
+  if(!films.length)return ins;
+  const yr=new Date().getFullYear().toString();
+  const gc={},dc={},ac={};
+  films.forEach(w=>{gc[w.f.g]=(gc[w.f.g]||0)+1;dc[w.f.d]=(dc[w.f.d]||0)+1;w.f.a.forEach(a=>ac[a]=(ac[a]||0)+1)});
+  const ta=Object.entries(ac).sort((a,b)=>b[1]-a[1])[0];
+  const td=Object.entries(dc).sort((a,b)=>b[1]-a[1])[0];
+  const tg=Object.entries(gc).sort((a,b)=>b[1]-a[1])[0];
+  const thisYr=films.filter(w=>w.d?.startsWith(yr));
+  const yrs=films.map(w=>w.f.y).sort();
+
+  if(ta&&ta[1]>1)ins.push({badge:'Favourite Face',text:`<strong>${ta[0]}</strong> has appeared in <strong>${ta[1]}</strong> films you've watched — clearly a face you trust.`});
+  if(td&&td[1]>1)ins.push({badge:'Auteur of Choice',text:`You've watched <strong>${td[1]}</strong> films by <strong>${td[0]}</strong>. You clearly trust their vision.`});
+  if(tg){const p=Math.round(tg[1]/films.length*100);ins.push({badge:'Genre Taste',text:`<strong>${p}%</strong> of your films are <strong>${tg[0]}</strong>. You have a distinct appetite for this kind of cinema.`})}
+  if(yrs.length>1)ins.push({badge:'Era Explorer',text:`Your taste spans from <strong>${yrs[0]}</strong> to <strong>${yrs[yrs.length-1]}</strong> — a <strong>${yrs[yrs.length-1]-yrs[0]}</strong>-year sweep of cinema history.`});
+  if(thisYr.length>0)ins.push({badge:'This Year',text:`You've watched <strong>${thisYr.length}</strong> film${thisYr.length!==1?'s':''} in ${yr} so far. The projector never goes dark.`});
+  return ins.slice(0,6);
+}
+
+function renderActors(films){
+  const el=document.getElementById('actorList');
+  if(!el)return;
+  if(!films.length){
+    el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see actor appearances.</div>';
+    return;
+  }
+  // Build map: actor → [{title, year}]
+  const ac={};
+  films.forEach(w=>{
+    (w.f.a||[]).forEach(a=>{
+      if(!ac[a])ac[a]=[];
+      ac[a].push({t:w.f.t,y:w.f.y});
+    });
+  });
+  // Sort by count desc, then alpha
+  const sorted=Object.entries(ac)
+    .sort((a,b)=>b[1].length-a[1].length||a[0].localeCompare(b[0]));
+
+  el.innerHTML=sorted.map(([actor,movies],i)=>{
+    const count=movies.length;
+    const pills=movies.sort((a,b)=>a.y-b.y).map(m=>`<span class="actor-film-pill">${m.t} <span style="opacity:.5">${m.y}</span></span>`).join('');
+    const label=count===1?'1 film':`${count} films`;
+    return `<div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">${actor}</div>
+        <div class="actor-count">${label}</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films">${pills}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleActor(header){
+  const films=header.nextElementSibling;
+  const chevron=header.querySelector('.actor-chevron');
+  const isOpen=films.classList.contains('open');
+  films.classList.toggle('open',!isOpen);
+  chevron.classList.toggle('open',!isOpen);
+}
+
+
+function fmtDate(d){if(!d)return'–';return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+let tT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),3200)}
+
+// INIT
+// Home page is now minimal — no init render needed
+
+// ══════════ RECENTLY WATCHED ══════════
+(async function renderRecentlyWatched() {
+  // Pull the 3 most recently watched from the live W array (sorted by date desc)
+  const sorted = W.slice().sort((a, b) => new Date(b.d) - new Date(a.d)).slice(0, 3);
+  const allSorted = W.slice().sort((a, b) => a.rank - b.rank);
+
+  // IMDb IDs for poster lookup — keyed by film title
+  const imdbIds = {
+    "One Battle After Another": "tt30144839",
+    "Mission: Impossible": "tt0117060",
+    "Before Sunrise": "tt0112471",
+    "Notting Hill": "tt0125439",
+    "Anora": "tt28607951",
+    "Stranger Than Fiction": "tt0420223",
+    "The Others": "tt0230600",
+    "Amélie": "tt0211915",
+    "Bugonia": "tt14236818",
+    "Marty Supreme": "tt32916440",
+    "Inglourious Basterds": "tt0361748",
+    "Love Actually": "tt0314331",
+    "Leaving Las Vegas": "tt0113627",
+    "Shutter Island": "tt1130884",
+    "The Roses": "tt31973693",
+    "Steel Magnolias": "tt0098384",
+    "Now You See Me": "tt1670345",
+    "A Fish Called Wanda": "tt0095159",
+    "The Royal Tenenbaums": "tt0265666",
+    "The Talented Mr. Ripley": "tt0134119",
+    "Mr. & Mrs. Smith": "tt0356910",
+    "If I Had Legs I'd Kick You": "tt14231344",
+    "Blue Jasmine": "tt2334873"
+  };
+
+  const container = document.getElementById('rw-tiles');
+  if (!container) return;
+
+  // Build skeleton tiles
+  container.innerHTML = sorted.map((w, i) => {
+    const f = film(w.id);
+    if (!f) return '';
+    const rank = allSorted.findIndex(x => x.id === w.id) + 1;
+    const isTop = rank === 1;
+    return `
+      <div style="width:160px;text-align:left;">
+        <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
+          <img id="rw-poster-${i}" src="" alt="${f.t}" style="width:100%;height:100%;object-fit:cover;display:none;"
+               onerror="this.style.display='none';document.getElementById('rw-fb-${i}').style.display='flex';" />
+          <div id="rw-fb-${i}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;background:#0a0a0a;">🎬</div>
+          ${isTop ? `<div style="position:absolute;top:0;left:0;background:rgba(201,168,76,0.9);color:#000;font-size:0.6rem;letter-spacing:0.12em;padding:0.25rem 0.5rem;text-transform:uppercase;font-weight:600;">#1 All Time</div>` : ''}
+        </div>
+        <div style="font-size:0.82rem;color:rgba(255,255,255,0.9);margin-bottom:0.25rem;line-height:1.3;letter-spacing:0.01em;">${f.t}</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;">
+          <span>${fmtDate(w.d)}</span>
+          <span style="color:rgba(201,168,76,0.7);">#${rank}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Fetch posters
+  for (let i = 0; i < sorted.length; i++) {
+    const f = film(sorted[i].id);
+    if (!f) continue;
+    const imdb = imdbIds[f.t];
+    if (!imdb) continue;
+    try {
+      const res = await fetch(`https://www.omdbapi.com/?i=${imdb}&apikey=trilogy`);
+      const data = await res.json();
+      if (data.Poster && data.Poster !== 'N/A') {
+        const img = document.getElementById(`rw-poster-${i}`);
+        const fb  = document.getElementById(`rw-fb-${i}`);
+        if (img) { img.src = data.Poster.replace('SX300','SX400'); img.style.display = 'block'; }
+        if (fb)  { fb.style.display = 'none'; }
+      }
+    } catch(e) { /* emoji fallback stays */ }
+  }
+})();
+
+// ══════════════════════════════════════════
+// CLAUDE RECOMMENDATION AGENT
+// Calls /.netlify/functions/claude-recommend — a serverless proxy
+// that keeps the Anthropic API key safely server-side.
+// ══════════════════════════════════════════
+
+const AGENT_ENDPOINT = '/.netlify/functions/claude-recommend';
+
+let _dismissedRecs = JSON.parse(sessionStorage.getItem('jwl_dismissed_recs') || '[]');
+let _currentRecs   = [];
+let _agentLoading  = false;
+
+function saveDismissed() {
+  sessionStorage.setItem('jwl_dismissed_recs', JSON.stringify(_dismissedRecs));
+}
+
+function buildTasteProfile() {
+  const watched = W.slice().sort((a, b) => a.rank - b.rank);
+  const films = watched.map(w => {
+    const f = film(w.id);
+    return f ? { ...f, rank: w.rank, rating: w.r } : null;
+  }).filter(Boolean);
+  if (!films.length) return null;
+
+  const topFilms  = films.slice(0, 10).map(f => `"${f.t}" (${f.y}, ${f.g}, dir. ${f.d})`).join('; ');
+  const allTitles = films.map(f => f.t);
+
+  const genreCount = {};
+  films.forEach(f => { genreCount[f.g] = (genreCount[f.g] || 0) + 1; });
+  const topGenres = Object.entries(genreCount).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([g])=>g).join(', ');
+
+  const dirCount = {};
+  films.forEach(f => { dirCount[f.d] = (dirCount[f.d] || 0) + 1; });
+  const favDirs = Object.entries(dirCount).filter(([,c])=>c>1).map(([d])=>d).join(', ');
+
+  const actorCount = {};
+  films.forEach(f => (f.a||[]).forEach(a => { actorCount[a] = (actorCount[a]||0)+1; }));
+  const favActors = Object.entries(actorCount).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([a])=>a).join(', ');
+
+  const leastFav = films.slice(-5).map(f => f.t).join(', ');
+
+  return { topFilms, topGenres, favDirs, favActors, leastFav, allTitles };
+}
+
+function showAgentSkeleton() {
+  document.getElementById('agent-cards').innerHTML = Array(6).fill(0).map(() => `
+    <div class="agent-skeleton">
+      <div class="agent-skeleton-poster"></div>
+      <div class="agent-skeleton-line" style="width:80%"></div>
+      <div class="agent-skeleton-line" style="width:55%"></div>
+      <div class="agent-skeleton-line" style="width:70%;margin-top:.3rem"></div>
+    </div>`).join('');
+}
+
+async function loadAgentRecs() {
+  if (_agentLoading) return;
+  _agentLoading = true;
+
+  const btn = document.getElementById('agentRefreshBtn');
+  if (btn) btn.disabled = true;
+  showAgentSkeleton();
+
+  const profile       = buildTasteProfile();
+  const watchedTitles = profile ? profile.allTitles : [];
+  const wlTitles      = WL.map(id => film(id)?.t).filter(Boolean);
+  const dismissed     = _dismissedRecs.map(r => typeof r === 'string' ? r : r.title);
+  const excluded      = [...watchedTitles, ...wlTitles, ...dismissed].join('", "');
+
+  const systemPrompt = `You are a sophisticated film curator for a personal movie diary. Recommend exactly 6 films tailored to the viewer's demonstrated taste.
+
+Respond ONLY with a valid JSON array of exactly 6 objects. No markdown, no explanation — pure JSON only.
+
+Each object must have these exact keys:
+- "title": string (exact canonical film title)
+- "year": number
+- "director": string
+- "stars": string (2–4 lead actors, comma-separated)
+- "genre": string
+- "accolades": string (e.g. "Academy Award, Best Picture" — or "" if none)
+- "tmdb_id": number (accurate TMDB movie ID — essential for poster images)
+- "why": string (one evocative sentence connecting to the viewer's taste)
+
+Do NOT recommend any of these titles: "${excluded}"
+Vary eras and countries. Prioritize critically acclaimed films.`;
+
+  const userPrompt = profile
+    ? `My viewing history ranked best to worst:\n${profile.topFilms}\n\nLeast favorites: ${profile.leastFav}\nTop genres: ${profile.topGenres}${profile.favDirs ? `\nFavorite directors: ${profile.favDirs}` : ''}${profile.favActors ? `\nFrequent actors: ${profile.favActors}` : ''}\n\nRecommend 6 films I would love. Return JSON only.`
+    : `Recommend 6 critically acclaimed films across different genres and eras. Return JSON only.`;
+
+  try {
+    const response = await fetch(AGENT_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2200,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Proxy ${response.status}: ${errText}`);
+    }
+
+    const data    = await response.json();
+    const rawText = (data.content || []).map(b => b.text || '').join('').trim();
+    const jsonStr = rawText.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim();
+    const recs    = JSON.parse(jsonStr);
+
+    if (!Array.isArray(recs) || !recs.length) throw new Error('Unexpected response shape');
+
+    _currentRecs = recs.slice(0, 6);
+    renderAgentCards(_currentRecs);
+
+  } catch (err) {
+    console.error('Agent error:', err);
+    document.getElementById('agent-cards').innerHTML =
+      `<div class="agent-error" style="grid-column:1/-1;">
+         Could not load recommendations. <a href="javascript:loadAgentRecs()" style="color:var(--gold);text-decoration:underline;">Try again</a>
+       </div>`;
+  } finally {
+    _agentLoading = false;
+    if (btn) btn.disabled = false;
+  }
+}
+
+function renderAgentCards(recs) {
+  const container = document.getElementById('agent-cards');
+  container.innerHTML = '';
+
+  recs.forEach((rec, i) => {
+    const alreadyOnWL = WL.some(id => {
+      const f = film(id);
+      return f && f.t.toLowerCase() === rec.title.toLowerCase();
+    });
+
+    const card = document.createElement('div');
+    card.className = 'rec-card';
+    card.id = `rec-card-${i}`;
+    card.innerHTML = `
+      <div class="rec-poster-wrap" id="rec-wrap-${i}">
+        <div class="rec-poster-fallback" id="rec-fb-${i}">🎬</div>
+        ${rec.accolades ? `<div class="rec-badge">${rec.accolades.split(',')[0].trim()}</div>` : ''}
+        <button class="rec-dismiss" onclick="dismissRec(${i})" title="Remove">×</button>
+      </div>
+      <div class="rec-info">
+        <div class="rec-title">${rec.title}</div>
+        <div class="rec-year">${rec.year} · ${rec.genre}</div>
+        <div class="rec-why">${rec.why || ''}</div>
+        <div class="rec-meta-row"><strong style="color:rgba(255,255,255,.5)">Dir.</strong> ${rec.director}</div>
+        <div class="rec-meta-row">${rec.stars}</div>
+        ${rec.accolades ? `<div class="rec-accolade">🏆 ${rec.accolades}</div>` : ''}
+        <div class="rec-actions">
+          <button class="rec-btn add ${alreadyOnWL?'saved':''}" id="rec-add-${i}"
+            ${alreadyOnWL ? 'disabled' : `onclick="addRecToWL(${i})"`}>
+            ${alreadyOnWL ? '✓ Saved' : '+ To Watch'}
+          </button>
+          <button class="rec-btn dismiss-sm" onclick="dismissRec(${i})">✕</button>
+        </div>
+      </div>`;
+    container.appendChild(card);
+
+    if (rec.tmdb_id) fetchRecPoster(rec, i);
+  });
+}
+
+async function fetchRecPoster(rec, idx) {
+  try {
+    const res = await fetch(`${TMDB_BASE}/movie/${rec.tmdb_id}?language=en-US`, {
+      headers: { Authorization: `Bearer ${TMDB_TOKEN}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data.poster_path) return;
+
+    const wrap = document.getElementById(`rec-wrap-${idx}`);
+    const fb   = document.getElementById(`rec-fb-${idx}`);
+    if (!wrap || !fb) return;
+
+    const img = new Image();
+    img.alt = rec.title;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0;z-index:1;';
+    img.onload = () => { wrap.insertBefore(img, fb); fb.style.display = 'none'; };
+    img.src = `https://image.tmdb.org/t/p/w342${data.poster_path}`;
+  } catch(e) { /* emoji fallback stays */ }
+}
+
+function addRecToWL(idx) {
+  const rec = _currentRecs[idx];
+  if (!rec) return;
+  let local = FILMS.find(f => f.t.toLowerCase() === rec.title.toLowerCase());
+  if (!local) {
+    const newId = Math.max(...FILMS.map(f => f.id)) + 1;
+    local = { id: newId, t: rec.title, y: rec.year, g: rec.genre, e: '🎬',
+              d: rec.director, a: rec.stars.split(',').map(s=>s.trim()), tmdbId: rec.tmdb_id };
+    FILMS.push(local);
+  }
+  if (!isWL(local.id) && !isW(local.id)) { WL.push(local.id); save(); }
+  showToast(`"${rec.title}" added to your Watch List`);
+  const btn = document.getElementById(`rec-add-${idx}`);
+  if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); btn.disabled = true; btn.removeAttribute('onclick'); }
+}
+
+function dismissRec(idx) {
+  const rec = _currentRecs[idx];
+  if (!rec) return;
+  _dismissedRecs.push({ title: rec.title });
+  saveDismissed();
+  const card = document.getElementById(`rec-card-${idx}`);
+  if (!card) return;
+  card.style.transition = 'opacity .25s, transform .25s';
+  card.style.opacity = '0';
+  card.style.transform = 'scale(.95)';
+  setTimeout(() => {
+    card.remove();
+    if (document.querySelectorAll('.rec-card').length < 2) {
+      const hint = document.createElement('div');
+      hint.style.cssText = 'grid-column:1/-1;font-family:"Times New Roman",Times,serif;font-size:.78rem;color:var(--white-20);font-style:italic;padding:1rem 0;';
+      hint.innerHTML = `<a href="javascript:loadAgentRecs()" style="color:var(--gold);text-decoration:underline;">Refresh</a> for more recommendations`;
+      document.getElementById('agent-cards').appendChild(hint);
+    }
+  }, 280);
+}
+
+// Auto-load on page init
+setTimeout(() => {
+  if (document.getElementById('page-home')?.classList.contains('active')) loadAgentRecs();
+}, 500);
+
+const _origShowPage = showPage;
+window.showPage = function(p) {
+  _origShowPage(p);
+  if (p === 'home' && !_agentLoading && !document.querySelector('.rec-card')) loadAgentRecs();
+};
+</script>
+
+
+</body></html>
