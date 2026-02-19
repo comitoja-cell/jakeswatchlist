@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_17.html -->
+<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_20.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -352,29 +352,42 @@ thead th:hover .sort-arrow{opacity:.7;}
 .mt-btn:hover{border-color:var(--white-50);color:var(--white)}
 .mt-btn.d:hover{border-color:rgba(200,60,60,.5);color:#e06060}
 
-/* Watchlist grid */
-.wl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--border)}
-.wl-card{background:var(--black);transition:background .2s}
-.wl-card:hover{background:var(--white-04)}
+/* Watchlist — IMDB-style list */
+.wl-grid{display:flex;flex-direction:column;gap:0;}
+.wl-card{
+  display:flex;align-items:center;gap:1.2rem;
+  padding:.85rem 1rem;
+  border-bottom:1px solid var(--white-04);
+  transition:background .15s;
+}
+.wl-card:hover{background:var(--white-04);}
+.wl-card:first-child{border-top:1px solid var(--white-04);}
 .wl-poster{
-  height:200px;background:var(--black-80);
-  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
-  border-bottom:1px solid var(--border);overflow:hidden;
+  width:46px;height:68px;flex-shrink:0;
+  background:var(--black-80);
+  overflow:hidden;position:relative;
+  border:1px solid var(--border);
 }
 .wl-poster img{width:100%;height:100%;object-fit:cover;display:block;}
-.wl-body{padding:.9rem}
-.wl-title{font-family:"Times New Roman",Times,serif;font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:.25rem;line-height:1.3}
-.wl-meta{font-family:"Times New Roman",Times,serif;font-size:.68rem;color:var(--white-50);margin-bottom:.7rem}
-.wl-btns{display:flex;gap:.35rem}
-.wl-btn{
-  flex:1;font-family:"Times New Roman",Times,serif;
-  font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
-  padding:.38rem;border:1px solid;background:none;cursor:pointer;transition:all .18s;text-align:center;
+.wl-poster-fallback{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;background:var(--black-80);
 }
-.wl-btn.w{border-color:var(--gold-dim);color:var(--gold)}
-.wl-btn.w:hover{background:var(--gold);color:var(--black);border-color:var(--gold)}
-.wl-btn.r{border-color:var(--border);color:var(--white-50)}
-.wl-btn.r:hover{border-color:rgba(200,60,60,.4);color:#e06060}
+.wl-body{flex:1;min-width:0;}
+.wl-title{font-family:"Times New Roman",Times,serif;font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:.2rem;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wl-meta{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:var(--white-50);margin-bottom:.45rem;letter-spacing:.02em;}
+.wl-genre-tag{display:inline-block;font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--border);color:var(--white-50);padding:.15rem .4rem;margin-right:.3rem;}
+.wl-btns{display:flex;gap:.4rem;}
+.wl-btn{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.3rem .7rem;border:1px solid;background:none;cursor:pointer;transition:all .18s;white-space:nowrap;
+}
+.wl-btn.w{border-color:var(--gold-dim);color:var(--gold);}
+.wl-btn.w:hover{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.wl-btn.r{border-color:var(--border);color:var(--white-50);}
+.wl-btn.r:hover{border-color:rgba(200,60,60,.4);color:#e06060;}
 
 /* ── RANKINGS page ── */
 .rank-page{max-width:800px;margin:0 auto;padding:3rem 2.5rem}
@@ -614,7 +627,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 ══════════════════════════════════════════ */
 #agent-section {
   width:100%;
-  max-width:900px;
+  max-width:450px;
   margin:3.5rem auto 0;
   padding:0 2rem;
 }
@@ -683,7 +696,8 @@ thead th:hover .sort-arrow{opacity:.7;}
   display:grid;
   grid-template-columns:repeat(3,160px);
   gap:1.5rem 1.4rem;
-  justify-content:flex-start;
+  justify-content:center;
+  align-items:stretch;
 }
 
 /* Loading skeleton */
@@ -725,6 +739,8 @@ thead th:hover .sort-arrow{opacity:.7;}
   width:160px;
   flex-shrink:0;
   position:relative;
+  display:flex;
+  flex-direction:column;
 }
 .rec-poster-wrap {
   width:160px;height:240px;
@@ -783,6 +799,9 @@ thead th:hover .sort-arrow{opacity:.7;}
 }
 .rec-info {
   font-family:"Times New Roman",Times,serif;
+  display:flex;
+  flex-direction:column;
+  flex:1;
 }
 .rec-title {
   font-size:.82rem;
@@ -821,7 +840,7 @@ thead th:hover .sort-arrow{opacity:.7;}
   line-height:1.4;
 }
 .rec-actions {
-  display:flex;gap:.4rem;margin-top:.4rem;
+  display:flex;gap:.4rem;margin-top:auto;padding-top:.6rem;
 }
 .rec-btn {
   font-family:"Times New Roman",Times,serif;
@@ -868,13 +887,9 @@ thead th:hover .sort-arrow{opacity:.7;}
   padding:1.5rem 0;
 }
 
-/* Divider between sections */
+/* Divider between sections — removed */
 .home-divider {
-  width:100%;
-  max-width:900px;
-  margin:3rem auto 0;
-  border:none;
-  border-top:1px solid var(--border);
+  display:none;
 }
 
 /* Tooltip for rec card — hover details panel */
@@ -2906,20 +2921,57 @@ function renderWL(){
   const el=document.getElementById('wlGrid');
   if(!WL.length){el.innerHTML='';document.getElementById('wlEmpty').style.display='block';return}
   document.getElementById('wlEmpty').style.display='none';
-  el.innerHTML=WL.map(id=>{
+  el.innerHTML=WL.map((id,idx)=>{
     const f=film(id);if(!f)return'';
+    const dir = f.d ? `<span style="color:var(--white-20)">Dir.</span> ${f.d} · ` : '';
     return `<div class="wl-card">
-      ${posterEl(f.t,'wl-poster')}
+      <div class="wl-poster" id="wlp-${idx}">
+        <div class="wl-poster-fallback">🎬</div>
+      </div>
       <div class="wl-body">
         <div class="wl-title">${f.t}</div>
-        <div class="wl-meta">${f.y} · ${f.g}</div>
+        <div class="wl-meta">${dir}${f.y}${f.g ? ' · <span class="wl-genre-tag">'+f.g+'</span>' : ''}</div>
         <div class="wl-btns">
-          <button class="wl-btn w" onclick="openModal(${f.id})">✓ Watched</button>
-          <button class="wl-btn r" onclick="removeWL(${f.id})">✕</button>
+          <button class="wl-btn w" onclick="openModal(${f.id})">✓ Mark Watched</button>
+          <button class="wl-btn r" onclick="removeWL(${f.id})">✕ Remove</button>
         </div>
       </div>
     </div>`;
   }).join('');
+  // Load posters after render
+  WL.forEach((id,idx) => {
+    const f=film(id);if(!f)return;
+    loadWLPoster(f, idx);
+  });
+}
+
+async function loadWLPoster(f, idx) {
+  const wrap = document.getElementById(`wlp-${idx}`);
+  if (!wrap) return;
+  // Try TMDB first if we have a tmdbId
+  if (f.tmdbId && tmdbReady()) {
+    try {
+      const res = await fetch(`${TMDB_BASE}/movie/${f.tmdbId}?language=en-US`, {
+        headers: { Authorization: `Bearer ${TMDB_TOKEN}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.poster_path) {
+          const img = new Image();
+          img.alt = f.t;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+          img.onload = () => { wrap.innerHTML = ''; wrap.appendChild(img); };
+          img.src = `https://image.tmdb.org/t/p/w92${data.poster_path}`;
+          return;
+        }
+      }
+    } catch(e) {}
+  }
+  // Fall back to OMDB
+  const url = await fetchPoster(f.t);
+  if (url && wrap) {
+    wrap.innerHTML = `<img src="${url}" alt="${f.t}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">`;
+  }
 }
 
 // ══════════ RENDER RANKINGS ══════════
@@ -3208,6 +3260,7 @@ const AGENT_ENDPOINT = '/.netlify/functions/claude-recommend';
 
 let _dismissedRecs = JSON.parse(sessionStorage.getItem('jwl_dismissed_recs') || '[]');
 let _currentRecs   = [];
+let _recBuffer     = [];
 let _agentLoading  = false;
 
 function saveDismissed() {
@@ -3266,9 +3319,9 @@ async function loadAgentRecs() {
   const dismissed     = _dismissedRecs.map(r => typeof r === 'string' ? r : r.title);
   const excluded      = [...watchedTitles, ...wlTitles, ...dismissed].join('", "');
 
-  const systemPrompt = `You are a sophisticated film curator for a personal movie diary. Recommend exactly 6 films tailored to the viewer's demonstrated taste.
+  const systemPrompt = `You are a sophisticated film curator for a personal movie diary. Recommend exactly 9 films tailored to the viewer's demonstrated taste.
 
-Respond ONLY with a valid JSON array of exactly 6 objects. No markdown, no explanation — pure JSON only.
+Respond ONLY with a valid JSON array of exactly 9 objects. No markdown, no explanation — pure JSON only.
 
 Each object must have these exact keys:
 - "title": string (exact canonical film title)
@@ -3284,8 +3337,8 @@ Do NOT recommend any of these titles: "${excluded}"
 Vary eras and countries. Prioritize critically acclaimed films.`;
 
   const userPrompt = profile
-    ? `My viewing history ranked best to worst:\n${profile.topFilms}\n\nLeast favorites: ${profile.leastFav}\nTop genres: ${profile.topGenres}${profile.favDirs ? `\nFavorite directors: ${profile.favDirs}` : ''}${profile.favActors ? `\nFrequent actors: ${profile.favActors}` : ''}\n\nRecommend 6 films I would love. Return JSON only.`
-    : `Recommend 6 critically acclaimed films across different genres and eras. Return JSON only.`;
+    ? `My viewing history ranked best to worst:\n${profile.topFilms}\n\nLeast favorites: ${profile.leastFav}\nTop genres: ${profile.topGenres}${profile.favDirs ? `\nFavorite directors: ${profile.favDirs}` : ''}${profile.favActors ? `\nFrequent actors: ${profile.favActors}` : ''}\n\nRecommend 9 films I would love. Return JSON only.`
+    : `Recommend 9 critically acclaimed films across different genres and eras. Return JSON only.`;
 
   try {
     const response = await fetch(AGENT_ENDPOINT, {
@@ -3293,7 +3346,7 @@ Vary eras and countries. Prioritize critically acclaimed films.`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2200,
+        max_tokens: 3000,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }]
       })
@@ -3312,6 +3365,7 @@ Vary eras and countries. Prioritize critically acclaimed films.`;
     if (!Array.isArray(recs) || !recs.length) throw new Error('Unexpected response shape');
 
     _currentRecs = recs.slice(0, 6);
+    _recBuffer   = recs.slice(6);   // keep extras as reserve
     renderAgentCards(_currentRecs);
 
   } catch (err) {
@@ -3329,39 +3383,11 @@ Vary eras and countries. Prioritize critically acclaimed films.`;
 function renderAgentCards(recs) {
   const container = document.getElementById('agent-cards');
   container.innerHTML = '';
-
   recs.forEach((rec, i) => {
-    const alreadyOnWL = WL.some(id => {
-      const f = film(id);
-      return f && f.t.toLowerCase() === rec.title.toLowerCase();
-    });
-
-    const card = document.createElement('div');
-    card.className = 'rec-card';
-    card.id = `rec-card-${i}`;
-    card.innerHTML = `
-      <div class="rec-poster-wrap" id="rec-wrap-${i}">
-        <div class="rec-poster-fallback" id="rec-fb-${i}">🎬</div>
-        ${rec.accolades ? `<div class="rec-badge">${rec.accolades.split(',')[0].trim()}</div>` : ''}
-        <button class="rec-dismiss" onclick="dismissRec(${i})" title="Remove">×</button>
-      </div>
-      <div class="rec-info">
-        <div class="rec-title">${rec.title}</div>
-        <div class="rec-year">${rec.year} · ${rec.genre}</div>
-        <div class="rec-why">${rec.why || ''}</div>
-        <div class="rec-meta-row"><strong style="color:rgba(255,255,255,.5)">Dir.</strong> ${rec.director}</div>
-        <div class="rec-meta-row">${rec.stars}</div>
-        ${rec.accolades ? `<div class="rec-accolade">🏆 ${rec.accolades}</div>` : ''}
-        <div class="rec-actions">
-          <button class="rec-btn add ${alreadyOnWL?'saved':''}" id="rec-add-${i}"
-            ${alreadyOnWL ? 'disabled' : `onclick="addRecToWL(${i})"`}>
-            ${alreadyOnWL ? '✓ Saved' : '+ To Watch'}
-          </button>
-          <button class="rec-btn dismiss-sm" onclick="dismissRec(${i})">✕</button>
-        </div>
-      </div>`;
+    const card = buildRecCardEl(rec, i);
+    card.style.opacity = '1';
+    card.style.transform = 'scale(1)';
     container.appendChild(card);
-
     if (rec.tmdb_id) fetchRecPoster(rec, i);
   });
 }
@@ -3399,8 +3425,7 @@ function addRecToWL(idx) {
   }
   if (!isWL(local.id) && !isW(local.id)) { WL.push(local.id); save(); }
   showToast(`"${rec.title}" added to your Watch List`);
-  const btn = document.getElementById(`rec-add-${idx}`);
-  if (btn) { btn.textContent = '✓ Saved'; btn.classList.add('saved'); btn.disabled = true; btn.removeAttribute('onclick'); }
+  replaceRecCard(idx);
 }
 
 function dismissRec(idx) {
@@ -3408,20 +3433,94 @@ function dismissRec(idx) {
   if (!rec) return;
   _dismissedRecs.push({ title: rec.title });
   saveDismissed();
+  replaceRecCard(idx);
+}
+
+function replaceRecCard(idx) {
   const card = document.getElementById(`rec-card-${idx}`);
   if (!card) return;
-  card.style.transition = 'opacity .25s, transform .25s';
+
+  // Pull next from buffer (skip any that are now on WL or watched)
+  let replacement = null;
+  while (_recBuffer.length) {
+    const candidate = _recBuffer.shift();
+    const onWL = WL.some(id => { const f = film(id); return f && f.t.toLowerCase() === candidate.title.toLowerCase(); });
+    const onW  = W.some(w  => { const f = film(w.id); return f && f.t.toLowerCase() === candidate.title.toLowerCase(); });
+    const dismissed = _dismissedRecs.some(r => (r.title||r).toLowerCase() === candidate.title.toLowerCase());
+    if (!onWL && !onW && !dismissed) { replacement = candidate; break; }
+  }
+
+  if (replacement) {
+    // Fade out old, fade in new
+    card.style.transition = 'opacity .2s, transform .2s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(.95)';
+    setTimeout(() => {
+      // Update data
+      _currentRecs[idx] = replacement;
+      // Build new card HTML
+      const newCard = buildRecCardEl(replacement, idx);
+      card.replaceWith(newCard);
+      // Trigger fade-in
+      requestAnimationFrame(() => {
+        newCard.style.transition = 'opacity .3s, transform .3s';
+        newCard.style.opacity = '1';
+        newCard.style.transform = 'scale(1)';
+      });
+      if (replacement.tmdb_id) fetchRecPoster(replacement, idx);
+    }, 220);
+  } else {
+    // No buffer left — fade out and collapse gracefully
+    card.style.transition = 'opacity .2s, transform .2s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(.95)';
+    setTimeout(() => {
+      _currentRecs[idx] = null;
+      card.remove();
+      // If fewer than 3 visible, offer a refresh
+      const remaining = document.querySelectorAll('.rec-card').length;
+      if (remaining < 3 && !document.querySelector('.rec-refresh-hint')) {
+        const hint = document.createElement('div');
+        hint.className = 'rec-refresh-hint';
+        hint.style.cssText = 'grid-column:1/-1;font-family:"Times New Roman",Times,serif;font-size:.78rem;color:var(--white-20);font-style:italic;padding:1rem 0;';
+        hint.innerHTML = `<a href="javascript:loadAgentRecs()" style="color:var(--gold);text-decoration:underline;">Refresh</a> for more recommendations`;
+        document.getElementById('agent-cards').appendChild(hint);
+      }
+    }, 220);
+  }
+}
+
+function buildRecCardEl(rec, i) {
+  const alreadyOnWL = WL.some(id => { const f = film(id); return f && f.t.toLowerCase() === rec.title.toLowerCase(); });
+  const card = document.createElement('div');
+  card.className = 'rec-card';
+  card.id = `rec-card-${i}`;
   card.style.opacity = '0';
   card.style.transform = 'scale(.95)';
-  setTimeout(() => {
-    card.remove();
-    if (document.querySelectorAll('.rec-card').length < 2) {
-      const hint = document.createElement('div');
-      hint.style.cssText = 'grid-column:1/-1;font-family:"Times New Roman",Times,serif;font-size:.78rem;color:var(--white-20);font-style:italic;padding:1rem 0;';
-      hint.innerHTML = `<a href="javascript:loadAgentRecs()" style="color:var(--gold);text-decoration:underline;">Refresh</a> for more recommendations`;
-      document.getElementById('agent-cards').appendChild(hint);
-    }
-  }, 280);
+  card.style.display = 'flex';
+  card.style.flexDirection = 'column';
+  card.innerHTML = `
+    <div class="rec-poster-wrap" id="rec-wrap-${i}">
+      <div class="rec-poster-fallback" id="rec-fb-${i}">🎬</div>
+      ${rec.accolades ? `<div class="rec-badge">${rec.accolades.split(',')[0].trim()}</div>` : ''}
+      <button class="rec-dismiss" onclick="dismissRec(${i})" title="Remove">×</button>
+    </div>
+    <div class="rec-info">
+      <div class="rec-title">${rec.title}</div>
+      <div class="rec-year">${rec.year} · ${rec.genre}</div>
+      <div class="rec-why">${rec.why || ''}</div>
+      <div class="rec-meta-row"><strong style="color:rgba(255,255,255,.5)">Dir.</strong> ${rec.director}</div>
+      <div class="rec-meta-row">${rec.stars}</div>
+      ${rec.accolades ? `<div class="rec-accolade">🏆 ${rec.accolades}</div>` : ''}
+      <div class="rec-actions">
+        <button class="rec-btn add ${alreadyOnWL?'saved':''}" id="rec-add-${i}"
+          ${alreadyOnWL ? 'disabled' : `onclick="addRecToWL(${i})"`}>
+          ${alreadyOnWL ? '✓ Saved' : '+ To Watch'}
+        </button>
+        <button class="rec-btn dismiss-sm" onclick="dismissRec(${i})">✕</button>
+      </div>
+    </div>`;
+  return card;
 }
 
 // Auto-load on page init
