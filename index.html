@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_20.html -->
+<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_21.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2477,11 +2477,23 @@ const SEED_W=[
 const SEED_WL=[3,8,12];
 
 // ══════════ STATE ══════════
+// Restore any custom films (added from recommendations) before loading W/WL
+(function(){
+  const custom = JSON.parse(localStorage.getItem('jwl3_custom')||'[]');
+  custom.forEach(f => { if (!FILMS.find(x=>x.id===f.id)) FILMS.push(f); });
+})();
 let W=JSON.parse(localStorage.getItem('jwl3_w')||'null')||[...SEED_W];
 let WL=JSON.parse(localStorage.getItem('jwl3_wl')||'null')||[...SEED_WL];
 let curSort='rank', mId=null;
 
-function save(){localStorage.setItem('jwl3_w',JSON.stringify(W));localStorage.setItem('jwl3_wl',JSON.stringify(WL))}
+function save(){
+  localStorage.setItem('jwl3_w',JSON.stringify(W));
+  localStorage.setItem('jwl3_wl',JSON.stringify(WL));
+  // Persist any custom films added beyond the built-in FILMS array
+  const builtInMax = 47; // all seed films have ids <= 47
+  const custom = FILMS.filter(f => f.id > builtInMax);
+  if (custom.length) localStorage.setItem('jwl3_custom',JSON.stringify(custom));
+}
 function film(id){return FILMS.find(f=>f.id===id)}
 function isW(id){return W.some(w=>w.id===id)}
 function isWL(id){return WL.includes(id)}
@@ -3388,18 +3400,24 @@ function renderAgentCards(recs) {
     card.style.opacity = '1';
     card.style.transform = 'scale(1)';
     container.appendChild(card);
-    if (rec.tmdb_id) fetchRecPoster(rec, i);
+    if (rec.title) fetchRecPoster(rec, i);
   });
 }
 
 async function fetchRecPoster(rec, idx) {
   try {
-    const res = await fetch(`${TMDB_BASE}/movie/${rec.tmdb_id}?language=en-US`, {
-      headers: { Authorization: `Bearer ${TMDB_TOKEN}` }
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-    if (!data.poster_path) return;
+    // Search by title + year for accuracy — don't trust the AI-generated tmdb_id
+    const searchRes = await fetch(
+      `${TMDB_BASE}/search/movie?query=${encodeURIComponent(rec.title)}&year=${rec.year}&language=en-US&page=1`,
+      { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } }
+    );
+    if (!searchRes.ok) return;
+    const searchData = await searchRes.json();
+    const match = searchData.results && searchData.results[0];
+    if (!match || !match.poster_path) return;
+
+    // Update the rec's tmdb_id with the verified one
+    if (_currentRecs[idx]) _currentRecs[idx].tmdb_id = match.id;
 
     const wrap = document.getElementById(`rec-wrap-${idx}`);
     const fb   = document.getElementById(`rec-fb-${idx}`);
@@ -3409,7 +3427,7 @@ async function fetchRecPoster(rec, idx) {
     img.alt = rec.title;
     img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0;z-index:1;';
     img.onload = () => { wrap.insertBefore(img, fb); fb.style.display = 'none'; };
-    img.src = `https://image.tmdb.org/t/p/w342${data.poster_path}`;
+    img.src = `https://image.tmdb.org/t/p/w342${match.poster_path}`;
   } catch(e) { /* emoji fallback stays */ }
 }
 
@@ -3467,7 +3485,7 @@ function replaceRecCard(idx) {
         newCard.style.opacity = '1';
         newCard.style.transform = 'scale(1)';
       });
-      if (replacement.tmdb_id) fetchRecPoster(replacement, idx);
+      if (replacement.title) fetchRecPoster(replacement, idx);
     }, 220);
   } else {
     // No buffer left — fade out and collapse gracefully
