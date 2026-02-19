@@ -1,13 +1,13 @@
 // Netlify Serverless Function — Anthropic API Proxy
-// Keeps your API key server-side and handles CORS.
-//
-// SETUP:
-//   1. In Netlify dashboard → Site settings → Environment variables
-//   2. Add variable: ANTHROPIC_API_KEY = sk-ant-...your key...
-//   3. Deploy — this function is automatically available at /.netlify/functions/claude-recommend
+// Uses Node's built-in https module for maximum compatibility.
+
+const https = require('https');
 
 exports.handler = async (event) => {
-  // Only allow POST
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers: corsHeaders(), body: '' };
+  }
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -16,37 +16,20 @@ exports.handler = async (event) => {
     };
   }
 
-  // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: corsHeaders(), body: '' };
-  }
-
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return {
       statusCode: 500,
       headers: corsHeaders(),
-      body: JSON.stringify({ error: 'ANTHROPIC_API_KEY environment variable not set' })
+      body: JSON.stringify({ error: 'ANTHROPIC_API_KEY not set' })
     };
   }
 
   try {
-    const body = JSON.parse(event.body);
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify(body)
-    });
-
-    const data = await response.json();
-
+    const body = event.body;
+    const data = await makeRequest(apiKey, body);
     return {
-      statusCode: response.status,
+      statusCode: 200,
       headers: corsHeaders(),
       body: JSON.stringify(data)
     };
@@ -58,6 +41,38 @@ exports.handler = async (event) => {
     };
   }
 };
+
+function makeRequest(apiKey, body) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (e) {
+          reject(new Error('Invalid JSON from Anthropic: ' + data));
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
 
 function corsHeaders() {
   return {
