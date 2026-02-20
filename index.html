@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_23.html -->
+<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_24.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2795,10 +2795,11 @@ function saveWatched(){
     const newFilm={id:newId,t:title,y:year,g:genre,e:'🎬',d:director,a:[]};
     FILMS.push(newFilm);
     W.push({id:newId,d:date,r:rating,rank:nextRank()});
-    save();
-    showToast(`"${title}" added to your diary`);
+    save(); // ← persist FIRST before any render that could throw
     closeModal();
-    renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts();
+    showToast(`"${title}" added to your diary`);
+    try { renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts(); }
+    catch(e) { console.warn('Re-render after log failed:', e); }
     return;
   }
 
@@ -2812,10 +2813,11 @@ function saveWatched(){
     W.push({id:mId,d:date,r:rating,rank:nextRank()});
     WL=WL.filter(x=>x!==mId);
   }
-  save();
-  showToast(`"${film(mId)?.t}" logged to your diary`);
+  save(); // ← persist FIRST before any render that could throw
   closeModal();
-  renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts();
+  showToast(`"${film(mId)?.t}" logged to your diary`);
+  try { renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts(); }
+  catch(e) { console.warn('Re-render after log failed:', e); }
 }
 
 // ══════════ REMOVE WATCHED ══════════
@@ -2911,6 +2913,7 @@ function switchTab(tab,btn){
 
 // ══════════ RENDER TABLE ══════════
 function renderTable(){
+  if(!document.getElementById('tableBody'))return;
   const q=(document.getElementById('dbSearch').value||'').toLowerCase();
   const genre=document.getElementById('dbGenre').value;
   const director=document.getElementById('dbDirector').value;
@@ -2992,6 +2995,7 @@ function renderTable(){
 // ══════════ RENDER WATCHLIST ══════════
 function renderWL(){
   const el=document.getElementById('wlGrid');
+  if(!el)return;
   if(!WL.length){el.innerHTML='';document.getElementById('wlEmpty').style.display='block';return}
   document.getElementById('wlEmpty').style.display='none';
   el.innerHTML=WL.map((id,idx)=>{
@@ -3050,6 +3054,7 @@ async function loadWLPoster(f, idx) {
 // ══════════ RENDER RANKINGS ══════════
 function renderRankings(){
   const el=document.getElementById('rankList');
+  if(!el)return;
   if(!W.length){el.innerHTML='';document.getElementById('rankEmpty').style.display='block';return}
   document.getElementById('rankEmpty').style.display='none';
   const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
@@ -3116,6 +3121,7 @@ function renderRecs(){
 // ══════════ RENDER FACTS ══════════
 function renderFacts(){
   const strip=document.getElementById('factsStrip');
+  if(!strip)return;
   if(!W.length){strip.style.display='none';return}
   strip.style.display='block';
   const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
@@ -3137,7 +3143,8 @@ function renderFacts(){
     td&&td[1]>1?{icon:'🎩',stat:td[1],text:`films by ${td[0].split(' ').pop()}`}:{icon:'📅',stat:thisYr.length,text:'films this year'},
     ta&&ta[1]>1?{icon:'🌟',stat:ta[1],text:`films featuring ${ta[0].split(' ')[0]}`}:{icon:'🎬',stat:films.length,text:'films logged'},
   ];
-  document.getElementById('factsGrid').innerHTML=facts.map(f=>`
+  const fg=document.getElementById('factsGrid');if(!fg)return;
+  fg.innerHTML=facts.map(f=>`
     <div class="fact-card">
       <span class="fact-icon">${f.icon}</span>
       <div class="fact-stat">${f.stat}</div>
@@ -3149,7 +3156,8 @@ function renderFacts(){
 function renderStats(){
   const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
   const yr=new Date().getFullYear().toString();
-  document.getElementById('statsCards').innerHTML=[
+  const sc=document.getElementById('statsCards');if(!sc)return;
+  sc.innerHTML=[
     {icon:'🎬',n:films.length,l:'Films Watched'},
     {icon:'📅',n:films.filter(w=>w.d?.startsWith(yr)).length,l:'This Year'},
     {icon:'🏆',n:W.length?film(W.slice().sort((a,b)=>a.rank-b.rank)[0].id)?.t:'–',l:'Top Ranked'},
@@ -3160,14 +3168,16 @@ function renderStats(){
   films.forEach(w=>gc[w.f.g]=(gc[w.f.g]||0)+1);
   const gs=Object.entries(gc).sort((a,b)=>b[1]-a[1]);
   const mx=gs[0]?.[1]||1;
-  document.getElementById('genreBars').innerHTML=gs.length?gs.map(([g,c])=>`
+  const gb=document.getElementById('genreBars');if(!gb)return;
+  gb.innerHTML=gs.length?gs.map(([g,c])=>`
     <div class="gbr">
       <div class="gbr-label">${g}</div>
       <div class="gbr-track"><div class="gbr-fill" style="width:${Math.round(c/mx*100)}%"></div></div>
       <div class="gbr-count">${c}</div>
     </div>`).join(''):'<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see your genre breakdown</div>';
 
-  document.getElementById('insightsGrid').innerHTML=buildInsights(films).map(i=>`
+  const ig=document.getElementById('insightsGrid');if(!ig)return;
+  ig.innerHTML=buildInsights(films).map(i=>`
     <div class="ins-card">
       <div class="ins-badge">${i.badge}</div>
       <div class="ins-text">${i.text}</div>
