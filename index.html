@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_24.html -->
+<!-- saved from url=(0048)file:///Users/jakecomito/Downloads/index_28.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,7 +48,7 @@ body{
 
 /* ── HEADER (30% white elements on 60% black) ── */
 header{
-  position:sticky;top:0;z-index:200;
+  position:-webkit-sticky;position:sticky;top:0;z-index:200;
   background:var(--black);
   border-bottom:1px solid var(--border);
 }
@@ -271,7 +271,7 @@ header{
 .db-filter:hover,.db-filter:focus{border-color:var(--white-50);color:var(--white)}
 .db-filter option{background:var(--black-80);color:var(--white)}
 .sort-arrow{font-size:.7rem;opacity:.3;margin-left:.25rem;}
-.rec-poster-img{width:100%;height:100%;position:absolute;inset:0;}
+.rec-poster-img{width:100%;height:100%;position:absolute;top:0;left:0;right:0;bottom:0;}
 .rec-poster-img img{width:100%;height:100%;object-fit:cover;display:block;}
 .active-arrow{opacity:1;color:var(--gold);}
 thead th:hover .sort-arrow{opacity:.7;}
@@ -530,7 +530,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 
 
 .modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.9);
+  position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);
   z-index:500;display:none;align-items:center;justify-content:center;padding:1.5rem;
 }
 .modal-overlay.open{display:flex}
@@ -722,7 +722,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .agent-skeleton-poster::after {
   content:'';
   position:absolute;
-  inset:0;
+  top:0;left:0;right:0;bottom:0;
   background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.04) 50%,transparent 100%);
   animation:agent-shimmer 1.8s infinite;
 }
@@ -758,7 +758,7 @@ thead th:hover .sort-arrow{opacity:.7;}
   width:100%;height:100%;object-fit:cover;display:block;
 }
 .rec-poster-fallback {
-  position:absolute;inset:0;
+  position:absolute;top:0;left:0;right:0;bottom:0;
   display:flex;align-items:center;justify-content:center;
   font-size:3rem;background:#0a0a0a;
 }
@@ -969,7 +969,7 @@ thead th:hover .sort-arrow{opacity:.7;}
       <div id="rw-tiles" style="display:flex;gap:1.5rem;justify-content:center;align-items:flex-start;width:100%;max-width:620px;margin:0 auto;">
       <div style="width:160px;text-align:left;">
         <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
-          <img id="rw-poster-0" src="./index_files/MV5BMzBkZmQ0NjMtNTZlMy00ZjdlLTg5ODUtYWFlNGM0YzE3MTg0XkEyXkFqcGc@._V1_SX342.jpg" alt="One Battle After Another" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-0&#39;).style.display=&#39;flex&#39;;">
+          <img id="rw-poster-0" src="./index_files/lbBWwxBht4JFP5PsuJ5onpMqugW.jpg" alt="One Battle After Another" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0px; z-index: 2; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-0&#39;).style.display=&#39;flex&#39;;">
           <div id="rw-fb-0" style="position: absolute; inset: 0px; display: none; align-items: center; justify-content: center; font-size: 3rem; background: rgb(10, 10, 10);">🎬</div>
           
         </div>
@@ -981,7 +981,7 @@ thead th:hover .sort-arrow{opacity:.7;}
       </div>
       <div style="width:160px;text-align:left;">
         <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
-          <img id="rw-poster-1" src="./index_files/MV5BOGZjNDlkMTYtMTJkZi00OTkzLWI4NDEtYTA2ODQyMjcwYTdlXkEyXkFqcGc@._V1_SX342.jpg" alt="Mission: Impossible" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-1&#39;).style.display=&#39;flex&#39;;">
+          <img id="rw-poster-1" src="./index_files/l5uxY5m5OInWpcExIpKG6AR3rgL.jpg" alt="Mission: Impossible" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0px; z-index: 2; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-1&#39;).style.display=&#39;flex&#39;;">
           <div id="rw-fb-1" style="position: absolute; inset: 0px; display: none; align-items: center; justify-content: center; font-size: 3rem; background: rgb(10, 10, 10);">🎬</div>
           
         </div>
@@ -993,7 +993,7 @@ thead th:hover .sort-arrow{opacity:.7;}
       </div>
       <div style="width:160px;text-align:left;">
         <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
-          <img id="rw-poster-2" src="./index_files/MV5BZDZhZmI1ZTUtYWI3NC00NTMwLTk3NWMtNDc0OGNjM2I0ZjlmXkEyXkFqcGc@._V1_SX342.jpg" alt="Before Sunrise" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-2&#39;).style.display=&#39;flex&#39;;">
+          <img id="rw-poster-2" src="./index_files/oaKp6HZQDTtCOwn4JGi2Mh7Ep95.jpg" alt="Before Sunrise" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0px; z-index: 2; display: block;" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;rw-fb-2&#39;).style.display=&#39;flex&#39;;">
           <div id="rw-fb-2" style="position: absolute; inset: 0px; display: none; align-items: center; justify-content: center; font-size: 3rem; background: rgb(10, 10, 10);">🎬</div>
           <div style="position:absolute;top:0;left:0;background:rgba(201,168,76,0.9);color:#000;font-size:0.6rem;letter-spacing:0.12em;padding:0.25rem 0.5rem;text-transform:uppercase;font-weight:600;">#1 All Time</div>
         </div>
@@ -2341,29 +2341,29 @@ const FILMS=[
   {id:23,t:"Gentlemen Prefer Blondes",y:1953,g:"Musical",e:"✨",d:"Howard Hawks",a:["Marilyn Monroe","Jane Russell","Charles Coburn"]},
   {id:24,t:"The Women",y:1939,g:"Comedy",e:"💄",d:"George Cukor",a:["Norma Shearer","Joan Crawford","Rosalind Russell"]},
   // ── Jake's 2026 Films ──
-  {id:25,t:"The Roses",y:2025,g:"Comedy-Drama",e:"🌸",d:"Jay Roach",a:["Benedict Cumberbatch","Olivia Colman","Andy Samberg","Kate McKinnon","Allison Janney","Ncuti Gatwa"]},
-  {id:26,t:"Inglourious Basterds",y:2009,g:"War",e:"🎖️",d:"Quentin Tarantino",a:["Brad Pitt","Christoph Waltz","Mélanie Laurent","Diane Kruger"]},
-  {id:27,t:"The Royal Tenenbaums",y:2001,g:"Comedy-Drama",e:"🎾",d:"Wes Anderson",a:["Gene Hackman","Anjelica Huston","Ben Stiller","Gwyneth Paltrow","Luke Wilson","Owen Wilson"]},
-  {id:28,t:"Amélie",y:2001,g:"Romance",e:"🎠",d:"Jean-Pierre Jeunet",a:["Audrey Tautou","Mathieu Kassovitz","Rufus"]},
-  {id:29,t:"Stranger Than Fiction",y:2006,g:"Comedy-Drama",e:"📖",d:"Marc Forster",a:["Will Ferrell","Maggie Gyllenhaal","Dustin Hoffman","Emma Thompson","Queen Latifah"]},
-  {id:30,t:"Marty Supreme",y:2025,g:"Drama",e:"🏓",d:"Josh Safdie",a:["Timothée Chalamet","Gwyneth Paltrow","Odessa A'zion","Tyler, the Creator","Fran Drescher"]},
-  {id:31,t:"The Talented Mr. Ripley",y:1999,g:"Thriller",e:"🎭",d:"Anthony Minghella",a:["Matt Damon","Gwyneth Paltrow","Jude Law","Cate Blanchett"]},
-  {id:32,t:"A Fish Called Wanda",y:1988,g:"Comedy",e:"🐟",d:"Charles Crichton",a:["John Cleese","Jamie Lee Curtis","Kevin Kline","Michael Palin"]},
-  {id:33,t:"The Others",y:2001,g:"Horror",e:"👻",d:"Alejandro Amenábar",a:["Nicole Kidman","Fionnula Flanagan","Christopher Eccleston"]},
-  {id:34,t:"Anora",y:2024,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"]},
-  {id:35,t:"Now You See Me",y:2013,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"]},
-  {id:36,t:"Love Actually",y:2003,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Keira Knightley","Colin Firth","Emma Thompson","Liam Neeson","Martine McCutcheon"]},
-  {id:37,t:"Mr. & Mrs. Smith",y:2005,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"]},
-  {id:38,t:"Bugonia",y:2025,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"]},
-  {id:39,t:"Notting Hill",y:1999,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"]},
-  {id:40,t:"If I Had Legs I'd Kick You",y:2025,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"]},
-  {id:41,t:"Leaving Las Vegas",y:1995,g:"Drama",e:"🎰",d:"Mike Figgis",a:["Nicolas Cage","Elisabeth Shue","Julian Sands"]},
-  {id:42,t:"Blue Jasmine",y:2013,g:"Drama",e:"💙",d:"Woody Allen",a:["Cate Blanchett","Alec Baldwin","Sally Hawkins","Bobby Cannavale"]},
-  {id:43,t:"Shutter Island",y:2010,g:"Thriller",e:"🏚️",d:"Martin Scorsese",a:["Leonardo DiCaprio","Mark Ruffalo","Ben Kingsley","Michelle Williams"]},
-  {id:44,t:"Steel Magnolias",y:1989,g:"Drama",e:"🌺",d:"Herbert Ross",a:["Sally Field","Dolly Parton","Shirley MacLaine","Olympia Dukakis","Daryl Hannah","Julia Roberts"]},
-  {id:45,t:"Before Sunrise",y:1995,g:"Romance",e:"🌄",d:"Richard Linklater",a:["Ethan Hawke","Julie Delpy"]},
-  {id:46,t:"Mission: Impossible",y:1996,g:"Action",e:"💣",d:"Brian De Palma",a:["Tom Cruise","Jon Voight","Emmanuelle Béart","Jean Reno","Ving Rhames"]},
-  {id:47,t:"One Battle After Another",y:2025,g:"War",e:"⚔️",d:"Paul Thomas Anderson",a:["Leonardo DiCaprio","Sean Penn","Benicio del Toro","Regina Hall","Teyana Taylor"]},
+  {id:25,t:"The Roses",y:2025,g:"Comedy-Drama",e:"🌸",d:"Jay Roach",a:["Benedict Cumberbatch","Olivia Colman","Andy Samberg","Kate McKinnon","Allison Janney","Ncuti Gatwa"],tmdbId:1267905},
+  {id:26,t:"Inglourious Basterds",y:2009,g:"War",e:"🎖️",d:"Quentin Tarantino",a:["Brad Pitt","Christoph Waltz","Mélanie Laurent","Diane Kruger"],tmdbId:16869},
+  {id:27,t:"The Royal Tenenbaums",y:2001,g:"Comedy-Drama",e:"🎾",d:"Wes Anderson",a:["Gene Hackman","Anjelica Huston","Ben Stiller","Gwyneth Paltrow","Luke Wilson","Owen Wilson"],tmdbId:9428},
+  {id:28,t:"Amélie",y:2001,g:"Romance",e:"🎠",d:"Jean-Pierre Jeunet",a:["Audrey Tautou","Mathieu Kassovitz","Rufus"],tmdbId:194},
+  {id:29,t:"Stranger Than Fiction",y:2006,g:"Comedy-Drama",e:"📖",d:"Marc Forster",a:["Will Ferrell","Maggie Gyllenhaal","Dustin Hoffman","Emma Thompson","Queen Latifah"],tmdbId:10929},
+  {id:30,t:"Marty Supreme",y:2025,g:"Drama",e:"🏓",d:"Josh Safdie",a:["Timothée Chalamet","Gwyneth Paltrow","Odessa A'zion","Tyler, the Creator","Fran Drescher"],tmdbId:1317288},
+  {id:31,t:"The Talented Mr. Ripley",y:1999,g:"Thriller",e:"🎭",d:"Anthony Minghella",a:["Matt Damon","Gwyneth Paltrow","Jude Law","Cate Blanchett"],tmdbId:1213},
+  {id:32,t:"A Fish Called Wanda",y:1988,g:"Comedy",e:"🐟",d:"Charles Crichton",a:["John Cleese","Jamie Lee Curtis","Kevin Kline","Michael Palin"],tmdbId:11129},
+  {id:33,t:"The Others",y:2001,g:"Horror",e:"👻",d:"Alejandro Amenábar",a:["Nicole Kidman","Fionnula Flanagan","Christopher Eccleston"],tmdbId:1557},
+  {id:34,t:"Anora",y:2024,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"],tmdbId:1218846},
+  {id:35,t:"Now You See Me",y:2013,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"],tmdbId:75656},
+  {id:36,t:"Love Actually",y:2003,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Keira Knightley","Colin Firth","Emma Thompson","Liam Neeson","Martine McCutcheon"],tmdbId:508},
+  {id:37,t:"Mr. & Mrs. Smith",y:2005,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"],tmdbId:14979},
+  {id:38,t:"Bugonia",y:2025,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"],tmdbId:701387},
+  {id:39,t:"Notting Hill",y:1999,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"],tmdbId:1094},
+  {id:40,t:"If I Had Legs I'd Kick You",y:2025,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"],tmdbId:1160360},
+  {id:41,t:"Leaving Las Vegas",y:1995,g:"Drama",e:"🎰",d:"Mike Figgis",a:["Nicolas Cage","Elisabeth Shue","Julian Sands"],tmdbId:9593},
+  {id:42,t:"Blue Jasmine",y:2013,g:"Drama",e:"💙",d:"Woody Allen",a:["Cate Blanchett","Alec Baldwin","Sally Hawkins","Bobby Cannavale"],tmdbId:162943},
+  {id:43,t:"Shutter Island",y:2010,g:"Thriller",e:"🏚️",d:"Martin Scorsese",a:["Leonardo DiCaprio","Mark Ruffalo","Ben Kingsley","Michelle Williams"],tmdbId:11324},
+  {id:44,t:"Steel Magnolias",y:1989,g:"Drama",e:"🌺",d:"Herbert Ross",a:["Sally Field","Dolly Parton","Shirley MacLaine","Olympia Dukakis","Daryl Hannah","Julia Roberts"],tmdbId:10868},
+  {id:45,t:"Before Sunrise",y:1995,g:"Romance",e:"🌄",d:"Richard Linklater",a:["Ethan Hawke","Julie Delpy"],tmdbId:11370},
+  {id:46,t:"Mission: Impossible",y:1996,g:"Action",e:"💣",d:"Brian De Palma",a:["Tom Cruise","Jon Voight","Emmanuelle Béart","Jean Reno","Ving Rhames"],tmdbId:954},
+  {id:47,t:"One Battle After Another",y:2025,g:"War",e:"⚔️",d:"Paul Thomas Anderson",a:["Leonardo DiCaprio","Sean Penn","Benicio del Toro","Regina Hall","Teyana Taylor"],tmdbId:1054867},
 ];
 
 // Ranking order (1=best): Before Sunrise, Notting Hill, Anora, Stranger Than Fiction,
@@ -2476,9 +2476,15 @@ function posterEl(title, cssClass) {
     const el = document.getElementById(id);
     if (!el) return;
     const url = await fetchPoster(title);
-    if (url) {
-      el.innerHTML = `<img src="${url}" alt="${title}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.opacity=0">`;
-    }
+    if (!url) return;
+    const img = document.createElement('img');
+    img.alt = title;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    img.onerror = () => { img.remove(); };
+    img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
+    img.src = url;
+    // If browser has it cached, onload won't fire
+    if (img.complete && img.naturalWidth > 0) { el.innerHTML = ''; el.appendChild(img); }
   }, 0);
   return `<div id="${id}" class="${cssClass}"></div>`;
 }
@@ -2513,21 +2519,35 @@ const SEED_WL=[3,8,12];
 // ══════════ STATE ══════════
 // Restore any custom films (added from recommendations) before loading W/WL
 (function(){
-  const custom = JSON.parse(localStorage.getItem('jwl3_custom')||'[]');
-  custom.forEach(f => { if (!FILMS.find(x=>x.id===f.id)) FILMS.push(f); });
+  try {
+    const custom = JSON.parse(localStorage.getItem('jwl3_custom')||'[]');
+    custom.forEach(f => { if (!FILMS.find(x=>x.id===f.id)) FILMS.push(f); });
+  } catch(e) {}
 })();
-let W=JSON.parse(localStorage.getItem('jwl3_w')||'null')||[...SEED_W];
-let WL=JSON.parse(localStorage.getItem('jwl3_wl')||'null')||[...SEED_WL];
+let W, WL;
+try {
+  W  = JSON.parse(localStorage.getItem('jwl3_w')  || 'null') || [...SEED_W];
+  WL = JSON.parse(localStorage.getItem('jwl3_wl') || 'null') || [...SEED_WL];
+} catch(e) {
+  W  = [...SEED_W];
+  WL = [...SEED_WL];
+}
 let curSort='rank', mId=null;
 
 function save(){
-  localStorage.setItem('jwl3_w',JSON.stringify(W));
-  localStorage.setItem('jwl3_wl',JSON.stringify(WL));
-  // Persist any custom films added beyond the built-in seed films (ids 1–47)
-  const BUILTIN_MAX = 47;
-  const custom = FILMS.filter(f => f.id > BUILTIN_MAX);
-  // Always write (even empty array) so stale entries are cleared on removal
-  localStorage.setItem('jwl3_custom', JSON.stringify(custom));
+  try {
+    localStorage.setItem('jwl3_w', JSON.stringify(W));
+    localStorage.setItem('jwl3_wl', JSON.stringify(WL));
+    const BUILTIN_MAX = 47;
+    const custom = FILMS.filter(f => f.id > BUILTIN_MAX);
+    localStorage.setItem('jwl3_custom', JSON.stringify(custom));
+  } catch(e) {
+    // Safari private mode blocks localStorage — show a warning once
+    if (!window._lsWarnShown) {
+      window._lsWarnShown = true;
+      showToast('⚠ Storage unavailable — data won\u2019t persist in private mode');
+    }
+  }
 }
 function film(id){return FILMS.find(f=>f.id===id)}
 function isW(id){return W.some(w=>w.id===id)}
@@ -2646,39 +2666,82 @@ function renderTMDBResults(results, q){
   }).join('');
 }
 
-// ── Add a TMDB film to local FILMS array (if not already there) ──
-// Only call this right before you're about to save — it commits the film to FILMS.
+// ── Add a TMDB film to local FILMS array and enrich with director + cast ──
 function tmdbToLocal(data){
   // data: {id, t, y, g, poster}
   let local=FILMS.find(f=>f.tmdbId===data.id);
+  if(!local) local=FILMS.find(f=>f.t.toLowerCase()===data.t.toLowerCase()&&f.y===data.y);
   if(!local){
-    // Also check by title+year
-    local=FILMS.find(f=>f.t.toLowerCase()===data.t.toLowerCase()&&f.y===data.y);
-  }
-  if(!local){
-    // Compute newId fresh from current FILMS + any saved customs to avoid id collision after reload
-    const savedCustoms = JSON.parse(localStorage.getItem('jwl3_custom')||'[]');
+    let savedCustoms = [];
+    try { savedCustoms = JSON.parse(localStorage.getItem('jwl3_custom')||'[]'); } catch(e){}
     const allIds = [...FILMS.map(f=>f.id), ...savedCustoms.map(f=>f.id)];
     const newId = Math.max(...allIds, 0) + 1;
     local={id:newId,t:data.t,y:data.y,g:data.g||'Drama',e:'🎬',d:'',a:[],tmdbId:data.id,poster:data.poster};
     FILMS.push(local);
   }
+  // Always try to enrich director + cast if missing, async — doesn't block the return
+  if((!local.d || !local.a || !local.a.length) && local.tmdbId && tmdbReady()){
+    enrichFilmFromTMDB(local);
+  }
   return local;
 }
 
-function openModalTMDB(safeJson){
+// Fetch director + cast from TMDB and update the film record + localStorage
+async function enrichFilmFromTMDB(filmObj) {
+  try {
+    const res = await fetch(
+      `${TMDB_BASE}/movie/${filmObj.tmdbId}?append_to_response=credits&language=en-US`,
+      { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } }
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    const director = data.credits?.crew?.find(c => c.job === 'Director')?.name || '';
+    const cast = (data.credits?.cast || []).slice(0, 8).map(c => c.name);
+    const genre = data.genres?.[0]?.name || filmObj.g;
+    const poster = data.poster_path || filmObj.poster || '';
+    // Update in-memory record
+    filmObj.d = director;
+    filmObj.a = cast;
+    filmObj.g = genre;
+    filmObj.poster = poster;
+    // Persist the enriched data and re-render anything showing this film's metadata
+    save();
+    try {
+      renderTable();
+      renderRankings();
+      renderStats();
+      renderFacts();
+      // If modal is open for this film, update the displayed metadata
+      if (mId === filmObj.id) {
+        const mMeta = document.getElementById('mMeta');
+        if (mMeta) mMeta.textContent = `${filmObj.y} · ${filmObj.g} · Dir. ${filmObj.d}`;
+      }
+    } catch(e) { /* non-critical re-render */ }
+  } catch(e) { /* non-critical */ }
+}
+
+async function openModalTMDB(safeJson){
   const data=JSON.parse(safeJson.replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
   const local=tmdbToLocal(data);
+  // If this is a new film missing director/cast, wait for enrichment before opening modal
+  // so the modal shows accurate metadata and saveWatched stores it correctly
+  if((!local.d || !local.a || !local.a.length) && local.tmdbId && tmdbReady()){
+    try { await enrichFilmFromTMDB(local); } catch(e){}
+  }
   openModal(local.id);
 }
 
-function addWLTMDB(safeJson){
+async function addWLTMDB(safeJson){
   const data=JSON.parse(safeJson.replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
   const local=tmdbToLocal(data);
   if(!isWL(local.id)&&!isW(local.id)){
     WL.push(local.id);save();
     showToast(`"${local.t}" added to your watch list`);
     hideResults();
+    // Enrich in background for watchlist films too
+    if((!local.d || !local.a || !local.a.length) && local.tmdbId && tmdbReady()){
+      try { await enrichFilmFromTMDB(local); } catch(e){}
+    }
   }
 }
 
@@ -2748,7 +2811,7 @@ function openModal(id){
   mId=id;mIsNew=false;
   const f=film(id);
   document.getElementById('mTitle').textContent=f.t;
-  document.getElementById('mMeta').textContent=`${f.y} · ${f.g} · Dir. ${f.d}`;
+  document.getElementById('mMeta').textContent=f.d?`${f.y} · ${f.g} · Dir. ${f.d}`:`${f.y} · ${f.g}`;
   document.getElementById('mDate').value=new Date().toISOString().split('T')[0];
   document.getElementById('mNewFields').style.display='none';
   document.getElementById('mSaveBtn').textContent='Log This Film';
@@ -2928,7 +2991,7 @@ function renderTable(){
   if(releaseYear)list=list.filter(w=>film(w.id)?.y==releaseYear);
   if(curSort==='date'){
     const dir=sortDir['date']==='asc'?1:-1;
-    list.sort((a,b)=>dir*(new Date(a.d)-new Date(b.d)));
+    list.sort((a,b)=>dir*(new Date(a.d+'T12:00:00')-new Date(b.d+'T12:00:00')));
   } else if(curSort==='rank'){
     const dir=sortDir['rank']==='desc'?-1:1;
     list.sort((a,b)=>dir*(a.rank-b.rank));
@@ -3104,7 +3167,7 @@ function renderRecs(){
     <div class="rec-card">
       <div class="rec-poster" style="position:relative;overflow:hidden;">
         ${posterEl(f.t,'rec-poster-img')}
-        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 50%)"></div>
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 50%)"></div>
         <span class="rec-badge">Recommended</span>
       </div>
       <div class="rec-year">${f.y}</div>
@@ -3262,7 +3325,7 @@ async function renderRecentlyWatched() {
   if (!container) return;
 
   // Pull the 3 most recently watched from the live W array (sorted by date desc)
-  const sorted = W.slice().sort((a, b) => new Date(b.d) - new Date(a.d)).slice(0, 3);
+  const sorted = W.slice().sort((a, b) => new Date(b.d+'T12:00:00') - new Date(a.d+'T12:00:00')).slice(0, 3);
   const allSorted = W.slice().sort((a, b) => a.rank - b.rank);
 
   // Build skeleton tiles
@@ -3276,7 +3339,7 @@ async function renderRecentlyWatched() {
         <div style="width:160px;height:240px;background:#111;border:1px solid rgba(255,255,255,0.08);overflow:hidden;position:relative;margin-bottom:0.75rem;">
           <img id="rw-poster-${i}" src="" alt="${f.t}" style="width:100%;height:100%;object-fit:cover;display:none;"
                onerror="this.style.display='none';document.getElementById('rw-fb-${i}').style.display='flex';" />
-          <div id="rw-fb-${i}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;background:#0a0a0a;">🎬</div>
+          <div id="rw-fb-${i}" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:3rem;background:#0a0a0a;">🎬</div>
           ${isTop ? `<div style="position:absolute;top:0;left:0;background:rgba(201,168,76,0.9);color:#000;font-size:0.6rem;letter-spacing:0.12em;padding:0.25rem 0.5rem;text-transform:uppercase;font-weight:600;">#1 All Time</div>` : ''}
         </div>
         <div style="font-size:0.82rem;color:rgba(255,255,255,0.9);margin-bottom:0.25rem;line-height:1.3;letter-spacing:0.01em;">${f.t}</div>
@@ -3287,7 +3350,7 @@ async function renderRecentlyWatched() {
       </div>`;
   }).join('');
 
-  // Fetch posters — use shared fetchPoster which handles TMDB + OMDB
+  // Fetch posters — use onload to ensure fallback is hidden only after image actually renders
   for (let i = 0; i < sorted.length; i++) {
     const f = film(sorted[i].id);
     if (!f) continue;
@@ -3296,12 +3359,26 @@ async function renderRecentlyWatched() {
       if (url) {
         const img = document.getElementById(`rw-poster-${i}`);
         const fb  = document.getElementById(`rw-fb-${i}`);
-        if (img) { img.src = url; img.style.display = 'block'; }
-        if (fb)  { fb.style.display = 'none'; }
+        if (!img) continue;
+        const showPoster = () => {
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;right:0;bottom:0;z-index:2;display:block;';
+          if (fb) fb.style.display = 'none';
+        };
+        img.onload = showPoster;
+        img.onerror = () => { img.style.display = 'none'; };
+        img.src = url;
+        if (img.complete && img.naturalWidth > 0) showPoster();
       }
     } catch(e) { /* emoji fallback stays */ }
   }
 }
+
+// Enrich any existing custom films that are missing director/cast
+(function enrichExistingFilms() {
+  // Enrich any film (seed or custom) that has a tmdbId but is missing director or cast
+  FILMS.filter(f => f.tmdbId && tmdbReady() && (!f.d || f.d === '' || !f.a || !f.a.length))
+       .forEach(f => enrichFilmFromTMDB(f));
+})();
 
 // Auto-run on load
 renderRecentlyWatched();
@@ -3469,7 +3546,7 @@ async function fetchRecPoster(rec, idx) {
 
     const img = new Image();
     img.alt = rec.title;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0;z-index:1;';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;';
     img.onload = () => { wrap.insertBefore(img, fb); fb.style.display = 'none'; };
     img.src = `https://image.tmdb.org/t/p/w342${match.poster_path}`;
   } catch(e) { /* emoji fallback stays */ }
