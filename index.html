@@ -914,6 +914,30 @@ thead th:hover .sort-arrow{opacity:.7;}
   .rec-card{width:140px}
   .rec-poster-wrap{width:140px;height:210px}
 }
+
+/* ── CLOUD SYNC ── */
+#syncBtn{background:none;border:none;cursor:pointer;padding:.25rem .4rem;color:var(--white-50);transition:color .2s;display:flex;align-items:center;gap:.35rem;font-size:.75rem;letter-spacing:.06em;margin-left:.5rem}
+#syncBtn:hover{color:var(--white-80)}
+#syncBtn .sdot{width:6px;height:6px;border-radius:50%;background:var(--white-20);display:inline-block;transition:background .4s;flex-shrink:0}
+#syncBtn.syncing .sdot{background:var(--gold);animation:sdotPulse 1s infinite}
+#syncBtn.synced .sdot{background:#5c9c5c}
+#syncBtn.serror .sdot{background:#c06060}
+@keyframes sdotPulse{0%,100%{opacity:1}50%{opacity:.25}}
+#syncModal{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.72);align-items:center;justify-content:center}
+#syncModal.open{display:flex}
+.sbox{background:var(--black-80);border:1px solid var(--border);padding:2rem;max-width:480px;width:92%;position:relative}
+.sbox h3{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem}
+.slabel{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--white-50);margin-bottom:.45rem}
+.scode{font-family:monospace;font-size:.78rem;background:var(--black-90);border:1px solid var(--border);padding:.65rem .9rem;color:var(--white-80);word-break:break-all;margin-bottom:.5rem;line-height:1.5}
+.srow{display:flex;gap:.5rem;margin-bottom:1.4rem}
+.sbtn{font-family:"Times New Roman",Times,serif;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);background:none;color:var(--white-80);padding:.4rem .85rem;cursor:pointer;transition:border-color .2s,color .2s;white-space:nowrap}
+.sbtn:hover{border-color:var(--gold);color:var(--gold)}
+.sinput{flex:1;background:var(--black-90);border:1px solid var(--border);color:var(--white);padding:.4rem .7rem;font-family:"Times New Roman",Times,serif;font-size:.85rem}
+.sinput:focus{outline:none;border-color:var(--gold)}
+.smsg{font-size:.72rem;color:var(--white-50);font-style:italic;min-height:1.2rem}
+.sclose{position:absolute;top:.9rem;right:1rem;background:none;border:none;color:var(--white-50);cursor:pointer;font-size:1.1rem}
+.sclose:hover{color:var(--white)}
+.sdivider{border:none;border-top:1px solid var(--border);margin:1.2rem 0}
 </style>
 <style id="claude-agent-animation-styles">
       @keyframes claude-pulse {
@@ -953,8 +977,29 @@ thead th:hover .sort-arrow{opacity:.7;}
       <button class="nav-tab" onclick="showPage(&#39;rankings&#39;)">Rank</button>
       <button class="nav-tab" onclick="showPage(&#39;stats&#39;)">Insights</button>
     </div>
+    <button id="syncBtn" onclick="openSyncModal()" title="Cloud Sync — click to manage">☁ <span class="sdot"></span></button>
   </div>
 </header>
+
+<div id="syncModal" onclick="if(event.target===this)closeSyncModal()">
+  <div class="sbox">
+    <button class="sclose" onclick="closeSyncModal()">✕</button>
+    <h3>Cloud Sync</h3>
+    <div class="slabel">Your Sync Code — save this to restore your data on any browser</div>
+    <div class="scode" id="syncCodeDisplay"></div>
+    <div class="srow">
+      <button class="sbtn" onclick="copySyncCode()">Copy Code</button>
+      <button class="sbtn" onclick="forceSyncNow()">Sync Now</button>
+    </div>
+    <hr class="sdivider">
+    <div class="slabel">Restore on a New Browser — paste your sync code below</div>
+    <div class="srow">
+      <input class="sinput" id="syncCodeInput" placeholder="Paste your sync code…">
+      <button class="sbtn" onclick="restoreFromCode()">Restore</button>
+    </div>
+    <div class="smsg" id="syncMsg"></div>
+  </div>
+</div>
 
 <!-- HOME -->
 <div id="page-home" class="page active">
@@ -2559,7 +2604,175 @@ function save(){
       showToast('⚠ Storage unavailable — data won\u2019t persist in private mode');
     }
   }
+  if (!_suppressCloudSave) cloudSave();
 }
+
+// ══════════════════════════════════════════
+// CLOUD SYNC — Netlify Blobs backend
+// ══════════════════════════════════════════
+const SYNC_ENDPOINT = '/.netlify/functions/sync';
+let _suppressCloudSave = false;
+let _cloudSaveTimer = null;
+
+function _getCookie(name) {
+  const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return m ? m[2] : null;
+}
+function _setCookie(name, val, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 86400000);
+  document.cookie = name + '=' + val + ';expires=' + d.toUTCString() + ';path=/;SameSite=Strict';
+}
+
+function getOrCreateUserId() {
+  let uid = localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid');
+  if (!uid) {
+    uid = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'jwl-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+  }
+  // Store in both localStorage and a cookie (cookie survives "clear cache" in most browsers)
+  try { localStorage.setItem('jwl3_uid', uid); } catch(e) {}
+  _setCookie('jwl3_uid', uid, 365);
+  return uid;
+}
+
+function setSyncStatus(state) { // 'syncing' | 'synced' | 'serror' | ''
+  const btn = document.getElementById('syncBtn');
+  if (!btn) return;
+  btn.className = state || '';
+  if (state === 'synced') setTimeout(() => { btn.className = ''; }, 4000);
+}
+
+function cloudSave() {
+  clearTimeout(_cloudSaveTimer);
+  _cloudSaveTimer = setTimeout(_doCloudSave, 2000);
+}
+
+async function _doCloudSave() {
+  const uid = getOrCreateUserId();
+  setSyncStatus('syncing');
+  try {
+    const payload = JSON.stringify({
+      w: W, wl: WL,
+      custom: FILMS.filter(f => f.id > 47),
+      _ts: Date.now()
+    });
+    const res = await fetch(SYNC_ENDPOINT + '?userId=' + uid, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const ts = String(Date.now());
+    try { localStorage.setItem('jwl3_ts', ts); } catch(e) {}
+    _setCookie('jwl3_ts', ts, 365);
+    setSyncStatus('synced');
+  } catch(e) {
+    setSyncStatus('serror');
+  }
+}
+
+async function cloudLoad() {
+  // Only load if we have a known UID — don't create one until user actually saves data
+  const uid = localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid');
+  if (!uid) return;
+  try {
+    const res = await fetch(SYNC_ENDPOINT + '?userId=' + uid);
+    if (!res.ok) return;
+    const cloud = await res.json();
+    if (!cloud || !Array.isArray(cloud.w) || cloud.w.length === 0) return;
+    const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
+    const cloudTs = cloud._ts || 0;
+    const cloudHasMore = cloud.w.length > W.length;
+    const cloudIsNewer = cloudTs > localTs && cloudTs > 0;
+    if (!cloudHasMore && !cloudIsNewer) return;
+    // Cloud has better data — restore it
+    W = cloud.w;
+    WL = cloud.wl || [];
+    // Replace custom films with cloud's version
+    if (Array.isArray(cloud.custom)) {
+      let i = FILMS.length;
+      while (i-- > 0) { if (FILMS[i].id > 47) FILMS.splice(i, 1); }
+      cloud.custom.forEach(f => { if (!FILMS.find(x => x.id === f.id)) FILMS.push(f); });
+    }
+    // Persist locally without re-triggering a cloud save
+    _suppressCloudSave = true;
+    save();
+    _suppressCloudSave = false;
+    const ts = String(cloudTs || Date.now());
+    try { localStorage.setItem('jwl3_ts', ts); } catch(e) {}
+    _setCookie('jwl3_ts', ts, 365);
+    // Re-render everything with restored data
+    try { renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts(); } catch(e) {}
+    setSyncStatus('synced');
+    showToast('✓ Data restored from cloud (' + cloud.w.length + ' films)');
+  } catch(e) { /* cloud unavailable — local data still intact */ }
+}
+
+function openSyncModal() {
+  document.getElementById('syncCodeDisplay').textContent = getOrCreateUserId();
+  const ts = localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts');
+  const msgEl = document.getElementById('syncMsg');
+  msgEl.textContent = ts
+    ? 'Last synced: ' + new Date(parseInt(ts, 10)).toLocaleString()
+    : 'Not yet synced. Log a film to trigger your first sync.';
+  document.getElementById('syncModal').classList.add('open');
+}
+function closeSyncModal() {
+  document.getElementById('syncModal').classList.remove('open');
+}
+function copySyncCode() {
+  const code = getOrCreateUserId();
+  navigator.clipboard?.writeText(code).then(() => {
+    document.getElementById('syncMsg').textContent = 'Copied to clipboard!';
+    setTimeout(() => { document.getElementById('syncMsg').textContent = ''; }, 2500);
+  });
+}
+async function forceSyncNow() {
+  clearTimeout(_cloudSaveTimer);
+  document.getElementById('syncMsg').textContent = 'Syncing…';
+  await _doCloudSave();
+  const ts = localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts');
+  document.getElementById('syncMsg').textContent = ts
+    ? 'Last synced: ' + new Date(parseInt(ts, 10)).toLocaleString()
+    : 'Sync complete.';
+}
+async function restoreFromCode() {
+  const raw = document.getElementById('syncCodeInput').value.trim();
+  const code = raw.replace(/[^a-zA-Z0-9-]/g, '');
+  const msgEl = document.getElementById('syncMsg');
+  if (code.length < 8) { msgEl.textContent = 'Please enter a valid sync code.'; return; }
+  msgEl.textContent = 'Restoring…';
+  try {
+    const res = await fetch(SYNC_ENDPOINT + '?userId=' + code);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const cloud = await res.json();
+    if (!cloud || !Array.isArray(cloud.w) || cloud.w.length === 0) {
+      msgEl.textContent = 'No data found for that sync code.'; return;
+    }
+    W = cloud.w;
+    WL = cloud.wl || [];
+    if (Array.isArray(cloud.custom)) {
+      let i = FILMS.length;
+      while (i-- > 0) { if (FILMS[i].id > 47) FILMS.splice(i, 1); }
+      cloud.custom.forEach(f => { if (!FILMS.find(x => x.id === f.id)) FILMS.push(f); });
+    }
+    // Switch to restored sync code
+    try { localStorage.setItem('jwl3_uid', code); } catch(e) {}
+    _setCookie('jwl3_uid', code, 365);
+    _suppressCloudSave = true;
+    save();
+    _suppressCloudSave = false;
+    try { renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts(); } catch(e) {}
+    document.getElementById('syncCodeDisplay').textContent = code;
+    document.getElementById('syncCodeInput').value = '';
+    msgEl.textContent = 'Restored ' + cloud.w.length + ' films. You are now using this sync code.';
+  } catch(e) {
+    msgEl.textContent = 'Restore failed. Check the code and try again.';
+  }
+}
+
 function film(id){return FILMS.find(f=>f.id===id)}
 function isW(id){return W.some(w=>w.id===id)}
 function isWL(id){return WL.includes(id)}
@@ -3405,6 +3618,9 @@ async function renderRecentlyWatched() {
   renderRankings();
   renderStats();
 })();
+
+// After initial render, pull from cloud — restores data after cache clears
+cloudLoad();
 
 // ══════════════════════════════════════════
 // CLAUDE RECOMMENDATION AGENT
