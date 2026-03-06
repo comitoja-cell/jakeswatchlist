@@ -54,6 +54,22 @@ exports.handler = async function(event) {
     return { statusCode: 200, headers: corsHeaders(), body: '' };
   }
 
+  // Debug route — returns context info without exposing token
+  if (event.path && event.path.includes('/debug')) {
+    const raw = process.env.NETLIFY_BLOBS_CONTEXT;
+    const ctx2 = getBlobsContext();
+    return { statusCode: 200, headers: corsHeaders(), body: JSON.stringify({
+      hasEnvVar: !!raw,
+      rawLength: raw ? raw.length : 0,
+      ctxKeys: ctx2 ? Object.keys(ctx2) : null,
+      hasEdgeURL: !!(ctx2?.edgeURL),
+      hasUncachedEdgeURL: !!(ctx2?.uncachedEdgeURL),
+      hasToken: !!(ctx2?.token),
+      hasSiteID: !!(ctx2?.siteID),
+      siteID: ctx2?.siteID || null
+    })};
+  }
+
   const userId = (event.queryStringParameters?.userId || '')
     .replace(/[^a-zA-Z0-9-]/g, '');
   if (userId.length < 8) {
