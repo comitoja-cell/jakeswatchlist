@@ -2690,8 +2690,8 @@ function tmdbToLocal(data){
     local={id:newId,t:data.t,y:data.y,g:data.g||'Drama',e:'🎬',d:'',a:[],tmdbId:data.id,poster:data.poster};
     FILMS.push(local);
   }
-  // Always try to enrich director + cast if missing, async — doesn't block the return
-  if((!local.d || !local.a || !local.a.length) && local.tmdbId && tmdbReady()){
+  // Always try to enrich director + cast if missing or cast list is incomplete, async — doesn't block the return
+  if((!local.d || !local.a || local.a.length < 12) && local.tmdbId && tmdbReady()){
     enrichFilmFromTMDB(local);
   }
   return local;
@@ -2707,7 +2707,7 @@ async function enrichFilmFromTMDB(filmObj) {
     if (!res.ok) return;
     const data = await res.json();
     const director = data.credits?.crew?.find(c => c.job === 'Director')?.name || '';
-    const cast = (data.credits?.cast || []).slice(0, 8).map(c => c.name);
+    const cast = (data.credits?.cast || []).slice(0, 12).map(c => c.name);
     const genre = data.genres?.[0]?.name || filmObj.g;
     const poster = data.poster_path || filmObj.poster || '';
     // Update in-memory record
@@ -2736,7 +2736,7 @@ async function openModalTMDB(safeJson){
   const local=tmdbToLocal(data);
   // If this is a new film missing director/cast, wait for enrichment before opening modal
   // so the modal shows accurate metadata and saveWatched stores it correctly
-  if((!local.d || !local.a || !local.a.length) && local.tmdbId && tmdbReady()){
+  if((!local.d || !local.a || local.a.length < 12) && local.tmdbId && tmdbReady()){
     try { await enrichFilmFromTMDB(local); } catch(e){}
   }
   openModal(local.id);
@@ -3296,9 +3296,10 @@ function renderActors(films){
       ac[a].push({t:w.f.t,y:w.f.y});
     });
   });
-  // Sort by count desc, then alpha
+  // Sort by count desc, then alpha; only show actors in 2+ films
   const sorted=Object.entries(ac)
-    .sort((a,b)=>b[1].length-a[1].length||a[0].localeCompare(b[0]));
+    .sort((a,b)=>b[1].length-a[1].length||a[0].localeCompare(b[0]))
+    .filter(([,movies])=>movies.length>=2);
 
   el.innerHTML=sorted.map(([actor,movies],i)=>{
     const count=movies.length;
