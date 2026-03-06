@@ -25,18 +25,11 @@ exports.handler = async function(event) {
       body: JSON.stringify({ error: 'Valid userId required' }) };
   }
 
-  function parseBlobsContext() {
-    const raw = process.env.NETLIFY_BLOBS_CONTEXT;
-    if (!raw) return null;
-    try { return JSON.parse(Buffer.from(raw, 'base64').toString('utf8')); } catch(_) {}
-    try { return JSON.parse(raw); } catch(_) {}
-    return null;
-  }
-
   try {
-    const ctx = parseBlobsContext();
-    const storeConfig = (ctx && ctx.siteID && ctx.token)
-      ? { name: 'watchlist', siteID: ctx.siteID, token: ctx.token }
+    const siteID = process.env.SITE_ID;
+    const token = process.env.NETLIFY_FUNCTIONS_TOKEN;
+    const storeConfig = (siteID && token)
+      ? { name: 'watchlist', siteID, token }
       : 'watchlist';
 
     const store = getStore(storeConfig);
