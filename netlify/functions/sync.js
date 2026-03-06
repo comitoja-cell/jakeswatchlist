@@ -1,6 +1,6 @@
 // Netlify Function — Cloud sync using @netlify/blobs SDK
-// GET  ?userId=UUID  → returns stored JSON
-// POST ?userId=UUID  → stores request body JSON
+// GET  ?userId=UUID  -> returns stored JSON
+// POST ?userId=UUID  -> stores request body JSON
 
 const { getStore } = require('@netlify/blobs');
 
@@ -25,8 +25,21 @@ exports.handler = async function(event) {
       body: JSON.stringify({ error: 'Valid userId required' }) };
   }
 
+  function parseBlobsContext() {
+    const raw = process.env.NETLIFY_BLOBS_CONTEXT;
+    if (!raw) return null;
+    try { return JSON.parse(Buffer.from(raw, 'base64').toString('utf8')); } catch(_) {}
+    try { return JSON.parse(raw); } catch(_) {}
+    return null;
+  }
+
   try {
-    const store = getStore('watchlist');
+    const ctx = parseBlobsContext();
+    const storeConfig = (ctx && ctx.siteID && ctx.token)
+      ? { name: 'watchlist', siteID: ctx.siteID, token: ctx.token }
+      : 'watchlist';
+
+    const store = getStore(storeConfig);
 
     if (event.httpMethod === 'GET') {
       const data = await store.get(userId, { type: 'text' });
@@ -45,7 +58,9 @@ exports.handler = async function(event) {
 
     return { statusCode: 405, headers: CORS, body: 'Method not allowed' };
   } catch(e) {
+    const netlifyEnvKeys = Object.keys(process.env)
+      .filter(k => k.startsWith('NETLIFY') || k.startsWith('SITE') || k.includes('BLOB'));
     return { statusCode: 500, headers: CORS,
-      body: JSON.stringify({ error: e.message }) };
+      body: JSON.stringify({ error: e.message, netlifyEnvKeys }) };
   }
 };
