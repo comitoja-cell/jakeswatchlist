@@ -62,12 +62,14 @@ exports.handler = async function(event) {
   }
 
   const ctx = getBlobsContext();
-  if (!ctx || !ctx.url || !ctx.token || !ctx.siteID) {
+  // Netlify Blobs context fields: edgeURL (cached reads), uncachedEdgeURL (writes), token, siteID
+  const baseUrl = ctx?.uncachedEdgeURL || ctx?.edgeURL;
+  if (!ctx || !baseUrl || !ctx.token || !ctx.siteID) {
     // Context unavailable (e.g. local dev) — return empty so client falls back gracefully
     return { statusCode: 200, headers: corsHeaders(), body: EMPTY };
   }
 
-  const blobUrl = `${ctx.url}/${ctx.siteID}/watchlist/${encodeURIComponent(userId)}`;
+  const blobUrl = `${baseUrl}/${ctx.siteID}/watchlist/${encodeURIComponent(userId)}`;
   const auth = { Authorization: `Bearer ${ctx.token}` };
 
   if (event.httpMethod === 'GET') {
