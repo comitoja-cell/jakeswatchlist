@@ -27,7 +27,7 @@ exports.handler = async function(event) {
 
   try {
     const siteID = process.env.SITE_ID;
-    const token = process.env.NETLIFY_FUNCTIONS_TOKEN;
+    const token = process.env.NETLIFY_BLOB_TOKEN || process.env.NETLIFY_FUNCTIONS_TOKEN;
     const storeConfig = (siteID && token)
       ? { name: 'watchlist', siteID, token }
       : 'watchlist';
