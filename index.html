@@ -938,6 +938,13 @@ thead th:hover .sort-arrow{opacity:.7;}
 .sclose{position:absolute;top:.9rem;right:1rem;background:none;border:none;color:var(--white-50);cursor:pointer;font-size:1.1rem}
 .sclose:hover{color:var(--white)}
 .sdivider{border:none;border-top:1px solid var(--border);margin:1.2rem 0}
+
+/* ── Visitor mode: hide all write controls (shown to non-owners) ── */
+body.visitor-mode .search-wrap { display: none !important; }
+body.visitor-mode .rank-ab     { display: none !important; }
+body.visitor-mode .rank-remove { display: none !important; }
+body.visitor-mode .wl-btn      { display: none !important; }
+body.visitor-mode #syncBtn     { display: none !important; }
 </style>
 <style id="claude-agent-animation-styles">
       @keyframes claude-pulse {
@@ -2584,6 +2591,7 @@ try {
 let curSort='rank', mId=null;
 
 function save(){
+  if (!isOwner) return; // public watchlist — visitors are read-only
   try {
     localStorage.setItem('jwl3_w', JSON.stringify(W));
     localStorage.setItem('jwl3_wl', JSON.stringify(WL));
@@ -2604,6 +2612,8 @@ function save(){
 // CLOUD SYNC — Netlify Blobs backend
 // ══════════════════════════════════════════
 const SYNC_ENDPOINT = '/.netlify/functions/sync';
+// Jake's canonical UID — all reads use this; only this browser can write
+const JAKE_UID = '9b88a31c-198d-4ee5-ba2a-48b14ab460b9';
 let _suppressCloudSave = false;
 let _cloudSaveTimer = null;
 
@@ -2616,6 +2626,9 @@ function _setCookie(name, val, days) {
   d.setTime(d.getTime() + days * 86400000);
   document.cookie = name + '=' + val + ';expires=' + d.toUTCString() + ';path=/;SameSite=Strict';
 }
+
+// True only on Jake's own browser — controls write access and visitor-mode UI
+const isOwner = (localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid')) === JAKE_UID;
 
 function getOrCreateUserId() {
   let uid = localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid');
@@ -2644,6 +2657,7 @@ function cloudSave() {
 
 async function _doCloudSave() {
   const uid = getOrCreateUserId();
+  if (uid !== JAKE_UID) return; // safety gate — only Jake can write to the cloud
   setSyncStatus('syncing');
   try {
     const payload = JSON.stringify({
@@ -2667,20 +2681,23 @@ async function _doCloudSave() {
 }
 
 async function cloudLoad() {
-  // Only load if we have a known UID — don't create one until user actually saves data
-  const uid = localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid');
-  if (!uid) return;
+  // Always fetch Jake's canonical data — this is a public watchlist.
+  // Visitors always get Jake's list. Jake's own browser uses smart logic
+  // to avoid overwriting fresher local changes.
   try {
-    const res = await fetch(SYNC_ENDPOINT + '?userId=' + uid);
+    const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID);
     if (!res.ok) return;
     const cloud = await res.json();
     if (!cloud || !Array.isArray(cloud.w) || cloud.w.length === 0) return;
-    const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
-    const cloudTs = cloud._ts || 0;
-    const cloudHasMore = cloud.w.length > W.length;
-    const cloudIsNewer = cloudTs > localTs && cloudTs > 0;
-    // Also load if local is empty — covers the "cleared cache" scenario
-    if (!cloudHasMore && !cloudIsNewer && W.length > 0) return;
+    if (isOwner) {
+      // Jake's own browser: only apply if cloud has better/newer data
+      const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
+      const cloudTs = cloud._ts || 0;
+      const cloudHasMore = cloud.w.length > W.length;
+      const cloudIsNewer = cloudTs > localTs && cloudTs > 0;
+      if (!cloudHasMore && !cloudIsNewer && W.length > 0) return;
+    }
+    // Visitors: always apply Jake's cloud data (no local state to protect)
     // Cloud has better data — restore it
     W = cloud.w;
     WL = cloud.wl || [];
@@ -3611,6 +3628,8 @@ async function renderRecentlyWatched() {
   renderWL();
   renderRankings();
   renderStats();
+  // Apply read-only mode for anyone who isn't Jake
+  if (!isOwner) document.body.classList.add('visitor-mode');
 })();
 
 // After initial render, pull from cloud — restores data after cache clears
