@@ -2691,10 +2691,10 @@ async function cloudLoad() {
     if (!res.ok) return;
     const cloud = await res.json();
     if (!cloud || !Array.isArray(cloud.w) || cloud.w.length === 0) return;
+    const cloudTs = cloud._ts || 0; // declared here so it's in scope for all visitors too
     if (isOwner) {
       // Jake's own browser: only apply if cloud has better/newer data
       const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
-      const cloudTs = cloud._ts || 0;
       const cloudHasMore = cloud.w.length > W.length;
       const cloudIsNewer = cloudTs > localTs && cloudTs > 0;
       if (!cloudHasMore && !cloudIsNewer && W.length > 0) return;
