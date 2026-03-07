@@ -2545,32 +2545,8 @@ function posterEl(title, cssClass) {
   return `<div id="${id}" class="${cssClass}"></div>`;
 }
 
-const SEED_W=[
-  {id:45,d:"2026-02-12",r:5,rank:1},   // Before Sunrise
-  {id:39,d:"2026-01-26",r:5,rank:2},   // Notting Hill
-  {id:34,d:"2026-01-18",r:5,rank:3},   // Anora
-  {id:29,d:"2026-01-08",r:5,rank:4},   // Stranger Than Fiction
-  {id:33,d:"2026-01-16",r:4,rank:5},   // The Others
-  {id:28,d:"2026-01-05",r:4,rank:6},   // Amélie
-  {id:38,d:"2026-01-23",r:4,rank:7},   // Bugonia
-  {id:47,d:"2026-02-15",r:4,rank:8},   // One Battle After Another
-  {id:30,d:"2026-01-10",r:4,rank:9},   // Marty Supreme
-  {id:26,d:"2026-01-03",r:4,rank:10},  // Inglourious Basterds
-  {id:36,d:"2026-01-21",r:4,rank:11},  // Love Actually
-  {id:41,d:"2026-02-01",r:3,rank:12},  // Leaving Las Vegas
-  {id:43,d:"2026-02-05",r:3,rank:13},  // Shutter Island
-  {id:25,d:"2026-01-02",r:3,rank:14},  // The Roses
-  {id:44,d:"2026-02-06",r:3,rank:15},  // Steel Magnolias
-  {id:35,d:"2026-01-19",r:3,rank:16},  // Now You See Me
-  {id:32,d:"2026-01-16",r:3,rank:17},  // A Fish Called Wanda
-  {id:27,d:"2026-01-04",r:2,rank:18},  // The Royal Tenenbaums
-  {id:31,d:"2026-01-11",r:2,rank:19},  // The Talented Mr. Ripley
-  {id:37,d:"2026-01-23",r:2,rank:20},  // Mr. & Mrs. Smith
-  {id:46,d:"2026-02-13",r:2,rank:21},  // Mission: Impossible
-  {id:40,d:"2026-01-29",r:1,rank:22},  // If I Had Legs I'd Kick You
-  {id:42,d:"2026-02-04",r:1,rank:23},  // Blue Jasmine
-];
-const SEED_WL=[3,8,12];
+const SEED_W=[];
+const SEED_WL=[];
 
 // ══════════ STATE ══════════
 // Restore any custom films (added from recommendations) before loading W/WL
