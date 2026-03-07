@@ -2715,9 +2715,9 @@ async function cloudLoad() {
     try { localStorage.setItem('jwl3_ts', ts); } catch(e) {}
     _setCookie('jwl3_ts', ts, 365);
     // Re-render everything with restored data
-    try { renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts(); } catch(e) {}
+    try { renderTable(); renderRankings(); renderRecentlyWatched(); renderWL(); renderStats(); renderFacts(); } catch(e) {}
     setSyncStatus('synced');
-    showToast('✓ Data restored from cloud (' + cloud.w.length + ' films)');
+    if (isOwner) showToast('✓ Data restored from cloud (' + cloud.w.length + ' films)');
   } catch(e) { /* cloud unavailable — local data still intact */ }
 }
 
@@ -3621,19 +3621,20 @@ async function renderRecentlyWatched() {
        .forEach(f => enrichFilmFromTMDB(f));
 })();
 
-// Auto-run on load — render all sections so no stale content ever shows
-(function initRender() {
+if (isOwner) {
+  // Jake: render immediately from localStorage, cloudLoad updates in background if cloud is newer
   renderRecentlyWatched();
   renderTable();
   renderWL();
   renderRankings();
   renderStats();
-  // Apply read-only mode for anyone who isn't Jake
-  if (!isOwner) document.body.classList.add('visitor-mode');
-})();
-
-// After initial render, pull from cloud — restores data after cache clears
-cloudLoad();
+  cloudLoad();
+} else {
+  // Visitors: W is always empty on load (no localStorage) so skip the blank render.
+  // Apply visitor-mode CSS then let cloudLoad fetch Jake's data and do the first render.
+  document.body.classList.add('visitor-mode');
+  cloudLoad();
+}
 
 // ══════════════════════════════════════════
 // CLAUDE RECOMMENDATION AGENT
