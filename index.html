@@ -2564,6 +2564,23 @@ try {
   W  = [...SEED_W];
   WL = [...SEED_WL];
 }
+
+// ── Migration v2: clear stale pre-sync data left over from the old SEED_W era ──
+// If jwl3_ts is 0 the data was never cloud-saved (it was hardcoded seed data).
+// Clearing it lets cloudLoad fetch the real data from the cloud on the next step.
+(function(){
+  try {
+    if (localStorage.getItem('jwl3_ver') !== '2') {
+      const ts = parseInt(localStorage.getItem('jwl3_ts') || '0', 10);
+      if (ts === 0 && W.length > 0) {
+        W = []; WL = [];
+        localStorage.removeItem('jwl3_w');
+        localStorage.removeItem('jwl3_wl');
+      }
+      localStorage.setItem('jwl3_ver', '2');
+    }
+  } catch(e) {}
+})();
 let curSort='rank', mId=null;
 
 function save(){
@@ -2662,7 +2679,8 @@ async function cloudLoad() {
     const cloudTs = cloud._ts || 0;
     const cloudHasMore = cloud.w.length > W.length;
     const cloudIsNewer = cloudTs > localTs && cloudTs > 0;
-    if (!cloudHasMore && !cloudIsNewer) return;
+    // Also load if local is empty — covers the "cleared cache" scenario
+    if (!cloudHasMore && !cloudIsNewer && W.length > 0) return;
     // Cloud has better data — restore it
     W = cloud.w;
     WL = cloud.wl || [];
