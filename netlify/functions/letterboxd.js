@@ -25,15 +25,18 @@ function extractCdata(xml, tag) {
   return xml.slice(cdataStart + 9, cdataEnd);
 }
 
-function stripHtml(html) {
-  return html
-    .replace(/<[^>]+>/g, ' ')
+function decodeEntities(str) {
+  return str
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ')
+    .replace(/&#0*39;/g, "'")  // handles both &#39; and &#039;
+    .replace(/&nbsp;/g, ' ');
+}
+
+function stripHtml(html) {
+  return decodeEntities(html.replace(/<[^>]+>/g, ' '))
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -58,7 +61,7 @@ exports.handler = async function(event) {
     const reviews = [];
 
     for (const item of rawItems) {
-      const filmTitle = extractTag(item, 'letterboxd:filmTitle');
+      const filmTitle = decodeEntities(extractTag(item, 'letterboxd:filmTitle'));
       const filmYear  = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
       const ratingStr = extractTag(item, 'letterboxd:memberRating');
       const rating    = ratingStr ? parseFloat(ratingStr) : 0;
