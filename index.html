@@ -2552,6 +2552,8 @@ function posterEl(title, cssClass) {
 
 const SEED_W=[];
 const SEED_WL=[];
+// Permanent cast corrections for films where TMDB billing order omits key actors
+const CAST_PATCHES={120:['Cate Blanchett']};// Fellowship of the Ring — Galadriel billed 13th
 
 // ══════════ STATE ══════════
 // Restore any custom films (added from recommendations) before loading W/WL
@@ -2559,6 +2561,8 @@ const SEED_WL=[];
   try {
     const custom = JSON.parse(localStorage.getItem('jwl3_custom')||'[]');
     custom.forEach(f => { if (!FILMS.find(x=>x.id===f.id)) FILMS.push(f); });
+    // Apply permanent cast patches to all films so billing-cutoff omissions are corrected
+    FILMS.forEach(f=>{ const p=f.tmdbId&&CAST_PATCHES[f.tmdbId]; if(p)p.forEach(n=>{if(!f.a.includes(n))f.a.push(n);}); });
   } catch(e) {}
 })();
 let W, WL;
@@ -2935,6 +2939,8 @@ async function enrichFilmFromTMDB(filmObj) {
     // Update in-memory record
     filmObj.d = director;
     filmObj.a = cast;
+    // Apply permanent patches so re-fetches from TMDB don't re-introduce billing-cutoff omissions
+    const _p=CAST_PATCHES[filmObj.tmdbId];if(_p)_p.forEach(n=>{if(!filmObj.a.includes(n))filmObj.a.push(n);});
     filmObj.g = genre;
     filmObj.poster = poster;
     // Persist the enriched data and re-render anything showing this film's metadata
