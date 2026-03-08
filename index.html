@@ -442,22 +442,31 @@ thead th:hover .sort-arrow{opacity:.7;}
   background:rgba(200,60,60,.08);
 }
 
-/* ── STATS / INSIGHTS page ── */
+/* \u2500\u2500 STATS / INSIGHTS page \u2500\u2500 */
 .stats-page{max-width:1200px;margin:0 auto;padding:3rem 2.5rem}
-.stats-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:3rem}
-.stat-card{
-  background:var(--black);padding:2rem 1.5rem;text-align:center;
-  border-bottom:2px solid transparent;transition:all .25s;
-}
-.stat-card:hover{background:var(--white-04);border-bottom-color:var(--gold)}
-.sc-num{
-  font-family:"Times New Roman",Times,serif;
-  font-size:3rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:.4rem;
-}
-.sc-label{
-  font-family:"Times New Roman",Times,serif;
-  font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--white-50);
-}
+/* \u2500\u2500 HEATMAP \u2500\u2500 */
+.hm-section{margin-bottom:2.5rem}
+.hm-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.5rem}
+.hm-inner{display:inline-flex;flex-direction:column;gap:0;min-width:max-content}
+.hm-month-row{position:relative;height:16px;margin-left:22px;margin-bottom:4px}
+.hm-month-label{font-family:"Times New Roman",Times,serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--white-50)}
+.hm-body{display:flex;gap:0;align-items:flex-start}
+.hm-dow{display:flex;flex-direction:column;gap:3px;padding-right:6px;width:16px}
+.hm-dow span{aont-family:"times new roman",Times,serif;font-size:.58rem;color:rgba(255,255,255,.28);height:13px;line-height:13px;text-align:right;width:16px;display:block}
+.hm-grid{display:flex;gap:3px}
+.hm-week{display:flex;flex-direction:column;gap:3px}
+.hm-cell{width:13px;height:13px;border-radius:2px;flex-shrink:0;touch-action:manipulation}
+.hm-active{background:var(--gold);cursor:pointer;transition:opacity .1s,transform .1s}
+.hm-active:hover{opacity:.8;transform:scale(1.25)}
+.hm-inactive{background:rgba(255,255,255,.08)}
+.hm-spacer{background:transparent}
+.hm-legend{display:flex;align-items:center;gap:.5rem;margin-top:.65rem;margin-left:22px}
+.hm-legend-label{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.hm-legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.hm-tip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;max-width:220px}
+.hm-tip.show{opacity:1}
+.hm-tip-date{font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
+.hm-tip-films{font-family:"Times New Roman",Times,serif;font-size:.8rem;color:var(--white-80);line-height:1.5}
 .genre-chart{border:1px solid var(--border);padding:2rem;margin-bottom:2.5rem}
 .pie-wrap{display:flex;align-items:center;gap:2.5rem;flex-wrap:wrap}
 .pie-slice{cursor:pointer;transition:transform .2s ease}
@@ -620,7 +629,6 @@ thead th:hover .sort-arrow{opacity:.7;}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
-  .stats-cards{grid-template-columns:repeat(2,1fr)}
   .insights-grid{grid-template-columns:1fr}
   .wl-grid{grid-template-columns:repeat(2,1fr)}
   .header-inner{padding:0 1.2rem}
@@ -1647,11 +1655,28 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 <!-- INSIGHTS -->
 <div id="page-stats" class="page">
   <div class="stats-page">
-    <div class="sec-head" style="margin-bottom:2rem">
+    <div class="sec-head" style="margin-bottom:1.5rem">
       <div class="sec-label">Your Cinema Story</div>
-      <div class="sec-title">Watching Insights</div>
+      <div class="sec-title">Viewing Activity</div>
     </div>
-    <div class="stats-cards" id="statsCards"><div class="stat-card"><span class="sc-icon">🎬</span><div class="sc-num" style="font-size:inherit">23</div><div class="sc-label">Films Watched</div></div><div class="stat-card"><span class="sc-icon">📅</span><div class="sc-num" style="font-size:inherit">23</div><div class="sc-label">This Year</div></div><div class="stat-card"><span class="sc-icon">🏆</span><div class="sc-num" style="font-size:.85rem">Before Sunrise</div><div class="sc-label">Top Ranked</div></div><div class="stat-card"><span class="sc-icon">◎</span><div class="sc-num" style="font-size:inherit">0</div><div class="sc-label">On Watch List</div></div></div>
+    <div class="hm-section" id="hmSection">
+      <div class="hm-wrap">
+        <div class="hm-inner">
+          <div class="hm-month-row" id="hmMonths"></div>
+          <div class="hm-body">
+            <div class="hm-dow" id="hmDow"></div>
+            <div class="hm-grid" id="hmGrid"></div>
+          </div>
+          <div class="hm-legend">
+            <span class="hm-legend-label">No activity</span>
+            <div class="hm-legend-swatch hm-inactive"></div>
+            <div class="hm-legend-swatch hm-active"></div>
+            <span class="hm-legend-label">Watched</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
     <div class="genre-chart" style="margin-bottom:2rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Genre Breakdown</div>
       <div id="genreBars">
@@ -3518,17 +3543,95 @@ function renderFacts(){
     </div>`).join('');
 }
 
+// ══════════ HEATMAP ══════════
+function buildHeatmap(){
+  const grid=document.getElementById('hmGrid');
+  const mRow=document.getElementById('hmMonths');
+  const dowEl=document.getElementById('hmDow');
+  if(!grid)return;
+  const dayMap={};
+  for(const w of W){
+    if(!w.d)continue;
+    const key=w.d.slice(0,10);
+    const f=film(w.id);
+    if(!dayMap[key])dayMap[key]=[];
+    if(f)dayMap[key].push(f.t);
+  }
+  const START=new Date(2026,0,1);
+  const today=new Date();today.setHours(23,59,59,999);
+  const gridStart=new Date(START);
+  gridStart.setDate(gridStart.getDate()-START.getDay());
+  const weeks=[];
+  const monthMarks=[];
+  const MNAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const cur=new Date(gridStart);
+  let wi=0;
+  while(cur<=today){
+    const week=[];
+    for(let d=0;d<7;d++){
+      const dt=new Date(cur);
+      if(dt>=START&&dt<=today&&dt.getDate()===1){
+        monthMarks.push({wi,m:dt.getMonth()});
+      }
+      week.push(dt);
+      cur.setDate(cur.getDate()+1);
+    }
+    weeks.push(week);
+    wi++;
+  }
+  dowEl.innerHTML=['','Mon','','Wed','','Fri',''].map(l=>`<span>${l}</span>`).join('');
+  const COL=16;
+  mRow.innerHTML=monthMarks.map(({wi:w,m})=>`<span class="hm-month-label" style="position:absolute;left:${w*COL}px">${MNAMES[m]}</span>`).join('');
+  function _key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  grid.innerHTML=weeks.map(week=>{
+    const cells=week.map(dt=>{
+      if(dt<START||dt>today)return'<div class="hm-cell hm-spacer"></div>';
+      const k=_key(dt);
+      const fs=dayMap[k]||[];
+      const cls=fs.length?'hm-active':'hm-inactive';
+      const safeFilms=fs.map(t=>t.replace(/\|/g,'')).join('|').replace(/"/g,'&quot;');
+      return`<div class="hm-cell ${cls}" data-date="${k}" data-films="${safeFilms}" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>`;
+    }).join('');
+    return`<div class="hm-week">${cells}</div>`;
+  }).join('');
+}
+function _hmEnter(e){_hmShow(e.currentTarget,e.clientX,e.clientY);}
+function _hmLeave(){const t=document.getElementById('hmTip');if(t)t.classList.remove('show');}
+function _hmMove(e){_hmPos(e.clientX,e.clientY);}
+function _hmTouch(e){
+  const t=e.touches[0];
+  _hmShow(e.currentTarget,t.clientX,t.clientY);
+  setTimeout(()=>document.addEventListener('touchstart',_hmLeave,{once:true}),80);
+}
+function _hmShow(el,cx,cy){
+  const tip=document.getElementById('hmTip');if(!tip)return;
+  const dateStr=el.dataset.date;if(!dateStr)return;
+  const dt=new Date(dateStr+'T12:00:00');
+  const MLONG=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('hmTipDate').textContent=MLONG[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear();
+  const films=(el.dataset.films||'').split('|').filter(Boolean);
+  document.getElementById('hmTipFilms').innerHTML=films.length
+    ?films.map(t=>`<div>· ${t}</div>`).join('')
+    :'<div style="opacity:.5;font-style:italic">No films watched</div>';
+  tip.classList.add('show');
+  _hmPos(cx,cy);
+}
+function _hmPos(cx,cy){
+  const tip=document.getElementById('hmTip');if(!tip)return;
+  const tw=tip.offsetWidth||180,th=tip.offsetHeight||80;
+  const vw=window.innerWidth,vh=window.innerHeight;
+  let x=cx+16,y=cy-12;
+  if(x+tw>vw-8)x=cx-tw-8;
+  if(y+th>vh-8)y=cy-th-8;
+  if(y<8)y=8;if(x<8)x=8;
+  tip.style.left=x+'px';tip.style.top=y+'px';
+}
+
 // ══════════ RENDER STATS ══════════
 function renderStats(){
+  buildHeatmap();
   const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
-  const yr=new Date().getFullYear().toString();
-  const sc=document.getElementById('statsCards');if(!sc)return;
-  sc.innerHTML=[
-    {icon:'🎬',n:films.length,l:'Films Watched'},
-    {icon:'📅',n:films.filter(w=>w.d?.startsWith(yr)).length,l:'This Year'},
-    {icon:'🏆',n:W.length?film(W.slice().sort((a,b)=>a.rank-b.rank)[0].id)?.t:'–',l:'Top Ranked'},
-    {icon:'◎',n:WL.length,l:'On Watch List'},
-  ].map(s=>`<div class="stat-card"><span class="sc-icon">${s.icon}</span><div class="sc-num" style="font-size:${typeof s.n==='string'&&s.n.length>6?'.85rem':'inherit'}">${s.n}</div><div class="sc-label">${s.l}</div></div>`).join('');
+
 
   const gc={};
   films.forEach(w=>gc[w.f.g]=(gc[w.f.g]||0)+1);
