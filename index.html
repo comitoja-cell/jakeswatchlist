@@ -478,7 +478,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .lb-tip.show{opacity:1}
 .lb-tip-title{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
 .lb-tip-stars{font-size:.88rem;color:var(--gold);margin-bottom:.5rem;letter-spacing:.04em}
-.lb-tip-text{font-size:.78rem;color:var(--white-50);line-height:1.55;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.lb-tip-text{font-size:.78rem;color:var(--white-50);line-height:1.55;overflow-y:auto;max-height:180px}
 .insights-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border)}
 .ins-card{background:var(--black);padding:1.8rem;transition:background .2s}
 .ins-card:hover{background:var(--white-04)}
@@ -3625,7 +3625,17 @@ function _lbLeave(){
 
 function _lbMove(e){
   const tip=document.getElementById('lbTip');if(!tip)return;
-  tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-12)+'px';
+  const tw=tip.offsetWidth||260;
+  const th=tip.offsetHeight||200;
+  const vw=window.innerWidth;
+  const vh=window.innerHeight;
+  let x=e.clientX+16;
+  let y=e.clientY-12;
+  if(x+tw>vw-8) x=e.clientX-tw-8;
+  if(y+th>vh-8) y=e.clientY-th-8;
+  if(y<8) y=8;
+  if(x<8) x=8;
+  tip.style.left=x+'px';tip.style.top=y+'px';
 }
 
 function _lbClick(e){
