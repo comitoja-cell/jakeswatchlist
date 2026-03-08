@@ -472,8 +472,8 @@ thead th:hover .sort-arrow{opacity:.7;}
 .pie-tip-pct{font-size:1.7rem;font-family:"Times New Roman",Times,serif;color:var(--white);line-height:1}
 .pie-tip-count{font-size:.7rem;color:var(--white-50);margin-top:.3rem}
 .lb-cell{text-align:center;width:54px}
-.lb-icon{display:inline-block;cursor:pointer;font-family:"Times New Roman",Times,serif;font-size:.65rem;letter-spacing:.1em;color:var(--gold);border:1px solid rgba(201,168,76,.45);padding:.18rem .48rem;opacity:.75;transition:opacity .15s,border-color .15s;user-select:none}
-.lb-icon:hover{opacity:1;border-color:var(--gold)}
+.lb-icon{display:inline-block;cursor:pointer;font-family:"Times New Roman",Times,serif;font-size:.82rem;letter-spacing:.03em;color:var(--gold);opacity:.8;transition:opacity .15s;user-select:none}
+.lb-icon:hover{opacity:1}
 .lb-tip{position:fixed;pointer-events:none;background:rgba(0,0,0,.96);border:1px solid var(--gold);padding:.9rem 1.2rem;z-index:9999;opacity:0;transition:opacity .15s;width:260px;max-width:90vw}
 .lb-tip.show{opacity:1}
 .lb-tip-title{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
@@ -583,9 +583,10 @@ thead th:hover .sort-arrow{opacity:.7;}
   color-scheme:dark;transition:border-color .2s;
 }
 .modal-date:focus{border-color:var(--white-50)}
-.modal-stars{display:flex;gap:.5rem;margin-bottom:1.8rem}
-.ms{font-size:1.6rem;cursor:pointer;color:var(--white-20);transition:all .18s;user-select:none}
-.ms.lit{color:var(--gold)}.ms:hover{transform:scale(1.1)}
+.toast a{color:var(--gold);text-decoration:none}.toast a:hover{text-decoration:underline}
+#tableHead th[draggable="true"]{cursor:grab}
+#tableHead th.col-drag-over{background:rgba(201,168,76,.12);outline:1px dashed rgba(201,168,76,.4)}
+#tableHead th.col-dragging{opacity:.4}
 .modal-save{
   width:100%;background:var(--gold);border:none;
   color:var(--black);
@@ -1122,17 +1123,7 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
         <select class="db-filter" id="dbDirector" onchange="renderTable()"><option value="">All Directors</option><option value="Alejandro Amenábar">Alejandro Amenábar</option><option value="Anthony Minghella">Anthony Minghella</option><option value="Brian De Palma">Brian De Palma</option><option value="Charles Crichton">Charles Crichton</option><option value="Doug Liman">Doug Liman</option><option value="Herbert Ross">Herbert Ross</option><option value="Jay Roach">Jay Roach</option><option value="Jean-Pierre Jeunet">Jean-Pierre Jeunet</option><option value="John Carney">John Carney</option><option value="Josh Safdie">Josh Safdie</option><option value="Louis Leterrier">Louis Leterrier</option><option value="Marc Forster">Marc Forster</option><option value="Martin Scorsese">Martin Scorsese</option><option value="Mary Bronstein">Mary Bronstein</option><option value="Mike Figgis">Mike Figgis</option><option value="Paul Thomas Anderson">Paul Thomas Anderson</option><option value="Quentin Tarantino">Quentin Tarantino</option><option value="Richard Curtis">Richard Curtis</option><option value="Richard Linklater">Richard Linklater</option><option value="Roger Michell">Roger Michell</option><option value="Sean Baker">Sean Baker</option><option value="Wes Anderson">Wes Anderson</option><option value="Woody Allen">Woody Allen</option></select>
       </div>
       <table class="movies-table">
-        <thead><tr id="tableHead">
-          <th style="width:46px;cursor:pointer;" onclick="colSort(&#39;rank&#39;)" id="th-rank">Rank <span class="sort-arrow active-arrow">↑</span></th>
-          <th style="width:44px"></th>
-          <th style="cursor:pointer;" onclick="colSort(&#39;alpha&#39;)" id="th-alpha">Title <span class="sort-arrow">↕</span></th>
-          <th style="cursor:pointer;" onclick="colSort(&#39;genre&#39;)" id="th-genre">Genre <span class="sort-arrow">↕</span></th>
-          <th style="cursor:pointer;" onclick="colSort(&#39;director&#39;)" id="th-director">Director <span class="sort-arrow">↕</span></th>
-          <th style="cursor:pointer;" onclick="colSort(&#39;year&#39;)" id="th-year">Year <span class="sort-arrow">↕</span></th>
-          <th style="cursor:pointer;" onclick="colSort(&#39;date&#39;)" id="th-date">Date Watched <span class="sort-arrow">↕</span></th>
-          
-        <th style="width:54px;text-align:center" id="th-review">Review</th>
-        </tr></thead>
+        <thead><tr id="tableHead"></tr></thead>
         <tbody id="tableBody"><tr class="elite-row">
       <td><div class="mt-rank elite-rank">1</div></td>
       <td><div id="p-1" class="mt-poster"><img alt="Before Sunrise" src="./index_files/oaKp6HZQDTtCOwn4JGi2Mh7Ep95.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div></td>
@@ -2373,8 +2364,6 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <input class="modal-input" type="text" id="mDirector" placeholder="e.g. Richard Linklater">
     </div>
 
-    <label class="modal-lbl">Your Rating</label>
-    <div class="modal-stars" id="mStars"><span class="ms" data-v="1" onclick="setModalStar(1)">★</span><span class="ms" data-v="2" onclick="setModalStar(2)">★</span><span class="ms" data-v="3" onclick="setModalStar(3)">★</span><span class="ms" data-v="4" onclick="setModalStar(4)">★</span><span class="ms" data-v="5" onclick="setModalStar(5)">★</span></div>
     <label class="modal-lbl">Date Watched</label>
     <input class="modal-date" type="date" id="mDate">
     <button class="modal-save" id="mSaveBtn" onclick="saveWatched()">Log This Film</button>
@@ -3108,7 +3097,7 @@ function saveWatched(){
     W.push({id:newId,d:date,r:rating,rank:nextRank()});
     save(); // ← persist FIRST before any render that could throw
     closeModal();
-    showToast(`"${title}" added to your diary`);
+    showLbToast(title);
     try { renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts(); }
     catch(e) { console.warn('Re-render after log failed:', e); }
     return;
@@ -3127,7 +3116,7 @@ function saveWatched(){
   const loggedTitle = film(mId)?.t; // capture before closeModal() nullifies mId
   save(); // ← persist FIRST before any render that could throw
   closeModal();
-  showToast(`"${loggedTitle}" logged to your diary`);
+  showLbToast(loggedTitle);
   try { renderTable(); renderRankings(); renderRecentlyWatched(); renderStats(); renderFacts(); }
   catch(e) { console.warn('Re-render after log failed:', e); }
 }
@@ -3223,9 +3212,72 @@ function switchTab(tab,btn){
   if(tab==='watchlist')renderWL();
 }
 
+// ══════════ COLUMN ORDER ══════════
+const COL_DEFS={
+  rank:    {id:'th-rank',    style:'width:46px;cursor:pointer;',    sortKey:'rank',     label:'Rank'},
+  poster:  {id:'',           style:'width:44px;',                   sortKey:null,       label:''},
+  title:   {id:'th-alpha',   style:'cursor:pointer;',               sortKey:'alpha',    label:'Title'},
+  review:  {id:'th-review',  style:'width:54px;text-align:center;', sortKey:null,       label:'Review'},
+  genre:   {id:'th-genre',   style:'cursor:pointer;',               sortKey:'genre',    label:'Genre'},
+  director:{id:'th-director',style:'cursor:pointer;',               sortKey:'director', label:'Director'},
+  year:    {id:'th-year',    style:'cursor:pointer;',               sortKey:'year',     label:'Year'},
+  date:    {id:'th-date',    style:'cursor:pointer;',               sortKey:'date',     label:'Date Watched'},
+};
+const DEFAULT_COL_ORDER=['rank','poster','title','review','genre','director','year','date'];
+let _colOrder=JSON.parse(localStorage.getItem('jwl3_col_order')||'null')||[...DEFAULT_COL_ORDER];
+let _colDragSrc=null;
+
+function renderHead(){
+  const tr=document.getElementById('tableHead');
+  if(!tr)return;
+  tr.innerHTML=_colOrder.map(key=>{
+    const c=COL_DEFS[key];
+    if(!c)return'';
+    const isActive=c.sortKey&&c.sortKey===curSort;
+    const arrowTxt=isActive?(sortDir[curSort]==='desc'?'↓':'↑'):'↕';
+    const arrow=c.sortKey?' <span class="sort-arrow'+(isActive?' active-arrow':'')+'">'+(arrowTxt)+'</span>':'';
+    const onclick=c.sortKey?'onclick="colSort(\''+c.sortKey+'\')" ':'';
+    const id=c.id?'id="'+c.id+'" ':'';
+    return '<th '+id+'style="'+c.style+'" '+onclick+'draggable="true" ondragstart="_colDragStart(event,\''+key+'\')" ondragover="_colDragOver(event)" ondrop="_colDrop(event,\''+key+'\')" ondragend="_colDragEnd()">'+c.label+arrow+'</th>';
+  }).join('');
+}
+
+function _colDragStart(e,key){
+  _colDragSrc=key;
+  e.dataTransfer.effectAllowed='move';
+  e.currentTarget.classList.add('col-dragging');
+}
+function _colDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('#tableHead th').forEach(th=>th.classList.remove('col-drag-over'));
+  e.currentTarget.classList.add('col-drag-over');
+}
+function _colDrop(e,key){
+  e.preventDefault();
+  document.querySelectorAll('#tableHead th').forEach(th=>th.classList.remove('col-drag-over'));
+  if(_colDragSrc===key)return;
+  const from=_colOrder.indexOf(_colDragSrc);
+  const to=_colOrder.indexOf(key);
+  if(from<0||to<0)return;
+  _colOrder.splice(from,1);
+  _colOrder.splice(to,0,_colDragSrc);
+  localStorage.setItem('jwl3_col_order',JSON.stringify(_colOrder));
+  renderHead();
+  renderTable();
+}
+function _colDragEnd(){
+  _colDragSrc=null;
+  document.querySelectorAll('#tableHead th').forEach(th=>{
+    th.classList.remove('col-drag-over');
+    th.classList.remove('col-dragging');
+  });
+}
+
 // ══════════ RENDER TABLE ══════════
 function renderTable(){
   if(!document.getElementById('tableBody'))return;
+  renderHead();
   const q=(document.getElementById('dbSearch').value||'').toLowerCase();
   const genre=document.getElementById('dbGenre').value;
   const director=document.getElementById('dbDirector').value;
@@ -3292,16 +3344,17 @@ function renderTable(){
     const rank=sortedAll.findIndex(x=>x.id===w.id)+1;
     const isElite = isRankSort && rank <= top10Cutoff;
     const rev=findLbReview(f.t,f.y);
-    return `<tr class="${isElite?'elite-row':''}">
-      <td><div class="mt-rank${isElite?' elite-rank':''}">${rank}</div></td>
-      <td>${posterEl(f.t,'mt-poster')}</td>
-      <td><div class="mt-title">${f.t}</div></td>
-      <td><span class="mt-genre">${f.g}</span></td>
-      <td><div class="mt-year">${f.d}</div></td>
-      <td><div class="mt-year">${f.y}</div></td>
-      <td><div class="mt-date">${fmtDate(w.d)}</div></td>
-      <td class="lb-cell">${rev?`<span class="lb-icon" data-fid="${f.id}" onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)" onclick="_lbClick(event)">LB</span>`:''}</td>
-    </tr>`;
+    const _cells={
+      rank:`<td><div class="mt-rank${isElite?' elite-rank':''}">${rank}</div></td>`,
+      poster:`<td>${posterEl(f.t,'mt-poster')}</td>`,
+      title:`<td><div class="mt-title">${f.t}</div></td>`,
+      review:`<td class="lb-cell">${rev?`<span class="lb-icon" data-fid="${f.id}" onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)" onclick="_lbClick(event)">${lbStars(rev.rating)}</span>`:''}</td>`,
+      genre:`<td><span class="mt-genre">${f.g}</span></td>`,
+      director:`<td><div class="mt-year">${f.d}</div></td>`,
+      year:`<td><div class="mt-year">${f.y}</div></td>`,
+      date:`<td><div class="mt-date">${fmtDate(w.d)}</div></td>`,
+    };
+    return `<tr class="${isElite?'elite-row':''}">${_colOrder.map(k=>_cells[k]||'').join('')}</tr>`;
   }).join('');
 }
 
@@ -3649,6 +3702,7 @@ function toggleActor(header){
 function fmtDate(d){if(!d)return'–';return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 let tT;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),3200)}
+function showLbToast(title){const t=document.getElementById('toast');const url='https://letterboxd.com/search/'+encodeURIComponent(title)+'/';t.innerHTML='Logged! <a href="'+url+'" target="_blank" rel="noopener">Review on Letterboxd ↗</a>';t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),6000)}
 
 // INIT
 // Home page is now minimal — no init render needed
