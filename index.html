@@ -471,6 +471,14 @@ thead th:hover .sort-arrow{opacity:.7;}
 .pie-tip-genre{font-family:"Times New Roman",Times,serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.25rem}
 .pie-tip-pct{font-size:1.7rem;font-family:"Times New Roman",Times,serif;color:var(--white);line-height:1}
 .pie-tip-count{font-size:.7rem;color:var(--white-50);margin-top:.3rem}
+.lb-cell{text-align:center;width:54px}
+.lb-icon{display:inline-block;cursor:pointer;font-family:"Times New Roman",Times,serif;font-size:.65rem;letter-spacing:.1em;color:var(--gold);border:1px solid rgba(201,168,76,.45);padding:.18rem .48rem;opacity:.75;transition:opacity .15s,border-color .15s;user-select:none}
+.lb-icon:hover{opacity:1;border-color:var(--gold)}
+.lb-tip{position:fixed;pointer-events:none;background:rgba(0,0,0,.96);border:1px solid var(--gold);padding:.9rem 1.2rem;z-index:9999;opacity:0;transition:opacity .15s;width:260px;max-width:90vw}
+.lb-tip.show{opacity:1}
+.lb-tip-title{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
+.lb-tip-stars{font-size:.88rem;color:var(--gold);margin-bottom:.5rem;letter-spacing:.04em}
+.lb-tip-text{font-size:.78rem;color:var(--white-50);line-height:1.55;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .insights-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border)}
 .ins-card{background:var(--black);padding:1.8rem;transition:background .2s}
 .ins-card:hover{background:var(--white-04)}
@@ -1123,6 +1131,7 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
           <th style="cursor:pointer;" onclick="colSort(&#39;year&#39;)" id="th-year">Year <span class="sort-arrow">↕</span></th>
           <th style="cursor:pointer;" onclick="colSort(&#39;date&#39;)" id="th-date">Date Watched <span class="sort-arrow">↕</span></th>
           
+        <th style="width:54px;text-align:center" id="th-review">Review</th>
         </tr></thead>
         <tbody id="tableBody"><tr class="elite-row">
       <td><div class="mt-rank elite-rank">1</div></td>
@@ -3282,6 +3291,7 @@ function renderTable(){
     const f=film(w.id);if(!f)return'';
     const rank=sortedAll.findIndex(x=>x.id===w.id)+1;
     const isElite = isRankSort && rank <= top10Cutoff;
+    const rev=findLbReview(f.t,f.y);
     return `<tr class="${isElite?'elite-row':''}">
       <td><div class="mt-rank${isElite?' elite-rank':''}">${rank}</div></td>
       <td>${posterEl(f.t,'mt-poster')}</td>
@@ -3290,7 +3300,7 @@ function renderTable(){
       <td><div class="mt-year">${f.d}</div></td>
       <td><div class="mt-year">${f.y}</div></td>
       <td><div class="mt-date">${fmtDate(w.d)}</div></td>
-      
+      <td class="lb-cell">${rev?`<span class="lb-icon" data-fid="${f.id}" onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)" onclick="_lbClick(event)">LB</span>`:''}</td>
     </tr>`;
   }).join('');
 }
@@ -3520,6 +3530,58 @@ function _pieMove(e){
   tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-12)+'px';
 }
 
+// ══════════ LETTERBOXD INTEGRATION ══════════
+let _lbReviews=[];
+
+async function loadLetterboxd(){
+  try{
+    const res=await fetch('/.netlify/functions/letterboxd');
+    if(!res.ok)return;
+    const data=await res.json();
+    if(Array.isArray(data)){_lbReviews=data;renderTable();}
+  }catch(e){}
+}
+
+function findLbReview(title,year){
+  if(!_lbReviews.length)return null;
+  const t=title.toLowerCase().trim();
+  return _lbReviews.find(r=>r.title.toLowerCase().trim()===t&&String(r.year)===String(year))||null;
+}
+
+function lbStars(rating){
+  if(!rating)return'';
+  const full=Math.floor(rating);
+  const half=(rating%1)>=0.5?1:0;
+  return'★'.repeat(full)+(half?'½':'');
+}
+
+function _lbEnter(e){
+  const fid=parseInt(e.currentTarget.dataset.fid);
+  const f=film(fid);if(!f)return;
+  const rev=findLbReview(f.t,f.y);if(!rev)return;
+  const tip=document.getElementById('lbTip');if(!tip)return;
+  document.getElementById('lbTipTitle').textContent=rev.title;
+  document.getElementById('lbTipStars').textContent=lbStars(rev.rating);
+  document.getElementById('lbTipText').textContent=rev.review;
+  tip.classList.add('show');
+}
+
+function _lbLeave(){
+  const tip=document.getElementById('lbTip');if(tip)tip.classList.remove('show');
+}
+
+function _lbMove(e){
+  const tip=document.getElementById('lbTip');if(!tip)return;
+  tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-12)+'px';
+}
+
+function _lbClick(e){
+  const fid=parseInt(e.currentTarget.dataset.fid);
+  const f=film(fid);if(!f)return;
+  const rev=findLbReview(f.t,f.y);
+  if(rev&&rev.link)window.open(rev.link,'_blank');
+}
+
 function buildInsights(films){
   const ins=[];
   if(!films.length)return ins;
@@ -3670,6 +3732,9 @@ if (isOwner) {
   document.body.classList.add('visitor-mode');
   cloudLoad();
 }
+
+// Fetch Letterboxd reviews on every page load (for all users)
+loadLetterboxd();
 
 // ══════════════════════════════════════════
 // CLAUDE RECOMMENDATION AGENT
@@ -3965,5 +4030,6 @@ window.showPage = function(p) {
 };
 </script>
 
+<div class="lb-tip" id="lbTip"><div class="lb-tip-title" id="lbTipTitle"></div><div class="lb-tip-stars" id="lbTipStars"></div><div class="lb-tip-text" id="lbTipText"></div></div>
 
 </body></html>
