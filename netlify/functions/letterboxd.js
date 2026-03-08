@@ -15,8 +15,14 @@ function extractTag(xml, tag) {
 }
 
 function extractCdata(xml, tag) {
-  const m = xml.match(new RegExp('<' + tag + '[^>]*><!\[CDATA\[([\s\S]*?)\]\]></' + tag + '>'));
-  return m ? m[1] : '';
+  // Use indexOf to avoid backslash-in-RegExp string escaping pitfalls
+  const open = xml.indexOf('<' + tag);
+  if (open === -1) return '';
+  const cdataStart = xml.indexOf('<![CDATA[', open);
+  if (cdataStart === -1) return '';
+  const cdataEnd = xml.indexOf(']]>', cdataStart);
+  if (cdataEnd === -1) return '';
+  return xml.slice(cdataStart + 9, cdataEnd);
 }
 
 function stripHtml(html) {
