@@ -446,27 +446,28 @@ thead th:hover .sort-arrow{opacity:.7;}
 .stats-page{max-width:1200px;margin:0 auto;padding:3rem 2.5rem}
 /* \u2500\u2500 HEATMAP \u2500\u2500 */
 .hm-section{margin-bottom:2.5rem}
-.hm-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.5rem}
-.hm-inner{display:inline-flex;flex-direction:column;gap:0;min-width:max-content}
-.hm-month-row{position:relative;height:16px;margin-left:22px;margin-bottom:4px}
-.hm-month-label{font-family:"Times New Roman",Times,serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--white-50)}
-.hm-body{display:flex;gap:0;align-items:flex-start}
-.hm-dow{display:flex;flex-direction:column;gap:3px;padding-right:6px;width:16px}
-.hm-dow span{aont-family:"times new roman",Times,serif;font-size:.58rem;color:rgba(255,255,255,.28);height:13px;line-height:13px;text-align:right;width:16px;display:block}
-.hm-grid{display:flex;gap:3px}
-.hm-week{display:flex;flex-direction:column;gap:3px}
-.hm-cell{width:13px;height:13px;border-radius:2px;flex-shrink:0;touch-action:manipulation}
+.hm-nav{display:flex;align-items:center;gap:.5rem}
+.hm-nav-btn{background:none;border:none;color:var(--white-50);font-size:2.2rem;line-height:1;cursor:pointer;padding:.1rem .5rem;transition:color .15s;flex-shrink:0;font-family:"Times New Roman",Times,serif;margin-top:-.2rem}
+.hm-nav-btn:hover:not(:disabled){color:var(--gold)}
+.hm-nav-btn:disabled{opacity:.2;cursor:default}
+.hm-months-row{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;flex:1;min-width:0}
+.hm-month{display:flex;flex-direction:column;gap:2px}
+.hm-month-name{font-family:"Times New Roman",Times,serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;text-align:center}
+.hm-dow-row,.hm-week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
+.hm-dow-cell{font-family:"Times New Roman",Times,serif;font-size:.55rem;color:rgba(255,255,255,.28);text-align:center;padding:.2rem 0}
+.hm-day{aspect-ratio:1;border-radius:2px;cursor:default;touch-action:manipulation;min-width:0}
 .hm-active{background:var(--gold);cursor:pointer;transition:opacity .1s,transform .1s}
-.hm-active:hover{opacity:.8;transform:scale(1.25)}
-.hm-inactive{background:rgba(255,255,255,.08)}
-.hm-spacer{background:transparent}
-.hm-legend{display:flex;align-items:center;gap:.5rem;margin-top:.65rem;margin-left:22px}
+.hm-active:hover{opacity:.8;transform:scale(1.12)}
+.hm-inactive{background:rgba(255,255,255,.07)}
+.hm-empty{background:transparent}
+.hm-today{background:rgba(139,92,246,.35);outline:1px solid rgba(139,92,246,.65);outline-offset:-1px}
+.hm-legend{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding-left:.5rem}
 .hm-legend-label{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
 .hm-legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 .hm-tip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;max-width:220px}
 .hm-tip.show{opacity:1}
 .hm-tip-date{font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
-.hm-tip-films{font-family:"Times New Roman",Times,serif;font-size:.8rem;color:var(--white-80);line-height:1.5}
+.hm-tip-films{font-family:"Times New Roman",Times,serif;font-size:.8rem;color:var(--white-80);line-height:1.5}}
 .genre-chart{border:1px solid var(--border);padding:2rem;margin-bottom:2.5rem}
 .pie-wrap{display:flex;align-items:center;gap:2.5rem;flex-wrap:wrap}
 .pie-slice{cursor:pointer;transition:transform .2s ease}
@@ -1659,21 +1660,19 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div class="sec-label">Your Cinema Story</div>
       <div class="sec-title">Viewing Activity</div>
     </div>
-    <div class="hm-section" id="hmSection">
-      <div class="hm-wrap">
-        <div class="hm-inner">
-          <div class="hm-month-row" id="hmMonths"></div>
-          <div class="hm-body">
-            <div class="hm-dow" id="hmDow"></div>
-            <div class="hm-grid" id="hmGrid"></div>
-          </div>
-          <div class="hm-legend">
-            <span class="hm-legend-label">No activity</span>
-            <div class="hm-legend-swatch hm-inactive"></div>
-            <div class="hm-legend-swatch hm-active"></div>
-            <span class="hm-legend-label">Watched</span>
-          </div>
-        </div>
+        <div class="hm-section" id="hmSection">
+      <div class="hm-nav">
+        <button class="hm-nav-btn" id="hmPrev" onclick="_hmNav(-1)">&#8249;</button>
+        <div class="hm-months-row" id="hmCalGrid"></div>
+        <button class="hm-nav-btn" id="hmNext" onclick="_hmNav(1)">&#8250;</button>
+      </div>
+      <div class="hm-legend">
+        <span class="hm-legend-label">No activity</span>
+        <div class="hm-legend-swatch hm-inactive"></div>
+        <div class="hm-legend-swatch hm-active"></div>
+        <span class="hm-legend-label">Watched</span>
+        <div class="hm-legend-swatch hm-today" style="margin-left:.5rem"></div>
+        <span class="hm-legend-label">Today</span>
       </div>
     </div>
     <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
@@ -3544,10 +3543,13 @@ function renderFacts(){
 }
 
 // ══════════ HEATMAP ══════════
-function buildHeatmap(){
-  const grid=document.getElementById('hmGrid');
-  const mRow=document.getElementById('hmMonths');
-  const dowEl=document.getElementById('hmDow');
+let _hmOffset=0;
+function buildHeatmap(){_hmOffset=0;_hmRender();}
+function _hmNav(delta){_hmOffset+=delta;_hmRender();}
+function _hmRender(){
+  const grid=document.getElementById('hmCalGrid');
+  const prevBtn=document.getElementById('hmPrev');
+  const nextBtn=document.getElementById('hmNext');
   if(!grid)return;
   const dayMap={};
   for(const w of W){
@@ -3557,43 +3559,49 @@ function buildHeatmap(){
     if(!dayMap[key])dayMap[key]=[];
     if(f)dayMap[key].push(f.t);
   }
-  const START=new Date(2026,0,1);
-  const today=new Date();today.setHours(23,59,59,999);
-  const gridStart=new Date(START);
-  gridStart.setDate(gridStart.getDate()-START.getDay());
-  const weeks=[];
-  const monthMarks=[];
-  const MNAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const cur=new Date(gridStart);
-  let wi=0;
-  while(cur<=today){
-    const week=[];
-    for(let d=0;d<7;d++){
-      const dt=new Date(cur);
-      if(dt>=START&&dt<=today&&dt.getDate()===1){
-        monthMarks.push({wi,m:dt.getMonth()});
-      }
-      week.push(dt);
-      cur.setDate(cur.getDate()+1);
-    }
-    weeks.push(week);
-    wi++;
+  const todayD=new Date();todayD.setHours(0,0,0,0);
+  const todayKey=todayD.getFullYear()+'-'+String(todayD.getMonth()+1).padStart(2,'0')+'-'+String(todayD.getDate()).padStart(2,'0');
+  const curY=todayD.getFullYear();
+  const curM=todayD.getMonth();
+  const months=[];
+  for(let i=-2;i<=0;i++){
+    let tm=(curY*12+curM)+i+_hmOffset;
+    let y=Math.floor(tm/12);
+    let m=tm%12;
+    if(m<0){m+=12;y--;}
+    months.push({y,m});
   }
-  dowEl.innerHTML=['','Mon','','Wed','','Fri',''].map(l=>`<span>${l}</span>`).join('');
-  const COL=16;
-  mRow.innerHTML=monthMarks.map(({wi:w,m})=>`<span class="hm-month-label" style="position:absolute;left:${w*COL}px">${MNAMES[m]}</span>`).join('');
-  function _key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-  grid.innerHTML=weeks.map(week=>{
-    const cells=week.map(dt=>{
-      if(dt<START||dt>today)return'<div class="hm-cell hm-spacer"></div>';
-      const k=_key(dt);
+  const firstTm=(curY*12+curM)-2+_hmOffset;
+  prevBtn.disabled=firstTm<=2026*12+0;
+  nextBtn.disabled=_hmOffset>=0;
+  grid.innerHTML=months.map(({y,m})=>_hmMonthHtml(y,m,dayMap,todayKey)).join('');
+}
+function _hmMonthHtml(year,month,dayMap,todayKey){
+  const MNAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const startDow=new Date(year,month,1).getDay();
+  const cells=[];
+  for(let i=0;i<startDow;i++)cells.push(null);
+  for(let d=1;d<=daysInMonth;d++)cells.push(d);
+  while(cells.length%7!==0)cells.push(null);
+  const dowRow=DOW.map(d=>`<div class="hm-dow-cell">${d}</div>`).join('');
+  const rows=[];
+  for(let r=0;r<cells.length/7;r++){
+
+    const week=cells.slice(r*7,r*7+7).map(day=>{
+      if(day===null)return'<div class="hm-day hm-empty"></div>';
+      const k=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
       const fs=dayMap[k]||[];
-      const cls=fs.length?'hm-active':'hm-inactive';
-      const safeFilms=fs.map(t=>t.replace(/\|/g,'')).join('|').replace(/"/g,'&quot;');
-      return`<div class="hm-cell ${cls}" data-date="${k}" data-films="${safeFilms}" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>`;
+      const isToday=k===todayKey;
+      const isActive=fs.length>0;
+      let cls='hm-day'+(isActive?' hm-active':isToday?' hm-today':' hm-inactive');
+      const sf=fs.map(t=>t.replace(/\|/g,'')).join('|').replace(/"/g,'&quot;');
+      return`<div class="${cls}" data-date="${k}" data-films="${sf}" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>`;
     }).join('');
-    return`<div class="hm-week">${cells}</div>`;
-  }).join('');
+    rows.push(`<div class="hm-week-row">${week}</div>`);
+  }
+  return`<div class="hm-month"><div class="hm-month-name">${MNAMES[month]} ${year}</div><div class="hm-dow-row">${dowRow}</div>${rows.join('')}</div>`;
 }
 function _hmEnter(e){_hmShow(e.currentTarget,e.clientX,e.clientY);}
 function _hmLeave(){const t=document.getElementById('hmTip');if(t)t.classList.remove('show');}
@@ -3606,7 +3614,7 @@ function _hmTouch(e){
 function _hmShow(el,cx,cy){
   const tip=document.getElementById('hmTip');if(!tip)return;
   const dateStr=el.dataset.date;if(!dateStr)return;
-  const dt=new Date(dateStr+'T12:00:00');
+  const dt=new Date(dateStr('T12:00:00');
   const MLONG=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('hmTipDate').textContent=MLONG[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear();
   const films=(el.dataset.films||'').split('|').filter(Boolean);
