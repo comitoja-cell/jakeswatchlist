@@ -3614,7 +3614,7 @@ function _hmTouch(e){
 function _hmShow(el,cx,cy){
   const tip=document.getElementById('hmTip');if(!tip)return;
   const dateStr=el.dataset.date;if(!dateStr)return;
-  const dt=new Date(dateStr('T12:00:00');
+  const dt=new Date(dateStr+'T12:00:00';
   const MLONG=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('hmTipDate').textContent=MLONG[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear();
   const films=(el.dataset.films||'').split('|').filter(Boolean);
