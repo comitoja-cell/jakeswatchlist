@@ -453,6 +453,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-months-row{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;flex:1;min-width:0}
 .hm-month{display:flex;flex-direction:column;gap:2px}
 .hm-month-name{font-family:"Times New Roman",Times,serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;text-align:center}
+.hm-count-pill{display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.45);font-family:"Times New Roman",Times,serif;font-size:.52rem;letter-spacing:.05em;padding:.08rem .32rem;border-radius:999px;margin-left:.4rem;vertical-align:middle;line-height:1.5}
 .hm-dow-row,.hm-week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
 .hm-dow-cell{font-family:"Times New Roman",Times,serif;font-size:.55rem;color:rgba(255,255,255,.28);text-align:center;padding:.2rem 0}
 .hm-day{aspect-ratio:1;border-radius:2px;cursor:default;touch-action:manipulation;min-width:0}
@@ -1720,25 +1721,6 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div class="gbr-count">1</div>
     </div></div>
     </div>
-    <div style="margin-bottom:2.5rem">
-      <div class="sec-label" style="margin-bottom:1.3rem">Fun Facts</div>
-      <div class="insights-grid" id="insightsGrid">
-    <div class="ins-card">
-      <div class="ins-badge">Favourite Face</div>
-      <div class="ins-text"><strong>Gwyneth Paltrow</strong> has appeared in <strong>3</strong> films you've watched — clearly a face you trust.</div>
-    </div>
-    <div class="ins-card">
-      <div class="ins-badge">Genre Taste</div>
-      <div class="ins-text"><strong>26%</strong> of your films are <strong>Drama</strong>. You have a distinct appetite for this kind of cinema.</div>
-    </div>
-    <div class="ins-card">
-      <div class="ins-badge">Era Explorer</div>
-      <div class="ins-text">Your taste spans from <strong>1988</strong> to <strong>2025</strong> — a <strong>37</strong>-year sweep of cinema history.</div>
-    </div>
-    <div class="ins-card">
-      <div class="ins-badge">This Year</div>
-      <div class="ins-text">You've watched <strong>23</strong> films in 2026 so far. The projector never goes dark.</div>
-    </div></div>
     </div>
     <div style="margin-top:2.5rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Actor Appearances</div>
@@ -3601,7 +3583,10 @@ function _hmMonthHtml(year,month,dayMap,todayKey){
     }).join('');
     rows.push(`<div class="hm-week-row">${week}</div>`);
   }
-  return`<div class="hm-month"><div class="hm-month-name">${MNAMES[month]} ${year}</div><div class="hm-dow-row">${dowRow}</div>${rows.join('')}</div>`;
+  const monthKey=year+'-'+String(month+1).padStart(2,'0')+'-';
+  const watchCount=Object.entries(dayMap).filter(([k])=>k.startsWith(monthKey)).reduce((s,[,fs])=>s+fs.length,0);
+  const pill=`<span class="hm-count-pill">${watchCount}</span>`;
+  return`<div class="hm-month"><div class="hm-month-name">${MNAMES[month]} ${year}${pill}</div><div class="hm-dow-row">${dowRow}</div>${rows.join('')}</div>`;
 }
 function _hmEnter(e){_hmShow(e.currentTarget,e.clientX,e.clientY);}
 function _hmLeave(){const t=document.getElementById('hmTip');if(t)t.classList.remove('show');}
@@ -3665,13 +3650,6 @@ function renderStats(){
   const legend=slices.map(s=>`<div class="pie-legend-row"><div class="pie-dot" style="background:${s.col}"></div><div class="pie-lname">${s.g}</div><div class="pie-lcount">${s.c}</div></div>`).join('');
   gb.innerHTML=`<div class="pie-wrap"><svg class="pie-svg" viewBox="0 0 260 260" width="220" height="220" style="overflow:visible">${svgPaths}<circle cx="${CX}" cy="${CY}" r="${IR-1}" fill="var(--black)"/></svg><div class="pie-legend">${legend}</div></div><div class="pie-tip" id="pieTip"><div class="pie-tip-genre" id="pieTipGenre"></div><div class="pie-tip-pct" id="pieTipPct"></div><div class="pie-tip-count" id="pieTipCount"></div></div>`;
   window._PIE_DATA=slices;
-
-  const ig=document.getElementById('insightsGrid');if(!ig)return;
-  ig.innerHTML=buildInsights(films).map(i=>`
-    <div class="ins-card">
-      <div class="ins-badge">${i.badge}</div>
-      <div class="ins-text">${i.text}</div>
-    </div>`).join('')||'<div class="ins-card"><div class="ins-text" style="text-align:center;opacity:.6">Watch more films to unlock insights</div></div>';
 
   renderActors(films);
 }
@@ -3756,25 +3734,6 @@ function _lbClick(e){
   if(rev&&rev.link)window.open(rev.link,'_blank');
 }
 
-function buildInsights(films){
-  const ins=[];
-  if(!films.length)return ins;
-  const yr=new Date().getFullYear().toString();
-  const gc={},dc={},ac={};
-  films.forEach(w=>{gc[w.f.g]=(gc[w.f.g]||0)+1;dc[w.f.d]=(dc[w.f.d]||0)+1;(w.f.a||[]).forEach(a=>ac[a]=(ac[a]||0)+1)});
-  const ta=Object.entries(ac).sort((a,b)=>b[1]-a[1])[0];
-  const td=Object.entries(dc).sort((a,b)=>b[1]-a[1])[0];
-  const tg=Object.entries(gc).sort((a,b)=>b[1]-a[1])[0];
-  const thisYr=films.filter(w=>w.d?.startsWith(yr));
-  const yrs=films.map(w=>w.f.y).sort();
-
-  if(ta&&ta[1]>1)ins.push({badge:'Favourite Face',text:`<strong>${ta[0]}</strong> has appeared in <strong>${ta[1]}</strong> films you've watched — clearly a face you trust.`});
-  if(td&&td[1]>1)ins.push({badge:'Auteur of Choice',text:`You've watched <strong>${td[1]}</strong> films by <strong>${td[0]}</strong>. You clearly trust their vision.`});
-  if(tg){const p=Math.round(tg[1]/films.length*100);ins.push({badge:'Genre Taste',text:`<strong>${p}%</strong> of your films are <strong>${tg[0]}</strong>. You have a distinct appetite for this kind of cinema.`})}
-  if(yrs.length>1)ins.push({badge:'Era Explorer',text:`Your taste spans from <strong>${yrs[0]}</strong> to <strong>${yrs[yrs.length-1]}</strong> — a <strong>${yrs[yrs.length-1]-yrs[0]}</strong>-year sweep of cinema history.`});
-  if(thisYr.length>0)ins.push({badge:'This Year',text:`You've watched <strong>${thisYr.length}</strong> film${thisYr.length!==1?'s':''} in ${yr} so far. The projector never goes dark.`});
-  return ins.slice(0,6);
-}
 
 function renderActors(films){
   const el=document.getElementById('actorList');
