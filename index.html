@@ -3682,10 +3682,10 @@ function renderDecades(films){
   if(!films.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see the decade breakdown</div>';return;}
   const map={};
   films.forEach(w=>{
-    const decade=Math.floor((w.film.y||0)/10)*10;
+    const decade=Math.floor((w.f.y||0)/10)*10;
     if(decade<1900)return;
     if(!map[decade])map[decade]=[];
-    map[decade].push({t:w.film.t,y:w.film.y});
+    map[decade].push({t:w.f.t,y:w.f.y});
   });
   const decades=Object.keys(map).map(Number).sort((a,b)=>a-b);
   const maxCount=Math.max(...decades.map(d=>map[d].length));
