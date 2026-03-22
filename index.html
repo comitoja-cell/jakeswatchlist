@@ -966,12 +966,12 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 /* ── Decade Histogram ──────────────────────────── */
 .decade-section{margin-top:2.5rem}
 .decade-bars{display:flex;flex-direction:column;gap:.55rem;position:relative}
-.decade-row{display:flex;align-items:center;gap:.9rem;position:relative}
+.decade-row{display:flex;align-items:center;gap:.9rem;position:relative;cursor:pointer}
 .decade-label{font-family:"Times New Roman",Times,serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);width:42px;flex-shrink:0;text-align:right}
 .decade-bar-wrap{flex:1;position:relative;height:28px;display:flex;align-items:center}
 .decade-bar-track{position:absolute;left:0;right:0;height:6px;background:var(--white-04);border-radius:3px}
-.decade-bar-fill{height:6px;background:var(--gold);border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
-.decade-bar-fill:hover{background:var(--white)}
+.decade-bar-fill{height:6px;background:var(--gold);border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.decade-row:hover .decade-bar-fill{background:var(--white)}
 .decade-count{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-50);width:18px;text-align:right;flex-shrink:0}
 .decade-tooltip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--border-gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;min-width:180px;max-width:260px}
 .decade-tooltip.show{opacity:1}
@@ -3708,7 +3708,7 @@ function renderDecades(films){
       '<div class="decade-count">'+count+'</div>'+
     '</div>';
   }).join('');
-  el.querySelectorAll('.decade-bar-fill').forEach(bar=>{
+  el.querySelectorAll('.decade-row').forEach(bar=>{
     const decade=Number(bar.dataset.decade);
     const filmList=map[decade].slice().sort((a,b)=>a.y-b.y);
     bar.addEventListener('mouseenter',e=>{
