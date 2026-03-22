@@ -962,6 +962,23 @@ body.visitor-mode .wl-btn       { display: none !important; }
 body.visitor-mode #syncBtn      { display: none !important; }
 body.visitor-mode .rec-btn      { display: none !important; }
 body.visitor-mode .rec-dismiss  { display: none !important; }
+
+/* ── Decade Histogram ──────────────────────────── */
+.decade-section{margin-top:2.5rem}
+.decade-bars{display:flex;flex-direction:column;gap:.55rem;position:relative}
+.decade-row{display:flex;align-items:center;gap:.9rem;position:relative}
+.decade-label{font-family:"Times New Roman",Times,serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);width:42px;flex-shrink:0;text-align:right}
+.decade-bar-wrap{flex:1;position:relative;height:28px;display:flex;align-items:center}
+.decade-bar-track{position:absolute;left:0;right:0;height:6px;background:var(--white-04);border-radius:3px}
+.decade-bar-fill{height:6px;background:var(--gold);border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.decade-bar-fill:hover{background:var(--white)}
+.decade-count{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-50);width:18px;text-align:right;flex-shrink:0}
+.decade-tooltip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--border-gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;min-width:180px;max-width:260px}
+.decade-tooltip.show{opacity:1}
+.decade-tip-label{font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.45rem}
+.decade-tip-film{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-80);padding:.18rem 0;border-bottom:1px solid var(--white-08)}
+.decade-tip-film:last-child{border-bottom:none}
+.decade-tip-year{font-size:.65rem;color:var(--white-50);margin-left:.4rem}
 </style>
 <style id="claude-agent-animation-styles">
       @keyframes claude-pulse {
@@ -1721,6 +1738,10 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div class="gbr-count">1</div>
     </div></div>
     </div>
+    </div>
+        <div class="decade-section">
+      <div class="sec-label" style="margin-bottom:1.3rem">Films by Decade</div>
+      <div class="decade-bars" id="decadeBars"></div>
     </div>
     <div style="margin-top:2.5rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Actor Appearances</div>
@@ -3651,7 +3672,60 @@ function renderStats(){
   gb.innerHTML=`<div class="pie-wrap"><svg class="pie-svg" viewBox="0 0 260 260" width="220" height="220" style="overflow:visible">${svgPaths}<circle cx="${CX}" cy="${CY}" r="${IR-1}" fill="var(--black)"/></svg><div class="pie-legend">${legend}</div></div><div class="pie-tip" id="pieTip"><div class="pie-tip-genre" id="pieTipGenre"></div><div class="pie-tip-pct" id="pieTipPct"></div><div class="pie-tip-count" id="pieTipCount"></div></div>`;
   window._PIE_DATA=slices;
 
-  renderActors(films);
+  renderDecades(films);
+    renderActors(films);
+}
+
+function renderDecades(films){
+  const el=document.getElementById('decadeBars');
+  if(!el)return;
+  if(!films.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see the decade breakdown</div>';return;}
+  const map={};
+  films.forEach(w=>{
+    const decade=Math.floor((w.film.y||0)/10)*10;
+    if(decade<1900)return;
+    if(!map[decade])map[decade]=[];
+    map[decade].push({t:w.film.t,y:w.film.y});
+  });
+  const decades=Object.keys(map).map(Number).sort((a,b)=>a-b);
+  const maxCount=Math.max(...decades.map(d=>map[d].length));
+  const oldTip=document.getElementById('decadeTip');
+  if(oldTip)oldTip.remove();
+  const tip=document.createElement('div');
+  tip.className='decade-tooltip';
+  tip.id='decadeTip';
+  document.body.appendChild(tip);
+  el.innerHTML=decades.map(decade=>{
+    const fs=map[decade].slice().sort((a,b)=>a.y-b.y);
+    const count=fs.length;
+    const pct=Math.round(count/maxCount*100);
+    return '<div class="decade-row" data-decade="'+decade+'">'+
+      '<div class="decade-label">'+decade+'s</div>'+
+      '<div class="decade-bar-wrap">'+
+        '<div class="decade-bar-track"></div>'+
+        '<div class="decade-bar-fill" style="width:'+pct+'%" data-decade="'+decade+'"></div>'+
+      '</div>'+
+      '<div class="decade-count">'+count+'</div>'+
+    '</div>';
+  }).join('');
+  el.querySelectorAll('.decade-bar-fill').forEach(bar=>{
+    const decade=Number(bar.dataset.decade);
+    const filmList=map[decade].slice().sort((a,b)=>a.y-b.y);
+    bar.addEventListener('mouseenter',e=>{
+      tip.innerHTML='<div class="decade-tip-label">'+decade+'s — '+filmList.length+' film'+(filmList.length>1?'s':'')+'</div>'+
+        filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
+      tip.classList.add('show');
+      _moveTip(e,tip);
+    });
+    bar.addEventListener('mousemove',e=>_moveTip(e,tip));
+    bar.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+  });
+}
+function _moveTip(e,tip){
+  const x=e.clientX,y=e.clientY;
+  const tw=tip.offsetWidth||220,th=tip.offsetHeight||120;
+  tip.style.left=(x+tw+16>window.innerWidth?x-tw-12:x+12)+'px';
+  tip.style.top=(y+th+8>window.innerHeight?y-th-8:y+8)+'px';
 }
 
 function _pieEnter(e,i){
