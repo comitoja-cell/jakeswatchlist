@@ -1743,6 +1743,10 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div class="sec-label" style="margin-bottom:1.3rem">Films by Decade</div>
       <div class="decade-bars" id="decadeBars"></div>
     </div>
+    <div class="decade-section" style="margin-top:2.5rem">
+      <div class="sec-label" style="margin-bottom:1.3rem">Films by Day</div>
+      <div class="decade-bars" id="dayBars"></div>
+    </div>
     <div style="margin-top:2.5rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Actor Appearances</div>
       <div id="actorList"><div class="actor-row">
@@ -3673,6 +3677,7 @@ function renderStats(){
   window._PIE_DATA=slices;
 
   renderDecades(films);
+    renderDays(films);
     renderActors(films);
 }
 
@@ -3725,6 +3730,58 @@ function renderDecades(films){
     col.addEventListener('mouseleave',()=>tip.classList.remove('show'));
   });
 }
+function renderDays(films){
+  const el=document.getElementById('dayBars');
+  if(!el)return;
+  if(!films.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see the day breakdown</div>';return;}
+  const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const DCOLS=['#c9a84c','#e0c870','#a07830','#f0e090','#7a5c20','#d4b060','#c9a84c'];
+  const map={Monday:[],Tuesday:[],Wednesday:[],Thursday:[],Friday:[],Saturday:[],Sunday:[]};
+  films.forEach(w=>{
+    if(!w.d)return;
+    const dt=new Date(w.d+'T12:00:00');
+    const day=dt.toLocaleDateString('en-US',{weekday:'long'});
+    if(map[day])map[day].push({t:w.f?w.f.t:'Unknown',y:w.f?w.f.y:''});
+  });
+  const counts=DAYS.map(d=>map[d].length);
+  const maxCount=Math.max(...counts,1);
+  const total=films.filter(w=>w.d).length||1;
+  const oldTip=document.getElementById('dayTip');
+  if(oldTip)oldTip.remove();
+  const tip=document.createElement('div');
+  tip.className='decade-tooltip';
+  tip.id='dayTip';
+  document.body.appendChild(tip);
+  el.innerHTML='<div class="decade-chart-wrap">'+
+    DAYS.map((day,i)=>{
+      const fs=map[day];
+      const count=fs.length;
+      const pct=Math.round(count/total*100);
+      const barH=Math.max(4,Math.round(count/maxCount*110));
+      const col=DCOLS[i%DCOLS.length];
+      const shortDay=day.substring(0,3);
+      return '<div class="decade-col" data-day="'+day+'">'+
+        '<div class="decade-vcount">'+count+'</div>'+
+        '<div class="decade-pct">'+pct+'%</div>'+
+        '<div class="decade-vbar" style="height:'+barH+'px;background:'+col+'"></div>'+
+        '<div class="decade-vlabel">'+shortDay+'</div>'+
+      '</div>';
+    }).join('')+
+  '</div>';
+  el.querySelectorAll('.decade-col').forEach(col=>{
+    const day=col.dataset.day;
+    const filmList=map[day];
+    col.addEventListener('mouseenter',e=>{
+      tip.innerHTML='<div class="decade-tip-label">'+day+' — '+filmList.length+' film'+(filmList.length!==1?'s':'')+'</div>'+
+        filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
+      tip.classList.add('show');
+      _moveTip(e,tip);
+    });
+    col.addEventListener('mousemove',e=>_moveTip(e,tip));
+    col.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+  });
+}
+
 function _moveTip(e,tip){
   const x=e.clientX,y=e.clientY;
   const tw=tip.offsetWidth||220,th=tip.offsetHeight||120;
