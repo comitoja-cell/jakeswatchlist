@@ -457,7 +457,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-dow-row,.hm-week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
 .hm-dow-cell{font-family:"Times New Roman",Times,serif;font-size:.55rem;color:rgba(255,255,255,.28);text-align:center;padding:.2rem 0}
 .hm-day{aspect-ratio:1;border-radius:2px;cursor:default;touch-action:manipulation;min-width:0}
-.hm-active{background:var(--gold);cursor:pointer;transition:opacity .1s,transform .1s}
+.hm-active{background:var(--gold);cursor:pointer;transition:opacity .1s,transform .1s}.hm-multi{background:#7a5c1e;cursor:pointer;transition:opacity .1s,transform .1s}.hm-multi:hover{opacity:.8;transform:scale(1.12)}
 .hm-active:hover{opacity:.8;transform:scale(1.12)}
 .hm-inactive{background:rgba(255,255,255,.07)}
 .hm-empty{background:transparent}
@@ -1688,6 +1688,8 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
         <div class="hm-legend-swatch hm-inactive"></div>
         <div class="hm-legend-swatch hm-active"></div>
         <span class="hm-legend-label">Watched</span>
+        <div class="hm-legend-swatch hm-multi" style="margin-left:.5rem"></div>
+        <span class="hm-legend-label">2+ Films</span>
         <div class="hm-legend-swatch hm-today" style="margin-left:.5rem"></div>
         <span class="hm-legend-label">Today</span>
       </div>
@@ -3596,7 +3598,7 @@ function _hmMonthHtml(year,month,dayMap,todayKey){
       const fs=dayMap[k]||[];
       const isToday=k===todayKey;
       const isActive=fs.length>0;
-      let cls='hm-day'+(isActive?' hm-active':isToday?' hm-today':' hm-inactive');
+      let cls='hm-day'+(fs.length>1?' hm-multi':isActive?' hm-active':isToday?' hm-today':' hm-inactive');
       const sf=fs.map(t=>t.replace(/\|/g,'')).join('|').replace(/"/g,'&quot;');
       return`<div class="${cls}" data-date="${k}" data-films="${sf}" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>`;
     }).join('');
