@@ -2916,7 +2916,7 @@ function renderTMDBResults(results, q){
       </div>`;
     }
     // Encode movie data for the add function
-    const safe=JSON.stringify({id:m.id,t:m.title,y:parseInt(year)||0,g:genre,poster:m.poster_path||''}).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    const safe=encodeURIComponent(JSON.stringify({id:m.id,t:m.title,y:parseInt(year)||0,g:genre,poster:m.poster_path||''}));
     return `<div class="sri">
       <div class="sri-poster">${poster}</div>
       <div class="sri-info">
@@ -2989,7 +2989,7 @@ async function enrichFilmFromTMDB(filmObj) {
 }
 
 async function openModalTMDB(safeJson){
-  const data=JSON.parse(safeJson.replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
+  const data=JSON.parse(decodeURIComponent(safeJson));
   const local=tmdbToLocal(data);
   // If this is a new film missing director/cast, wait for enrichment before opening modal
   // so the modal shows accurate metadata and saveWatched stores it correctly
@@ -3000,7 +3000,7 @@ async function openModalTMDB(safeJson){
 }
 
 async function addWLTMDB(safeJson){
-  const data=JSON.parse(safeJson.replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
+  const data=JSON.parse(decodeURIComponent(safeJson));
   const local=tmdbToLocal(data);
   if(!isWL(local.id)&&!isW(local.id)){
     WL.push(local.id);save();
