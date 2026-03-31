@@ -2916,7 +2916,7 @@ function renderTMDBResults(results, q){
       </div>`;
     }
     // Encode movie data for the add function
-    const safe=encodeURIComponent(JSON.stringify({id:m.id,t:m.title,y:parseInt(year)||0,g:genre,poster:m.poster_path||''}));
+    const safe=encodeURIComponent(JSON.stringify({id:m.id,t:m.title,y:parseInt(year)||0,g:genre,poster:m.poster_path||''})).replace(/'/g,'%27');
     return `<div class="sri">
       <div class="sri-poster">${poster}</div>
       <div class="sri-info">
