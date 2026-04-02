@@ -450,12 +450,12 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-nav-btn{background:none;border:none;color:var(--white-50);font-size:2.2rem;line-height:1;cursor:pointer;padding:.1rem .5rem;transition:color .15s;flex-shrink:0;font-family:"Times New Roman",Times,serif;margin-top:-.2rem}
 .hm-nav-btn:hover:not(:disabled){color:var(--gold)}
 .hm-nav-btn:disabled{opacity:.2;cursor:default}
-.hm-months-row{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;flex:1;min-width:0}
+.hm-months-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;flex:1;min-width:0}
 .hm-month{display:flex;flex-direction:column;gap:2px}
-.hm-month-name{font-family:"Times New Roman",Times,serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;text-align:center}
+.hm-month-name{font-family:"Times New Roman",Times,serif;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;text-align:center}
 .hm-count-pill{display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.45);font-family:"Times New Roman",Times,serif;font-size:.52rem;letter-spacing:.05em;padding:.08rem .32rem;border-radius:999px;margin-left:.4rem;vertical-align:middle;line-height:1.5}
 .hm-dow-row,.hm-week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
-.hm-dow-cell{font-family:"Times New Roman",Times,serif;font-size:.55rem;color:rgba(255,255,255,.28);text-align:center;padding:.2rem 0}
+.hm-dow-cell{font-family:"Times New Roman",Times,serif;font-size:.48rem;color:rgba(255,255,255,.28);text-align:center;padding:.15rem 0}
 .hm-day{aspect-ratio:1;border-radius:2px;cursor:default;touch-action:manipulation;min-width:0}
 .hm-active{background:var(--gold);cursor:pointer;transition:opacity .1s,transform .1s}.hm-multi{background:#7a5c1e;cursor:pointer;transition:opacity .1s,transform .1s}.hm-multi:hover{opacity:.8;transform:scale(1.12)}
 .hm-active:hover{opacity:.8;transform:scale(1.12)}
@@ -636,6 +636,34 @@ thead th:hover .sort-arrow{opacity:.7;}
   .header-inner{padding:0 1.2rem}
   .nav-tab{padding:.5rem .65rem;font-size:.65rem;letter-spacing:.08em}
   .rank-page,.page-inner,.stats-page{padding:2rem 1.2rem}
+  /* ── Mobile: full device usability ── */
+  body{overflow-x:hidden}
+  .header-inner{flex-wrap:wrap;gap:.5rem}
+  .nav-tabs{flex-wrap:wrap;justify-content:center}
+  .nav-tab{flex:1 1 auto;text-align:center;min-width:0}
+  .page-inner{padding:1.5rem 1rem}
+  .stats-page{padding:1.5rem 1rem}
+  .modal-overlay{padding:.5rem;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .modal{width:100%;max-width:100%;max-height:88vh;overflow-y:auto;margin-top:.5rem;border-radius:0}
+  .modal-body{padding:1.2rem 1rem}
+  .modal-row{flex-direction:column;gap:.5rem}
+  .modal-save{width:100%;font-size:.85rem;padding:.9rem}
+  .search-bar{flex-direction:column;gap:.5rem}
+  .search-bar input,.search-input{width:100%;box-sizing:border-box}
+  .sr-list{max-height:220px}
+  .hm-months-row{grid-template-columns:repeat(2,1fr)!important;gap:.75rem}
+  .hm-section{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .rank-page{padding:1.5rem 1rem}
+  .wl-grid{grid-template-columns:1fr}
+  .db-inner{overflow-x:hidden}
+  .tab-switcher{flex-wrap:wrap}
+  .tsb{flex:1 1 auto;font-size:.65rem;padding:.4rem .5rem}
+  .sri-btns{flex-shrink:0}
+  .agent-input-row{flex-direction:column;gap:.5rem}
+  .agent-input-row input{width:100%;box-sizing:border-box}
+  .ins-card{padding:1.2rem}
+  .genre-chart,.pie-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  input,select,textarea{font-size:16px!important}
 }
 
 /* ══════════════════════════════════════════
