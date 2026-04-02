@@ -3599,14 +3599,14 @@ function _hmRender(){
   const curY=todayD.getFullYear();
   const curM=todayD.getMonth();
   const months=[];
-  for(let i=-2;i<=0;i++){
+  for(let i=-3;i<=0;i++){
     let tm=(curY*12+curM)+i+_hmOffset;
     let y=Math.floor(tm/12);
     let m=tm%12;
     if(m<0){m+=12;y--;}
     months.push({y,m});
   }
-  const firstTm=(curY*12+curM)-2+_hmOffset;
+  const firstTm=(curY*12+curM)-3+_hmOffset;
   prevBtn.disabled=firstTm<=2026*12+0;
   nextBtn.disabled=_hmOffset>=0;
   grid.innerHTML=months.map(({y,m})=>_hmMonthHtml(y,m,dayMap,todayKey)).join('');
