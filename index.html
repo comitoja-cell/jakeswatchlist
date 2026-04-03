@@ -3955,12 +3955,12 @@ async function renderRecentlyWatched() {
   const container = document.getElementById('rw-tiles');
   if (!container) return;
 
-  // Pull the 3 most recently watched from the live W array (sorted by date desc)
+  // Pull the 5 most recently watched from the live W array (sorted by date desc)
   const sorted = W.slice().sort((a, b) => {
     const dateDiff = new Date(b.d+'T12:00:00') - new Date(a.d+'T12:00:00');
     if (dateDiff !== 0) return dateDiff;
     return b.id - a.id; // same date: higher id = more recently logged = leftmost
-  }).slice(0, 3);
+  }).slice(0, 5);
   const allSorted = W.slice().sort((a, b) => a.rank - b.rank);
 
   // Build skeleton tiles
@@ -4079,7 +4079,7 @@ function buildTasteProfile() {
 }
 
 function showAgentSkeleton() {
-  document.getElementById('agent-cards').innerHTML = Array(6).fill(0).map(() => `
+  document.getElementById('agent-cards').innerHTML = Array(5).fill(0).map(() => `
     <div class="agent-skeleton">
       <div class="agent-skeleton-poster"></div>
       <div class="agent-skeleton-line" style="width:80%"></div>
@@ -4102,9 +4102,9 @@ async function loadAgentRecs() {
   const dismissed     = _dismissedRecs.map(r => typeof r === 'string' ? r : r.title);
   const excluded      = [...watchedTitles, ...wlTitles, ...dismissed].join('", "');
 
-  const systemPrompt = `You are a sophisticated film curator for a personal movie diary. Recommend exactly 9 films tailored to the viewer's demonstrated taste.
+  const systemPrompt = `You are a sophisticated film curator for a personal movie diary. Recommend exactly 8 films tailored to the viewer's demonstrated taste.
 
-Respond ONLY with a valid JSON array of exactly 9 objects. No markdown, no explanation — pure JSON only.
+Respond ONLY with a valid JSON array of exactly 8 objects. No markdown, no explanation — pure JSON only.
 
 Each object must have these exact keys:
 - "title": string (exact canonical film title)
@@ -4147,8 +4147,8 @@ Vary eras and countries. Prioritize critically acclaimed films.`;
 
     if (!Array.isArray(recs) || !recs.length) throw new Error('Unexpected response shape');
 
-    _currentRecs = recs.slice(0, 6);
-    _recBuffer   = recs.slice(6);   // keep extras as reserve
+    _currentRecs = recs.slice(0, 5);
+    _recBuffer   = recs.slice(5);   // keep extras as reserve
     renderAgentCards(_currentRecs);
 
   } catch (err) {
