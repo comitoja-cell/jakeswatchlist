@@ -735,20 +735,22 @@ thead th:hover .sort-arrow{opacity:.7;}
   cursor:not-allowed;
 }
 
-/* Rec cards — 3×2 grid */
+/* Rec cards — single flex row */
 #agent-cards {
-  display:grid;
-  grid-template-columns:repeat(3,160px);
-  gap:1.5rem 1.4rem;
+  display:flex;
+  flex-direction:row;
+  gap:1.5rem;
   justify-content:center;
-  align-items:stretch;
+  align-items:flex-start;
+  flex-wrap:nowrap;
 }
 
 /* Loading skeleton */
 .agent-loading {
-  display:grid;
-  grid-template-columns:repeat(3,160px);
-  gap:1.5rem 1.4rem;
+  display:flex;
+  flex-direction:row;
+  gap:1.5rem;
+  justify-content:center;
   width:100%;
 }
 .agent-skeleton {
@@ -953,7 +955,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .rec-card:hover .rec-tooltip {display:block}
 
 @media(max-width:768px){
-  #agent-cards{grid-template-columns:repeat(2,140px);gap:1rem;}
+  #agent-cards{gap:1rem;}
   #agent-section{padding:0 1rem}
   .rec-card{width:140px}
   .rec-poster-wrap{width:140px;height:210px}
