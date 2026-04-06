@@ -3499,18 +3499,60 @@ function _saveStreamCache() {
   try { localStorage.setItem('jwl3_stream_cache', JSON.stringify(_streamCache)); } catch(e) {}
 }
 
-// TMDB provider_id → friendly short name for US
-const TMDB_PROVIDERS = {
-  8:'Netflix',9:'Prime Video',15:'Hulu',337:'Disney+',384:'Max',
-  386:'Peacock',387:'Peacock',531:'Paramount+',2:'Apple TV+',350:'Apple TV+',
-  283:'Crunchyroll',190:'Max',1899:'Max',37:'Starz',43:'Starz',
-  309:'Showtime',300:'MGM+',526:'AMC+',257:'fuboTV',
-  10:'Prime Video',192:'YouTube',7:'Vudu',3:'Google Play',68:'Microsoft'
-};
+// Normalize verbose TMDB provider names to clean short names
+// and deduplicate channel variants (e.g. "HBO Max Amazon Channel" → "Max")
+function _normalizeProvider(rawName) {
+  const n = rawName.toLowerCase();
+  if (n.includes('netflix')) return 'Netflix';
+  if (n.includes('disney')) return 'Disney+';
+  if (n.includes('hulu')) return 'Hulu';
+  if (n.includes('hbo') || n.includes('max amazon') || (n === 'max')) return 'Max';
+  if (n === 'max' || n.includes('max ')) return 'Max';
+  if (n.includes('prime video') || n.includes('amazon prime')) return 'Prime Video';
+  if (n.includes('apple tv')) return 'Apple TV+';
+  if (n.includes('paramount')) return 'Paramount+';
+  if (n.includes('peacock')) return 'Peacock';
+  if (n.includes('showtime')) return 'Showtime';
+  if (n.includes('starz')) return 'Starz';
+  if (n.includes('mgm')) return 'MGM+';
+  if (n.includes('amc')) return 'AMC+';
+  if (n.includes('shudder')) return 'Shudder';
+  if (n.includes('crunchyroll')) return 'Crunchyroll';
+  if (n.includes('fubotv') || n.includes('fubo')) return 'fuboTV';
+  if (n.includes('mubi')) return 'MUBI';
+  if (n.includes('criterion')) return 'Criterion';
+  if (n.includes('kanopy')) return 'Kanopy';
+  if (n.includes('tubi')) return 'Tubi';
+  if (n.includes('pluto')) return 'Pluto TV';
+  if (n.includes('plex')) return 'Plex';
+  if (n.includes('philo')) return 'Philo';
+  if (n.includes('youtube tv')) return 'YouTube TV';
+  if (n.includes('vudu') || n.includes('fandango')) return 'Vudu';
+  if (n.includes('google play') || n.includes('google')) return 'Google Play';
+  if (n.includes('microsoft') || n.includes('xbox')) return 'Microsoft';
+  if (n.includes('youtube')) return 'YouTube';
+  // Strip common suffixes for unknown providers
+  return rawName
+    .replace(/ Amazon Channel$/i,'')
+    .replace(/ Apple TV Channel$/i,'')
+    .replace(/ Roku Premium Channel$/i,'')
+    .replace(/ Plus Premium$/i,'+')
+    .replace(/ Plus Essential$/i,'+')
+    .replace(/ with Ads$/i,'')
+    .trim();
+}
+
+// Major subscription services — shown in gold
+const MAJOR_SUBS = new Set([
+  'Netflix','Hulu','Disney+','Max','Prime Video','Apple TV+',
+  'Paramount+','Peacock','Showtime','Starz','MGM+','AMC+',
+  'Shudder','Crunchyroll','fuboTV','MUBI','Criterion','Philo',
+  'YouTube TV','Tubi','Pluto TV','Plex','Kanopy'
+]);
 
 async function fetchStreaming(f) {
   if (!tmdbReady()) return [];
-  const cacheKey = f.tmdbId ? 'wp_' + f.tmdbId : 'wpt_' + (f.t + '_' + f.y).toLowerCase().replace(/[^a-z0-9]/g,'_');
+  const cacheKey = f.tmdbId ? 'wp2_' + f.tmdbId : 'wpt2_' + (f.t + '_' + f.y).toLowerCase().replace(/[^a-z0-9]/g,'_');
   const cached = _streamCache[cacheKey];
   if (cached && (Date.now() - cached.ts) < STREAM_CACHE_TTL) return cached.sources;
 
@@ -3540,22 +3582,22 @@ async function fetchStreaming(f) {
 
     const seen = new Set();
     const sources = [];
-    (us.flatrate||[]).forEach(p=>{
-      const name=TMDB_PROVIDERS[p.provider_id]||p.provider_name;
-      if(!seen.has(name)){seen.add(name);sources.push({name,type:'sub'});}
-    });
-    if(!sources.length){
-      (us.rent||[]).slice(0,3).forEach(p=>{
-        const name=TMDB_PROVIDERS[p.provider_id]||p.provider_name;
-        if(!seen.has(name)){seen.add(name);sources.push({name,type:'rent'});}
+
+    const addProviders = (list, type) => {
+      (list||[]).forEach(p => {
+        const name = _normalizeProvider(p.provider_name);
+        if (!seen.has(name)) { seen.add(name); sources.push({ name, type }); }
       });
-    }
-    if(!sources.length){
-      (us.buy||[]).slice(0,2).forEach(p=>{
-        const name=TMDB_PROVIDERS[p.provider_id]||p.provider_name;
-        if(!seen.has(name)){seen.add(name);sources.push({name,type:'rent'});}
-      });
-    }
+    };
+
+    // Subscription (flatrate) first
+    addProviders(us.flatrate, 'sub');
+    // Free tiers (ads)
+    addProviders(us.free, 'free');
+    // Rent/buy only if nothing else available
+    if (!sources.length) addProviders((us.rent||[]).slice(0,3), 'rent');
+    if (!sources.length) addProviders((us.buy||[]).slice(0,2), 'rent');
+
     _streamCache[cacheKey]={sources,ts:Date.now()};
     _saveStreamCache();
     return sources;
