@@ -388,6 +388,52 @@ thead th:hover .sort-arrow{opacity:.7;}
 .wl-btn.w:hover{background:var(--gold);color:var(--black);border-color:var(--gold);}
 .wl-btn.r{border-color:var(--border);color:var(--white-50);}
 .wl-btn.r:hover{border-color:rgba(200,60,60,.4);color:#e06060;}
+/* ── WATCHLIST TABLE ── */
+.wl-table{width:100%;border-collapse:collapse}
+.wl-table th{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--white-50);border-bottom:1px solid var(--border);
+  padding:.7rem 1rem;text-align:left;font-weight:400;cursor:pointer;
+  user-select:none;
+}
+.wl-table th:hover{color:var(--white)}
+.wl-table td{
+  padding:.85rem 1rem;
+  border-bottom:1px solid var(--white-04);
+  vertical-align:middle;
+}
+.wl-table tr:hover td{background:var(--white-04)}
+.wl-table .mt-poster{
+  width:30px;height:44px;background:var(--black-70);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:.95rem;
+  overflow:hidden;flex-shrink:0;
+}
+.wl-table .mt-poster img{width:100%;height:100%;object-fit:cover;display:block;}
+.stream-pills{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;}
+.stream-pill{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.18rem .55rem;border:1px solid;white-space:nowrap;
+  font-weight:700;
+}
+.stream-pill.sub{border-color:rgba(201,168,76,.45);color:var(--gold);background:rgba(201,168,76,.06);}
+.stream-pill.rent{border-color:rgba(255,255,255,.2);color:var(--white-50);background:transparent;}
+.stream-pill.free{border-color:rgba(90,200,90,.4);color:#7cd47c;background:rgba(90,200,90,.06);}
+.stream-loading{font-size:.65rem;color:var(--white-20);font-style:italic;font-family:"Times New Roman",Times,serif;}
+.stream-none{font-size:.65rem;color:var(--white-20);font-style:italic;font-family:"Times New Roman",Times,serif;}
+.wl-controls{display:flex;align-items:center;gap:.7rem;margin-bottom:2rem;flex-wrap:wrap;justify-content:flex-end}
+.wl-tbl-actions{display:flex;gap:.3rem;align-items:center}
+.wl-tbl-btn{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.3rem .7rem;border:1px solid;background:none;cursor:pointer;transition:all .18s;white-space:nowrap;
+}
+.wl-tbl-btn.w{border-color:var(--gold-dim);color:var(--gold);}
+.wl-tbl-btn.w:hover{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.wl-tbl-btn.r{border-color:var(--border);color:var(--white-50);}
+.wl-tbl-btn.r:hover{border-color:rgba(200,60,60,.4);color:#e06060;}
 
 /* ── RANKINGS page ── */
 .rank-page{max-width:800px;margin:0 auto;padding:3rem 2.5rem}
@@ -1396,8 +1442,25 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       </div>
     </div>
     <div class="db-sub" id="sub-watchlist">
-      <div class="wl-grid" id="wlGrid"></div>
-      <div id="wlEmpty" class="empty" style="display: block;">
+      <div class="wl-controls" id="wlControls">
+        <div class="db-search-wrap">
+          <button class="db-search-icon" onclick="toggleWLSearch()" title="Search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+          <input class="db-search" id="wlSearch" type="text" placeholder="Search watchlist..." oninput="renderWL()">
+        </div>
+        <select class="db-filter" id="wlGenreFilter" onchange="renderWL()"><option value="">All Genres</option></select>
+        <select class="db-filter" id="wlDirectorFilter" onchange="renderWL()"><option value="">All Directors</option></select>
+        <select class="db-filter" id="wlStreamFilter" onchange="renderWL()"><option value="">Any Streaming</option></select>
+      </div>
+      <table class="wl-table">
+        <thead><tr id="wlTableHead"></tr></thead>
+        <tbody id="wlTableBody"></tbody>
+      </table>
+      <div id="wlEmpty" class="empty" style="display: none;">
         <span class="empty-icon">◎</span>
         <div class="empty-title">Your watch list is empty</div>
         <div class="empty-text">Save films from the Home page to watch later</div>
@@ -3089,7 +3152,7 @@ function addWL(id){
     hideResults();
   }
 }
-function removeWL(id){WL=WL.filter(x=>x!==id);save();renderWL();showToast('Removed from watch list')}
+function removeWL(id){WL=WL.filter(x=>x!==id);delete _wlStreamData[id];save();renderWL();showToast('Removed from watch list')}
 
 // ══════════ MODAL ══════════
 let mIsNew=false, mRating=0;
@@ -3419,63 +3482,293 @@ function renderTable(){
   }).join('');
 }
 
+// ══════════ STREAMING (WATCHMODE) ══════════
+// Watchmode free tier: 1,000 credits/month. Search = 1 credit, sources = 1 credit.
+// We cache aggressively in localStorage to preserve credits.
+const WATCHMODE_KEY = 'WbYvB2qMeBLaTUNYajixEjN9EcZcCW6K4P9LBxjX';
+const WATCHMODE_BASE = 'https://api.watchmode.com/v1';
+
+// Streaming cache: { [tmdbId|title_year]: { sources: [...], ts: timestamp } }
+let _streamCache = {};
+try { _streamCache = JSON.parse(localStorage.getItem('jwl3_stream_cache') || '{}'); } catch(e) {}
+const STREAM_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+function _saveStreamCache() {
+  try { localStorage.setItem('jwl3_stream_cache', JSON.stringify(_streamCache)); } catch(e) {}
+}
+
+// Subscription-only service IDs we want to show (major platforms)
+const STREAM_PRIORITY = [
+  {id:203,name:'Netflix'},{id:157,name:'Hulu'},{id:387,name:'Max'},
+  {id:26,name:'Prime Video'},{id:372,name:'Disney+'},{id:444,name:'Peacock'},
+  {id:371,name:'Apple TV+'},{id:389,name:'Paramount+'},
+  {id:567,name:'MGM+'},{id:190,name:'Showtime'},
+];
+const PRIORITY_IDS = new Set(STREAM_PRIORITY.map(s=>s.id));
+
+async function fetchStreaming(f) {
+  const cacheKey = f.tmdbId ? 'tmdb_' + f.tmdbId : (f.t + '_' + f.y).toLowerCase().replace(/\s+/g,'_');
+  const cached = _streamCache[cacheKey];
+  if (cached && (Date.now() - cached.ts) < STREAM_CACHE_TTL) return cached.sources;
+
+  try {
+    // Step 1: Search Watchmode for the title
+    let wmId = null;
+    if (f.tmdbId) {
+      // Direct TMDB lookup is most accurate
+      const searchRes = await fetch(
+        `${WATCHMODE_BASE}/search/?apiKey=${WATCHMODE_KEY}&search_field=tmdb_movie_id&search_value=${f.tmdbId}`
+      );
+      if (searchRes.ok) {
+        const searchData = await searchRes.json();
+        wmId = searchData?.title_results?.[0]?.id || null;
+      }
+    }
+    if (!wmId) {
+      // Fallback: search by title
+      const q = encodeURIComponent(f.t);
+      const searchRes = await fetch(
+        `${WATCHMODE_BASE}/search/?apiKey=${WATCHMODE_KEY}&search_field=name&search_value=${q}&types=movie`
+      );
+      if (searchRes.ok) {
+        const searchData = await searchRes.json();
+        const results = searchData?.title_results || [];
+        // Match by year if possible
+        const match = results.find(r => Math.abs((r.year_released||0) - (f.y||0)) <= 1) || results[0];
+        wmId = match?.id || null;
+      }
+    }
+    if (!wmId) {
+      _streamCache[cacheKey] = { sources: [], ts: Date.now() };
+      _saveStreamCache();
+      return [];
+    }
+
+    // Step 2: Get streaming sources
+    const srcRes = await fetch(
+      `${WATCHMODE_BASE}/title/${wmId}/sources/?apiKey=${WATCHMODE_KEY}&regions=US`
+    );
+    if (!srcRes.ok) return [];
+    const srcData = await srcRes.json();
+
+    // Filter to subscription services we care about, deduplicate
+    const seen = new Set();
+    const sources = (srcData || [])
+      .filter(s => s.type === 'sub' && PRIORITY_IDS.has(s.source_id))
+      .filter(s => { if (seen.has(s.source_id)) return false; seen.add(s.source_id); return true; })
+      .map(s => {
+        const info = STREAM_PRIORITY.find(p => p.id === s.source_id);
+        return { name: info?.name || s.name, type: 'sub', url: s.web_url };
+      });
+
+    // Also capture rental/buy if no subs available
+    let rentals = [];
+    if (!sources.length) {
+      const rentSeen = new Set();
+      rentals = (srcData || [])
+        .filter(s => (s.type === 'rent' || s.type === 'buy') && !rentSeen.has(s.source_id) && rentSeen.add(s.source_id))
+        .slice(0,2)
+        .map(s => ({ name: s.name, type: 'rent' }));
+    }
+
+    const finalSources = [...sources, ...rentals];
+    _streamCache[cacheKey] = { sources: finalSources, ts: Date.now() };
+    _saveStreamCache();
+    return finalSources;
+  } catch(e) {
+    return [];
+  }
+}
+
 // ══════════ RENDER WATCHLIST ══════════
-function renderWL(){
-  const el=document.getElementById('wlGrid');
-  if(!el)return;
-  if(!WL.length){el.innerHTML='';document.getElementById('wlEmpty').style.display='block';return}
-  document.getElementById('wlEmpty').style.display='none';
-  el.innerHTML=WL.map((id,idx)=>{
-    const f=film(id);if(!f)return'';
-    const dir = f.d ? `<span style="color:var(--white-20)">Dir.</span> ${f.d} · ` : '';
-    return `<div class="wl-card">
-      <div class="wl-poster" id="wlp-${idx}">
-        <div class="wl-poster-fallback">🎬</div>
-      </div>
-      <div class="wl-body">
-        <div class="wl-title">${f.t}</div>
-        <div class="wl-meta">${dir}${f.y}${f.g ? ' · <span class="wl-genre-tag">'+f.g+'</span>' : ''}</div>
-        <div class="wl-btns">
-          <button class="wl-btn w" onclick="openModal(${f.id})">✓ Mark Watched</button>
-          <button class="wl-btn r" onclick="removeWL(${f.id})">✕ Remove</button>
-        </div>
-      </div>
-    </div>`;
+let _wlSort = 'alpha';
+let _wlSortDir = { alpha: 'asc', genre: 'asc', director: 'asc', year: 'desc', stream: 'asc' };
+let _wlStreamData = {}; // { filmId: sources[] }
+
+function toggleWLSearch() {
+  const search = document.getElementById('wlSearch');
+  if (search.classList.contains('expanded')) {
+    if (!search.value) { search.classList.remove('expanded'); search.blur(); }
+  } else {
+    search.classList.add('expanded');
+    setTimeout(() => search.focus(), 100);
+  }
+}
+
+function _wlColSort(col) {
+  if (_wlSort === col) {
+    _wlSortDir[col] = _wlSortDir[col] === 'asc' ? 'desc' : 'asc';
+  } else {
+    _wlSort = col;
+  }
+  renderWL();
+}
+
+function _wlRenderHead() {
+  const tr = document.getElementById('wlTableHead');
+  if (!tr) return;
+  const cols = [
+    { key: null, label: '', style: 'width:44px;' },
+    { key: 'alpha', label: 'Title', style: '' },
+    { key: 'year', label: 'Year', style: 'width:70px;' },
+    { key: 'genre', label: 'Genre', style: '' },
+    { key: 'director', label: 'Director', style: '' },
+    { key: 'stream', label: 'Streaming', style: '' },
+    { key: null, label: '', style: 'width:120px;' },
+  ];
+  tr.innerHTML = cols.map(c => {
+    if (!c.key) return `<th style="${c.style}">${c.label}</th>`;
+    const isActive = _wlSort === c.key;
+    const arrow = isActive ? (_wlSortDir[c.key] === 'asc' ? ' ↑' : ' ↓') : ' <span class="sort-arrow">↕</span>';
+    return `<th style="${c.style}" onclick="_wlColSort('${c.key}')">${c.label}${arrow}</th>`;
   }).join('');
-  // Load posters after render
-  WL.forEach((id,idx) => {
-    const f=film(id);if(!f)return;
-    loadWLPoster(f, idx);
+}
+
+function renderWL() {
+  const tbody = document.getElementById('wlTableBody');
+  const emptyEl = document.getElementById('wlEmpty');
+  const controlsEl = document.getElementById('wlControls');
+  if (!tbody) return;
+
+  if (!WL.length) {
+    tbody.innerHTML = '';
+    document.getElementById('wlTableHead').innerHTML = '';
+    if (emptyEl) emptyEl.style.display = 'block';
+    if (controlsEl) controlsEl.style.display = 'none';
+    return;
+  }
+
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (controlsEl) controlsEl.style.display = 'flex';
+  _wlRenderHead();
+
+  const q = (document.getElementById('wlSearch')?.value || '').toLowerCase();
+  const genreF = document.getElementById('wlGenreFilter')?.value || '';
+  const dirF = document.getElementById('wlDirectorFilter')?.value || '';
+  const streamF = document.getElementById('wlStreamFilter')?.value || '';
+
+  let list = WL.map(id => film(id)).filter(Boolean);
+
+  // Update filters
+  const genres = [...new Set(list.map(f => f.g).filter(Boolean))].sort();
+  const gf = document.getElementById('wlGenreFilter');
+  if (gf) {
+    const gv = gf.value;
+    gf.innerHTML = '<option value="">All Genres</option>' + genres.map(g => `<option value="${g}"${g===gv?' selected':''}>${g}</option>`).join('');
+  }
+  const directors = [...new Set(list.map(f => f.d).filter(Boolean))].sort();
+  const df = document.getElementById('wlDirectorFilter');
+  if (df) {
+    const dv = df.value;
+    df.innerHTML = '<option value="">All Directors</option>' + directors.map(d => `<option value="${d}"${d===dv?' selected':''}>${d}</option>`).join('');
+  }
+
+  // Build streaming service list for filter
+  const allServices = new Set();
+  Object.values(_wlStreamData).forEach(srcs => srcs.forEach(s => allServices.add(s.name)));
+  const sf = document.getElementById('wlStreamFilter');
+  if (sf) {
+    const sv = sf.value;
+    sf.innerHTML = '<option value="">Any Streaming</option>' + [...allServices].sort().map(n => `<option value="${n}"${n===sv?' selected':''}>${n}</option>`).join('');
+  }
+
+  // Apply filters
+  if (q) list = list.filter(f => f.t.toLowerCase().includes(q) || (f.g||'').toLowerCase().includes(q) || (f.d||'').toLowerCase().includes(q));
+  if (genreF) list = list.filter(f => f.g === genreF);
+  if (dirF) list = list.filter(f => f.d === dirF);
+  if (streamF) list = list.filter(f => (_wlStreamData[f.id]||[]).some(s => s.name === streamF));
+
+  // Sort
+  const dir = _wlSortDir[_wlSort] === 'asc' ? 1 : -1;
+  list.sort((a, b) => {
+    if (_wlSort === 'alpha') return dir * a.t.localeCompare(b.t);
+    if (_wlSort === 'genre') return dir * (a.g||'').localeCompare(b.g||'');
+    if (_wlSort === 'director') return dir * (a.d||'').localeCompare(b.d||'');
+    if (_wlSort === 'year') return dir * ((a.y||0) - (b.y||0));
+    if (_wlSort === 'stream') {
+      const as = (_wlStreamData[a.id]||[]).map(s=>s.name).join(',');
+      const bs = (_wlStreamData[b.id]||[]).map(s=>s.name).join(',');
+      return dir * as.localeCompare(bs);
+    }
+    return 0;
+  });
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;font-style:italic;color:var(--white-20);font-family:'Times New Roman',Times,serif;">No films match your filters</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map((f, i) => {
+    const streamSrcs = _wlStreamData[f.id];
+    let streamCell;
+    if (streamSrcs === undefined) {
+      streamCell = `<span class="stream-loading">Loading…</span>`;
+    } else if (!streamSrcs.length) {
+      streamCell = `<span class="stream-none">Not streaming</span>`;
+    } else {
+      streamCell = `<div class="stream-pills">${streamSrcs.map(s => `<span class="stream-pill ${s.type}">${s.name}</span>`).join('')}</div>`;
+    }
+
+    return `<tr>
+      <td>${posterEl(f.t, 'mt-poster')}</td>
+      <td>
+        <div class="mt-title">${f.t}</div>
+      </td>
+      <td><div class="mt-year">${f.y||'—'}</div></td>
+      <td><span class="mt-genre">${f.g||'—'}</span></td>
+      <td><div class="mt-year">${f.d||'—'}</div></td>
+      <td>${streamCell}</td>
+      <td>
+        <div class="wl-tbl-actions">
+          <button class="wl-tbl-btn w" onclick="openModal(${f.id})">✓ Watched</button>
+          <button class="wl-tbl-btn r" onclick="removeWL(${f.id})">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Kick off streaming lookups for films not yet cached
+  list.forEach(f => {
+    if (_wlStreamData[f.id] === undefined) {
+      _wlStreamData[f.id] = undefined; // mark as in-flight
+      fetchStreaming(f).then(srcs => {
+        _wlStreamData[f.id] = srcs;
+        // Re-render just the streaming cell for this film
+        _updateStreamCell(f.id, srcs);
+        // Update streaming filter options
+        const allSvcs = new Set();
+        Object.values(_wlStreamData).forEach(s => (s||[]).forEach(x => allSvcs.add(x.name)));
+        const sf2 = document.getElementById('wlStreamFilter');
+        if (sf2) {
+          const sv2 = sf2.value;
+          sf2.innerHTML = '<option value="">Any Streaming</option>' + [...allSvcs].sort().map(n => `<option value="${n}"${n===sv2?' selected':''}>${n}</option>`).join('');
+        }
+      });
+    }
   });
 }
 
-async function loadWLPoster(f, idx) {
-  const wrap = document.getElementById(`wlp-${idx}`);
-  if (!wrap) return;
-  // Try TMDB first if we have a tmdbId
-  if (f.tmdbId && tmdbReady()) {
-    try {
-      const res = await fetch(`${TMDB_BASE}/movie/${f.tmdbId}?language=en-US`, {
-        headers: { Authorization: `Bearer ${TMDB_TOKEN}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.poster_path) {
-          const img = new Image();
-          img.alt = f.t;
-          img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-          img.onload = () => { wrap.innerHTML = ''; wrap.appendChild(img); };
-          img.src = `https://image.tmdb.org/t/p/w92${data.poster_path}`;
-          return;
-        }
-      }
-    } catch(e) {}
-  }
-  // Fall back to OMDB
-  const url = await fetchPoster(f.t);
-  if (url && wrap) {
-    wrap.innerHTML = `<img src="${url}" alt="${f.t}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">`;
-  }
+function _updateStreamCell(filmId, srcs) {
+  // Find all rows in the wl table and update the streaming cell
+  const tbody = document.getElementById('wlTableBody');
+  if (!tbody) return;
+  const rows = tbody.querySelectorAll('tr');
+  rows.forEach(row => {
+    // The poster cell has a child with an id like p-N. We use the film title in the title cell to match.
+    // Simpler: check onclick attr of the Watched button for the film id
+    const watchedBtn = row.querySelector('.wl-tbl-btn.w');
+    if (!watchedBtn) return;
+    const match = watchedBtn.getAttribute('onclick')?.match(/openModal\((\d+)\)/);
+    if (!match || parseInt(match[1]) !== filmId) return;
+    // 6th td is the streaming cell (index 5)
+    const streamTd = row.querySelectorAll('td')[5];
+    if (!streamTd) return;
+    if (!srcs.length) {
+      streamTd.innerHTML = '<span class="stream-none">Not streaming</span>';
+    } else {
+      streamTd.innerHTML = '<div class="stream-pills">' + srcs.map(s => `<span class="stream-pill ${s.type}">${s.name}</span>`).join('') + '</div>';
+    }
+  });
 }
 
 // ══════════ RENDER RANKINGS ══════════
