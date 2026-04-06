@@ -3490,7 +3490,7 @@ let _streamCache = {};
 try {
   _streamCache = JSON.parse(localStorage.getItem('jwl3_stream_cache') || '{}');
   // Clear stale Watchmode-era cache entries
-  const staleKeys = Object.keys(_streamCache).filter(k => k.startsWith('tmdb_') || (!k.startsWith('wp_') && !k.startsWith('wpt_')));
+  const staleKeys = Object.keys(_streamCache).filter(k => k.startsWith('tmdb_') || k.startsWith('wp_') || k.startsWith('wpt_') || k.startsWith('wp2_') || k.startsWith('wpt2_'));
   if (staleKeys.length) { staleKeys.forEach(k => delete _streamCache[k]); localStorage.setItem('jwl3_stream_cache', JSON.stringify(_streamCache)); }
 } catch(e) {}
 const STREAM_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -3508,7 +3508,7 @@ function _normalizeProvider(rawName) {
   if (n.includes('hulu')) return 'Hulu';
   if (n.includes('hbo') || n.includes('max amazon') || (n === 'max')) return 'Max';
   if (n === 'max' || n.includes('max ')) return 'Max';
-  if (n.includes('prime video') || n.includes('amazon prime')) return 'Prime Video';
+  if (n.includes('prime video') || n.includes('amazon prime') || n.includes('amazon video')) return 'Prime Video';
   if (n.includes('apple tv')) return 'Apple TV+';
   if (n.includes('paramount')) return 'Paramount+';
   if (n.includes('peacock')) return 'Peacock';
@@ -3552,7 +3552,7 @@ const MAJOR_SUBS = new Set([
 
 async function fetchStreaming(f) {
   if (!tmdbReady()) return [];
-  const cacheKey = f.tmdbId ? 'wp2_' + f.tmdbId : 'wpt2_' + (f.t + '_' + f.y).toLowerCase().replace(/[^a-z0-9]/g,'_');
+  const cacheKey = f.tmdbId ? 'wp3_' + f.tmdbId : 'wpt3_' + (f.t + '_' + f.y).toLowerCase().replace(/[^a-z0-9]/g,'_');
   const cached = _streamCache[cacheKey];
   if (cached && (Date.now() - cached.ts) < STREAM_CACHE_TTL) return cached.sources;
 
