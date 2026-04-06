@@ -3482,104 +3482,85 @@ function renderTable(){
   }).join('');
 }
 
-// ══════════ STREAMING (WATCHMODE) ══════════
-// Watchmode free tier: 1,000 credits/month. Search = 1 credit, sources = 1 credit.
-// We cache aggressively in localStorage to preserve credits.
-const WATCHMODE_KEY = 'WbYvB2qMeBLaTUNYajixEjN9EcZcCW6K4P9LBxjX';
-const WATCHMODE_BASE = 'https://api.watchmode.com/v1';
+// ══════════ STREAMING (TMDB WATCH PROVIDERS) ══════════
+// Uses the existing TMDB token — no extra API key needed.
+// TMDB /watch/providers is free with the standard read-access token.
 
-// Streaming cache: { [tmdbId|title_year]: { sources: [...], ts: timestamp } }
 let _streamCache = {};
-try { _streamCache = JSON.parse(localStorage.getItem('jwl3_stream_cache') || '{}'); } catch(e) {}
+try {
+  _streamCache = JSON.parse(localStorage.getItem('jwl3_stream_cache') || '{}');
+  // Clear stale Watchmode-era cache entries
+  const staleKeys = Object.keys(_streamCache).filter(k => k.startsWith('tmdb_') || (!k.startsWith('wp_') && !k.startsWith('wpt_')));
+  if (staleKeys.length) { staleKeys.forEach(k => delete _streamCache[k]); localStorage.setItem('jwl3_stream_cache', JSON.stringify(_streamCache)); }
+} catch(e) {}
 const STREAM_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function _saveStreamCache() {
   try { localStorage.setItem('jwl3_stream_cache', JSON.stringify(_streamCache)); } catch(e) {}
 }
 
-// Subscription-only service IDs we want to show (major platforms)
-const STREAM_PRIORITY = [
-  {id:203,name:'Netflix'},{id:157,name:'Hulu'},{id:387,name:'Max'},
-  {id:26,name:'Prime Video'},{id:372,name:'Disney+'},{id:444,name:'Peacock'},
-  {id:371,name:'Apple TV+'},{id:389,name:'Paramount+'},
-  {id:567,name:'MGM+'},{id:190,name:'Showtime'},
-];
-const PRIORITY_IDS = new Set(STREAM_PRIORITY.map(s=>s.id));
+// TMDB provider_id → friendly short name for US
+const TMDB_PROVIDERS = {
+  8:'Netflix',9:'Prime Video',15:'Hulu',337:'Disney+',384:'Max',
+  386:'Peacock',387:'Peacock',531:'Paramount+',2:'Apple TV+',350:'Apple TV+',
+  283:'Crunchyroll',190:'Max',1899:'Max',37:'Starz',43:'Starz',
+  309:'Showtime',300:'MGM+',526:'AMC+',257:'fuboTV',
+  10:'Prime Video',192:'YouTube',7:'Vudu',3:'Google Play',68:'Microsoft'
+};
 
 async function fetchStreaming(f) {
-  const cacheKey = f.tmdbId ? 'tmdb_' + f.tmdbId : (f.t + '_' + f.y).toLowerCase().replace(/\s+/g,'_');
+  if (!tmdbReady()) return [];
+  const cacheKey = f.tmdbId ? 'wp_' + f.tmdbId : 'wpt_' + (f.t + '_' + f.y).toLowerCase().replace(/[^a-z0-9]/g,'_');
   const cached = _streamCache[cacheKey];
   if (cached && (Date.now() - cached.ts) < STREAM_CACHE_TTL) return cached.sources;
 
   try {
-    // Step 1: Search Watchmode for the title
-    let wmId = null;
-    if (f.tmdbId) {
-      // Direct TMDB lookup is most accurate
-      const searchRes = await fetch(
-        `${WATCHMODE_BASE}/search/?apiKey=${WATCHMODE_KEY}&search_field=tmdb_movie_id&search_value=${f.tmdbId}`
-      );
-      if (searchRes.ok) {
-        const searchData = await searchRes.json();
-        wmId = searchData?.title_results?.[0]?.id || null;
-      }
-    }
-    if (!wmId) {
-      // Fallback: search by title
+    let tmdbId = f.tmdbId;
+    if (!tmdbId) {
       const q = encodeURIComponent(f.t);
-      const searchRes = await fetch(
-        `${WATCHMODE_BASE}/search/?apiKey=${WATCHMODE_KEY}&search_field=name&search_value=${q}&types=movie`
+      const sr = await fetch(
+        `${TMDB_BASE}/search/movie?query=${q}&year=${f.y||''}&language=en-US&page=1`,
+        { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } }
       );
-      if (searchRes.ok) {
-        const searchData = await searchRes.json();
-        const results = searchData?.title_results || [];
-        // Match by year if possible
-        const match = results.find(r => Math.abs((r.year_released||0) - (f.y||0)) <= 1) || results[0];
-        wmId = match?.id || null;
-      }
-    }
-    if (!wmId) {
-      _streamCache[cacheKey] = { sources: [], ts: Date.now() };
-      _saveStreamCache();
-      return [];
+      if (!sr.ok) { _streamCache[cacheKey]={sources:[],ts:Date.now()};_saveStreamCache();return []; }
+      const sd = await sr.json();
+      const match = (sd.results||[]).find(r=>Math.abs((r.release_date||'').slice(0,4)-(f.y||0))<=1)||sd.results?.[0];
+      if (!match) { _streamCache[cacheKey]={sources:[],ts:Date.now()};_saveStreamCache();return []; }
+      tmdbId = match.id;
     }
 
-    // Step 2: Get streaming sources
-    const srcRes = await fetch(
-      `${WATCHMODE_BASE}/title/${wmId}/sources/?apiKey=${WATCHMODE_KEY}&regions=US`
+    const wr = await fetch(
+      `${TMDB_BASE}/movie/${tmdbId}/watch/providers`,
+      { headers: { Authorization: `Bearer ${TMDB_TOKEN}` } }
     );
-    if (!srcRes.ok) return [];
-    const srcData = await srcRes.json();
+    if (!wr.ok) { _streamCache[cacheKey]={sources:[],ts:Date.now()};_saveStreamCache();return []; }
+    const wd = await wr.json();
+    const us = wd.results?.US;
+    if (!us) { _streamCache[cacheKey]={sources:[],ts:Date.now()};_saveStreamCache();return []; }
 
-    // Filter to subscription services we care about, deduplicate
     const seen = new Set();
-    const sources = (srcData || [])
-      .filter(s => s.type === 'sub' && PRIORITY_IDS.has(s.source_id))
-      .filter(s => { if (seen.has(s.source_id)) return false; seen.add(s.source_id); return true; })
-      .map(s => {
-        const info = STREAM_PRIORITY.find(p => p.id === s.source_id);
-        return { name: info?.name || s.name, type: 'sub', url: s.web_url };
+    const sources = [];
+    (us.flatrate||[]).forEach(p=>{
+      const name=TMDB_PROVIDERS[p.provider_id]||p.provider_name;
+      if(!seen.has(name)){seen.add(name);sources.push({name,type:'sub'});}
+    });
+    if(!sources.length){
+      (us.rent||[]).slice(0,3).forEach(p=>{
+        const name=TMDB_PROVIDERS[p.provider_id]||p.provider_name;
+        if(!seen.has(name)){seen.add(name);sources.push({name,type:'rent'});}
       });
-
-    // Also capture rental/buy if no subs available
-    let rentals = [];
-    if (!sources.length) {
-      const rentSeen = new Set();
-      rentals = (srcData || [])
-        .filter(s => (s.type === 'rent' || s.type === 'buy') && !rentSeen.has(s.source_id) && rentSeen.add(s.source_id))
-        .slice(0,2)
-        .map(s => ({ name: s.name, type: 'rent' }));
     }
-
-    const finalSources = [...sources, ...rentals];
-    _streamCache[cacheKey] = { sources: finalSources, ts: Date.now() };
+    if(!sources.length){
+      (us.buy||[]).slice(0,2).forEach(p=>{
+        const name=TMDB_PROVIDERS[p.provider_id]||p.provider_name;
+        if(!seen.has(name)){seen.add(name);sources.push({name,type:'rent'});}
+      });
+    }
+    _streamCache[cacheKey]={sources,ts:Date.now()};
     _saveStreamCache();
-    return finalSources;
-  } catch(e) {
-    return [];
-  }
+    return sources;
+  } catch(e) { return []; }
 }
-
 // ══════════ RENDER WATCHLIST ══════════
 let _wlSort = 'alpha';
 let _wlSortDir = { alpha: 'asc', genre: 'asc', director: 'asc', year: 'desc', stream: 'asc' };
