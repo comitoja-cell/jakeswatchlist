@@ -1054,6 +1054,33 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .decade-tip-film{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-80);padding:.18rem 0;border-bottom:1px solid var(--white-08)}
 .decade-tip-film:last-child{border-bottom:none}
 .decade-tip-year{font-size:.65rem;color:var(--white-50);margin-left:.4rem}
+/* ── RECENTLY WATCHED — mobile horizontal scroll ── */
+@media(max-width:768px){
+  #recently-watched-section{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:0 1.2rem 0.5rem;
+    width:100%;
+    max-width:100%!important;
+    box-sizing:border-box;
+  }
+  #rw-tiles{
+    justify-content:flex-start!important;
+    min-width:max-content;
+    max-width:none!important;
+    margin:0!important;
+    gap:1.2rem;
+  }
+  #rw-tiles>div{
+    flex-shrink:0!important;
+    width:140px!important;
+    scroll-snap-align:start;
+  }
+  #rw-tiles>div>div:first-child{
+    width:140px!important;
+    height:210px!important;
+  }
+}
 </style>
 <style id="claude-agent-animation-styles">
       @keyframes claude-pulse {
@@ -3633,7 +3660,7 @@ function _wlRenderHead() {
   const cols = [
     { key: null, label: '', style: 'width:44px;' },
     { key: 'alpha', label: 'Title', style: '' },
-    { key: 'year', label: 'Year', style: 'width:70px;' },
+    { key: 'year', label: 'Year', style: 'width:100px;white-space:nowrap;' },
     { key: 'genre', label: 'Genre', style: '' },
     { key: 'director', label: 'Director', style: '' },
     { key: 'stream', label: 'Streaming', style: '' },
