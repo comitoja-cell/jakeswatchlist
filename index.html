@@ -1047,6 +1047,24 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .decade-pct{font-family:"Times New Roman",Times,serif;font-size:.6rem;color:var(--white-50);letter-spacing:.04em}
 .decade-vlabel{font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-align:center}
 .decade-avgrank{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.06em;margin-top:3px;padding:2px 5px;border-radius:10px;text-align:center;line-height:1.2}
+.hbar-wrap{display:flex;flex-direction:column;gap:0;width:100%}
+.hbar-header{display:flex;align-items:center;margin-bottom:8px;font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase}
+.hbar-header-label{width:52px;flex-shrink:0}
+.hbar-header-films{flex:1;color:var(--white-50)}
+.hbar-header-rank{width:90px;flex-shrink:0;text-align:right;color:var(--white-50)}
+.hbar-row{display:flex;align-items:center;gap:0;padding:5px 0;cursor:pointer}
+.hbar-row:hover .hbar-fill{filter:brightness(1.15)}
+.hbar-label{width:52px;flex-shrink:0;font-family:"Times New Roman",Times,serif;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);text-align:right;padding-right:10px}
+.hbar-track{flex:1;height:26px;position:relative;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);display:flex;align-items:center}
+.hbar-count{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:rgba(0,0,0,0.75);padding-left:8px;white-space:nowrap}
+.hbar-pct{font-family:"Times New Roman",Times,serif;font-size:.6rem;color:rgba(0,0,0,0.55);padding-left:4px}
+.hbar-meta{width:90px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:6px;padding-left:12px}
+.hbar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hbar-avg{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:var(--white-50)}
+.hbar-legend{display:flex;gap:16px;margin-top:14px;font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.06em;color:var(--white-50)}
+.hbar-legend-item{display:flex;align-items:center;gap:5px}
+.hbar-legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 .decade-vcount{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:var(--white-80)}
 .decade-tooltip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--border-gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;min-width:180px;max-width:260px}
 .decade-tooltip.show{opacity:1}
@@ -4058,7 +4076,8 @@ function renderDecades(films){
   const el=document.getElementById('decadeBars');
   if(!el)return;
   if(!films.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see the decade breakdown</div>';return;}
-  const DCOLS=['#c9a84c','#e0c870','#a07830','#f0e090','#7a5c20','#d4b060'];
+  const BEST_COL='#d4a017';
+  const BASE_COL='#c9a84c';
   const map={};
   films.forEach(w=>{
     const decade=Math.floor((w.f.y||0)/10)*10;
@@ -4082,40 +4101,56 @@ function renderDecades(films){
   tip.className='decade-tooltip';
   tip.id='decadeTip';
   document.body.appendChild(tip);
-  el.innerHTML='<div class="decade-chart-wrap">'+
-    decades.map((decade,i)=>{
+  el.innerHTML=
+    '<div class="hbar-wrap">'+
+    '<div class="hbar-header">'+
+      '<div class="hbar-header-label"></div>'+
+      '<div class="hbar-header-films">FILMS WATCHED</div>'+
+      '<div class="hbar-header-rank">AVG RANK</div>'+
+    '</div>'+
+    decades.map(decade=>{
       const fs=map[decade].slice().sort((a,b)=>a.y-b.y);
       const count=fs.length;
       const pct=Math.round(count/total*100);
-      const barH=Math.max(4,Math.round(count/maxCount*110));
+      const barW=Math.max(4,Math.round(count/maxCount*100));
       const avg=avgRanks[decade];
       const isBest=avg!==null&&avg===bestAvg;
-      const col=isBest?'#d4a017':DCOLS[i%DCOLS.length];
-      const rankBadge=avg!==null
-        ?'<div class="decade-avgrank" style="background:'+(isBest?'rgba(212,160,23,0.18)':'rgba(255,255,255,0.06)')+';color:'+(isBest?'#f0c040':'var(--white-50)')+';border:1px solid '+(isBest?'rgba(212,160,23,0.5)':'rgba(255,255,255,0.1)')+'">&#x2605;&nbsp;'+avg+'</div>'
-        :'';
-      return '<div class="decade-col" data-decade="'+decade+'">'+
-        '<div class="decade-vcount" style="'+(isBest?'color:#f0c040;font-weight:600':'')+'">'+count+'</div>'+
-        '<div class="decade-pct">'+pct+'%</div>'+
-        '<div class="decade-vbar" style="height:'+barH+'px;background:'+col+';'+(isBest?'box-shadow:0 0 8px rgba(212,160,23,0.4)':'')+'"></div>'+
-        '<div class="decade-vlabel" style="'+(isBest?'color:#f0c040':'')+'">'+decade+'s</div>'+
-        rankBadge+
+      const col=isBest?BEST_COL:BASE_COL;
+      const dotCol=isBest?'#d4a017':'rgba(255,255,255,0.25)';
+      const avgDisplay=avg!==null?(isBest?'<span style="color:#f0c040;font-weight:600">'+avg+'</span> <span style="color:#f0c040">&#9733;</span>':'<span>'+avg+'</span>'):'—';
+      return '<div class="hbar-row" data-decade="'+decade+'">'+
+        '<div class="hbar-label" style="'+(isBest?'color:#f0c040':'')+'">'+decade+'s</div>'+
+        '<div class="hbar-track">'+
+          '<div class="hbar-fill" style="width:'+barW+'%;background:'+col+';">'+
+            '<span class="hbar-count">'+count+'</span>'+
+            '<span class="hbar-pct">'+pct+'%</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="hbar-meta">'+
+          '<div class="hbar-dot" style="background:'+dotCol+'"></div>'+
+          '<div class="hbar-avg">'+avgDisplay+'</div>'+
+        '</div>'+
       '</div>';
     }).join('')+
+    '<div class="hbar-legend">'+
+      '<div class="hbar-legend-item"><div class="hbar-legend-swatch" style="background:#d4a017"></div>Best ranked decade</div>'+
+      '<div class="hbar-legend-item"><div class="hbar-legend-swatch" style="background:#c9a84c"></div>All other decades</div>'+
+      '<div style="margin-left:auto;font-size:.6rem;color:var(--white-50)">Avg rank: lower = more loved</div>'+
+    '</div>'+
   '</div>';
-  el.querySelectorAll('.decade-col').forEach(col=>{
-    const decade=Number(col.dataset.decade);
+  el.querySelectorAll('.hbar-row').forEach(row=>{
+    const decade=Number(row.dataset.decade);
     const filmList=map[decade].slice().sort((a,b)=>a.y-b.y);
     const avg=avgRanks[decade];
-    col.addEventListener('mouseenter',e=>{
+    row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+decade+'s — '+filmList.length+' film'+(filmList.length>1?'s':'')+'</div>'+
         (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
     });
-    col.addEventListener('mousemove',e=>_moveTip(e,tip));
-    col.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+    row.addEventListener('mousemove',e=>_moveTip(e,tip));
+    row.addEventListener('mouseleave',()=>tip.classList.remove('show'));
   });
 }
 function renderDays(films){
@@ -4123,7 +4158,8 @@ function renderDays(films){
   if(!el)return;
   if(!films.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see the day breakdown</div>';return;}
   const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const DCOLS=['#c9a84c','#e0c870','#a07830','#f0e090','#7a5c20','#d4b060','#c9a84c'];
+  const BEST_COL='#c17f3a';
+  const BASE_COL='#c9a84c';
   const map={Monday:[],Tuesday:[],Wednesday:[],Thursday:[],Friday:[],Saturday:[],Sunday:[]};
   films.forEach(w=>{
     if(!w.d)return;
@@ -4147,41 +4183,57 @@ function renderDays(films){
   tip.className='decade-tooltip';
   tip.id='dayTip';
   document.body.appendChild(tip);
-  el.innerHTML='<div class="decade-chart-wrap">'+
-    DAYS.map((day,i)=>{
+  el.innerHTML=
+    '<div class="hbar-wrap">'+
+    '<div class="hbar-header">'+
+      '<div class="hbar-header-label"></div>'+
+      '<div class="hbar-header-films">FILMS WATCHED</div>'+
+      '<div class="hbar-header-rank">AVG RANK</div>'+
+    '</div>'+
+    DAYS.map(day=>{
       const fs=map[day];
       const count=fs.length;
       const pct=Math.round(count/total*100);
-      const barH=Math.max(4,Math.round(count/maxCount*110));
+      const barW=Math.max(count?2:0,Math.round(count/maxCount*100));
       const avg=avgRanks[day];
       const isBest=avg!==null&&avg===bestAvg;
-      const col=isBest?'#c17f3a':DCOLS[i%DCOLS.length];
+      const col=isBest?BEST_COL:BASE_COL;
+      const dotCol=isBest?'#c17f3a':'rgba(255,255,255,0.25)';
       const shortDay=day.substring(0,3);
-      const rankBadge=avg!==null
-        ?'<div class="decade-avgrank" style="background:'+(isBest?'rgba(193,127,58,0.18)':'rgba(255,255,255,0.06)')+';color:'+(isBest?'#e8a050':'var(--white-50)')+';border:1px solid '+(isBest?'rgba(193,127,58,0.5)':'rgba(255,255,255,0.1)')+'">&#x2605;&nbsp;'+avg+'</div>'
-        :'';
-      return '<div class="decade-col" data-day="'+day+'">'+
-        '<div class="decade-vcount" style="'+(isBest?'color:#e8a050;font-weight:600':'')+'">'+count+'</div>'+
-        '<div class="decade-pct">'+pct+'%</div>'+
-        '<div class="decade-vbar" style="height:'+barH+'px;background:'+col+';'+(isBest?'box-shadow:0 0 8px rgba(193,127,58,0.4)':'')+'"></div>'+
-        '<div class="decade-vlabel" style="'+(isBest?'color:#e8a050':'')+'">'+shortDay+'</div>'+
-        rankBadge+
+      const avgDisplay=avg!==null?(isBest?'<span style="color:#e8a050;font-weight:600">'+avg+'</span> <span style="color:#e8a050">&#9733;</span>':'<span>'+avg+'</span>'):'—';
+      return '<div class="hbar-row" data-day="'+day+'">'+
+        '<div class="hbar-label" style="'+(isBest?'color:#e8a050':'')+'">'+shortDay+'</div>'+
+        '<div class="hbar-track">'+
+          '<div class="hbar-fill" style="width:'+barW+'%;background:'+col+';">'+
+            '<span class="hbar-count">'+count+'</span>'+
+            '<span class="hbar-pct">'+pct+'%</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="hbar-meta">'+
+          '<div class="hbar-dot" style="background:'+dotCol+'"></div>'+
+          '<div class="hbar-avg">'+avgDisplay+'</div>'+
+        '</div>'+
       '</div>';
     }).join('')+
+    '<div class="hbar-legend">'+
+      '<div class="hbar-legend-item"><div class="hbar-legend-swatch" style="background:#c17f3a"></div>Best ranked day</div>'+
+      '<div class="hbar-legend-item"><div class="hbar-legend-swatch" style="background:#c9a84c"></div>All other days</div>'+
+      '<div style="margin-left:auto;font-size:.6rem;color:var(--white-50)">Avg rank: lower = more loved</div>'+
+    '</div>'+
   '</div>';
-  el.querySelectorAll('.decade-col').forEach(col=>{
-    const day=col.dataset.day;
+  el.querySelectorAll('.hbar-row').forEach(row=>{
+    const day=row.dataset.day;
     const filmList=map[day];
     const avg=avgRanks[day];
-    col.addEventListener('mouseenter',e=>{
+    row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+day+' — '+filmList.length+' film'+(filmList.length!==1?'s':'')+'</div>'+
         (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
     });
-    col.addEventListener('mousemove',e=>_moveTip(e,tip));
-    col.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+    row.addEventListener('mousemove',e=>_moveTip(e,tip));
+    row.addEventListener('mouseleave',()=>tip.classList.remove('show'));
   });
 }
 
