@@ -1046,6 +1046,7 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .decade-vbar{width:100%;border-radius:3px 3px 0 0;transition:height .6s cubic-bezier(.4,0,.2,1);flex-shrink:0;min-height:2px}
 .decade-pct{font-family:"Times New Roman",Times,serif;font-size:.6rem;color:var(--white-50);letter-spacing:.04em}
 .decade-vlabel{font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-align:center}
+.decade-avgrank{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.06em;margin-top:3px;padding:2px 5px;border-radius:10px;text-align:center;line-height:1.2}
 .decade-vcount{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:var(--white-80)}
 .decade-tooltip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--border-gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;min-width:180px;max-width:260px}
 .decade-tooltip.show{opacity:1}
@@ -4063,11 +4064,18 @@ function renderDecades(films){
     const decade=Math.floor((w.f.y||0)/10)*10;
     if(decade<1900)return;
     if(!map[decade])map[decade]=[];
-    map[decade].push({t:w.f.t,y:w.f.y});
+    map[decade].push({t:w.f.t,y:w.f.y,rank:w.rank||0});
   });
   const decades=Object.keys(map).map(Number).sort((a,b)=>a-b);
   const maxCount=Math.max(...decades.map(d=>map[d].length));
   const total=films.length;
+  const avgRanks={};
+  decades.forEach(d=>{
+    const ranked=map[d].filter(f=>f.rank>0);
+    avgRanks[d]=ranked.length?parseFloat((ranked.reduce((s,f)=>s+f.rank,0)/ranked.length).toFixed(1)):null;
+  });
+  const validAvgs=Object.values(avgRanks).filter(v=>v!==null);
+  const bestAvg=validAvgs.length?Math.min(...validAvgs):null;
   const oldTip=document.getElementById('decadeTip');
   if(oldTip)oldTip.remove();
   const tip=document.createElement('div');
@@ -4080,20 +4088,28 @@ function renderDecades(films){
       const count=fs.length;
       const pct=Math.round(count/total*100);
       const barH=Math.max(4,Math.round(count/maxCount*110));
-      const col=DCOLS[i%DCOLS.length];
+      const avg=avgRanks[decade];
+      const isBest=avg!==null&&avg===bestAvg;
+      const col=isBest?'#d4a017':DCOLS[i%DCOLS.length];
+      const rankBadge=avg!==null
+        ?'<div class="decade-avgrank" style="background:'+(isBest?'rgba(212,160,23,0.18)':'rgba(255,255,255,0.06)')+';color:'+(isBest?'#f0c040':'var(--white-50)')+';border:1px solid '+(isBest?'rgba(212,160,23,0.5)':'rgba(255,255,255,0.1)')+'">&#x2605;&nbsp;'+avg+'</div>'
+        :'';
       return '<div class="decade-col" data-decade="'+decade+'">'+
-        '<div class="decade-vcount">'+count+'</div>'+
+        '<div class="decade-vcount" style="'+(isBest?'color:#f0c040;font-weight:600':'')+'">'+count+'</div>'+
         '<div class="decade-pct">'+pct+'%</div>'+
-        '<div class="decade-vbar" style="height:'+barH+'px;background:'+col+'"></div>'+
-        '<div class="decade-vlabel">'+decade+'s</div>'+
+        '<div class="decade-vbar" style="height:'+barH+'px;background:'+col+';'+(isBest?'box-shadow:0 0 8px rgba(212,160,23,0.4)':'')+'"></div>'+
+        '<div class="decade-vlabel" style="'+(isBest?'color:#f0c040':'')+'">'+decade+'s</div>'+
+        rankBadge+
       '</div>';
     }).join('')+
   '</div>';
   el.querySelectorAll('.decade-col').forEach(col=>{
     const decade=Number(col.dataset.decade);
     const filmList=map[decade].slice().sort((a,b)=>a.y-b.y);
+    const avg=avgRanks[decade];
     col.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+decade+'s — '+filmList.length+' film'+(filmList.length>1?'s':'')+'</div>'+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
@@ -4113,11 +4129,18 @@ function renderDays(films){
     if(!w.d)return;
     const dt=new Date(w.d+'T12:00:00');
     const day=dt.toLocaleDateString('en-US',{weekday:'long'});
-    if(map[day])map[day].push({t:w.f?w.f.t:'Unknown',y:w.f?w.f.y:''});
+    if(map[day])map[day].push({t:w.f?w.f.t:'Unknown',y:w.f?w.f.y:'',rank:w.rank||0});
   });
   const counts=DAYS.map(d=>map[d].length);
   const maxCount=Math.max(...counts,1);
   const total=films.filter(w=>w.d).length||1;
+  const avgRanks={};
+  DAYS.forEach(d=>{
+    const ranked=map[d].filter(f=>f.rank>0);
+    avgRanks[d]=ranked.length?parseFloat((ranked.reduce((s,f)=>s+f.rank,0)/ranked.length).toFixed(1)):null;
+  });
+  const validAvgs=Object.values(avgRanks).filter(v=>v!==null);
+  const bestAvg=validAvgs.length?Math.min(...validAvgs):null;
   const oldTip=document.getElementById('dayTip');
   if(oldTip)oldTip.remove();
   const tip=document.createElement('div');
@@ -4130,21 +4153,29 @@ function renderDays(films){
       const count=fs.length;
       const pct=Math.round(count/total*100);
       const barH=Math.max(4,Math.round(count/maxCount*110));
-      const col=DCOLS[i%DCOLS.length];
+      const avg=avgRanks[day];
+      const isBest=avg!==null&&avg===bestAvg;
+      const col=isBest?'#c17f3a':DCOLS[i%DCOLS.length];
       const shortDay=day.substring(0,3);
+      const rankBadge=avg!==null
+        ?'<div class="decade-avgrank" style="background:'+(isBest?'rgba(193,127,58,0.18)':'rgba(255,255,255,0.06)')+';color:'+(isBest?'#e8a050':'var(--white-50)')+';border:1px solid '+(isBest?'rgba(193,127,58,0.5)':'rgba(255,255,255,0.1)')+'">&#x2605;&nbsp;'+avg+'</div>'
+        :'';
       return '<div class="decade-col" data-day="'+day+'">'+
-        '<div class="decade-vcount">'+count+'</div>'+
+        '<div class="decade-vcount" style="'+(isBest?'color:#e8a050;font-weight:600':'')+'">'+count+'</div>'+
         '<div class="decade-pct">'+pct+'%</div>'+
-        '<div class="decade-vbar" style="height:'+barH+'px;background:'+col+'"></div>'+
-        '<div class="decade-vlabel">'+shortDay+'</div>'+
+        '<div class="decade-vbar" style="height:'+barH+'px;background:'+col+';'+(isBest?'box-shadow:0 0 8px rgba(193,127,58,0.4)':'')+'"></div>'+
+        '<div class="decade-vlabel" style="'+(isBest?'color:#e8a050':'')+'">'+shortDay+'</div>'+
+        rankBadge+
       '</div>';
     }).join('')+
   '</div>';
   el.querySelectorAll('.decade-col').forEach(col=>{
     const day=col.dataset.day;
     const filmList=map[day];
+    const avg=avgRanks[day];
     col.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+day+' — '+filmList.length+' film'+(filmList.length!==1?'s':'')+'</div>'+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
