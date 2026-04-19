@@ -289,7 +289,7 @@ thead th:hover .sort-arrow{opacity:.7;}
   font-family:"Times New Roman",Times,serif;
   font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
   color:var(--white-50);border-bottom:2px solid var(--border);
-  padding:.6rem 1rem .6rem;text-align:left;font-weight:400;
+  padding:.6rem 1rem;text-align:left;font-weight:400;
   background:rgba(255,255,255,.018);white-space:nowrap;
 }
 .movies-table td{
@@ -1070,7 +1070,6 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .genre-rank-meta{font-size:.7rem;color:var(--white-50);letter-spacing:.04em;white-space:nowrap;margin-left:.5rem}
 .genre-rank-track{height:4px;background:var(--white-04);border-radius:2px;overflow:hidden}
 .genre-rank-fill{height:100%;border-radius:2px;transition:width .4s ease}
-/* Actor rank badge */
 .actor-rank-badge{font-family:"Times New Roman",Times,serif;font-size:.75rem;font-weight:700;color:var(--gold);min-width:2rem;text-align:center;flex-shrink:0;letter-spacing:.03em}
 .hbar-pct{font-family:"Times New Roman",Times,serif;font-size:.6rem;color:rgba(0,0,0,0.55);padding-left:4px}
 .hbar-meta{width:90px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:6px;padding-left:12px}
@@ -1536,8 +1535,283 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div class="sec-title">All-Time Rankings</div>
     </div>
     <p style="font-size:.88rem;font-style:italic;color:var(--white-50);margin-bottom:1.8rem">Use the arrows to reorder films. Click the stars to rate them.</p>
-    <div class="rank-list" id="rankList">
-</div>
+    <div class="rank-list" id="rankList"><div class="rank-item">
+      <div class="rank-num t3" onclick="editRank(45,1)" title="Click to edit rank">1</div>
+      <div id="p-24" class="rank-poster"><img alt="Before Sunrise" src="./index_files/oaKp6HZQDTtCOwn4JGi2Mh7Ep95.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Before Sunrise</div>
+        <div class="rank-meta">1995 · Romance · Richard Linklater</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(45,&#39;up&#39;)" disabled="">▲</button>
+        <button class="rank-ab" onclick="moveRank(45,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Before Sunrise from your list?&#39;))removeW(45)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num t3" onclick="editRank(39,2)" title="Click to edit rank">2</div>
+      <div id="p-25" class="rank-poster"><img alt="Notting Hill" src="./index_files/MV5BZjY3YWI5OTMtYTdlNy00ZTZiLWEwYjItN2M1MGVkMDM4ZDExXkEyXkFqcGc@._V1_SX342.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Notting Hill</div>
+        <div class="rank-meta">1999 · Romance · Roger Michell</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(39,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(39,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Notting Hill from your list?&#39;))removeW(39)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num t3" onclick="editRank(34,3)" title="Click to edit rank">3</div>
+      <div id="p-26" class="rank-poster"><img alt="Anora" src="./index_files/MV5BYThiN2M0NTItODRmNC00NDhlLWFiYTgtMWM2YTEyYzI3ZTY1XkEyXkFqcGc@._V1_SX342.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Anora</div>
+        <div class="rank-meta">2024 · Drama · Sean Baker</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(34,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(34,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Anora from your list?&#39;))removeW(34)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(29,4)" title="Click to edit rank">4</div>
+      <div id="p-27" class="rank-poster"><img alt="Stranger Than Fiction" src="./index_files/hRVP8Ud9ehv7tp5WWQ4CHk2XNus.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Stranger Than Fiction</div>
+        <div class="rank-meta">2006 · Comedy-Drama · Marc Forster</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(29,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(29,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Stranger Than Fiction from your list?&#39;))removeW(29)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(33,5)" title="Click to edit rank">5</div>
+      <div id="p-28" class="rank-poster"><img alt="The Others" src="./index_files/7QCfZb0KTN3Iu8jkLoog3NRBNud.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Others</div>
+        <div class="rank-meta">2001 · Horror · Alejandro Amenábar</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(33,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(33,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Others from your list?&#39;))removeW(33)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(28,6)" title="Click to edit rank">6</div>
+      <div id="p-29" class="rank-poster"><img alt="Amélie" src="./index_files/nSxDa3M9aMvGVLoItzWTepQ5h5d.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Amélie</div>
+        <div class="rank-meta">2001 · Romance · Jean-Pierre Jeunet</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(28,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(28,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Amélie from your list?&#39;))removeW(28)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(38,7)" title="Click to edit rank">7</div>
+      <div id="p-30" class="rank-poster"><img alt="Bugonia" src="./index_files/rSdOua3wKMEaFWDcKAYWRjXQWOt.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Bugonia</div>
+        <div class="rank-meta">2025 · Comedy · John Carney</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(38,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(38,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Bugonia from your list?&#39;))removeW(38)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(47,8)" title="Click to edit rank">8</div>
+      <div id="p-31" class="rank-poster"><img alt="One Battle After Another" src="./index_files/lbBWwxBht4JFP5PsuJ5onpMqugW.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">One Battle After Another</div>
+        <div class="rank-meta">2025 · War · Paul Thomas Anderson</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(47,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(47,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove One Battle After Another from your list?&#39;))removeW(47)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(30,9)" title="Click to edit rank">9</div>
+      <div id="p-32" class="rank-poster"><img alt="Marty Supreme" src="./index_files/lYWEXbQgRTR4ZQleSXAgRbxAjvq.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Marty Supreme</div>
+        <div class="rank-meta">2025 · Drama · Josh Safdie</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(30,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(30,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Marty Supreme from your list?&#39;))removeW(30)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(26,10)" title="Click to edit rank">10</div>
+      <div id="p-33" class="rank-poster"><img alt="Inglourious Basterds" src="./index_files/7sfbEnaARXDDhKm0CZ7D7uc2sbo.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Inglourious Basterds</div>
+        <div class="rank-meta">2009 · War · Quentin Tarantino</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(26,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(26,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Inglourious Basterds from your list?&#39;))removeW(26)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(36,11)" title="Click to edit rank">11</div>
+      <div id="p-34" class="rank-poster"><img alt="Love Actually" src="./index_files/7QPeVsr9rcFU9Gl90yg0gTOTpVv.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Love Actually</div>
+        <div class="rank-meta">2003 · Romance · Richard Curtis</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(36,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(36,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Love Actually from your list?&#39;))removeW(36)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(41,12)" title="Click to edit rank">12</div>
+      <div id="p-35" class="rank-poster"><img alt="Leaving Las Vegas" src="./index_files/vkhEaWAv5j3qgrOGp3BgMeiYPKj.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Leaving Las Vegas</div>
+        <div class="rank-meta">1995 · Drama · Mike Figgis</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(41,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(41,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Leaving Las Vegas from your list?&#39;))removeW(41)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(43,13)" title="Click to edit rank">13</div>
+      <div id="p-36" class="rank-poster"><img alt="Shutter Island" src="./index_files/nrmXQ0zcZUL8jFLrakWc90IR8z9.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Shutter Island</div>
+        <div class="rank-meta">2010 · Thriller · Martin Scorsese</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(43,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(43,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Shutter Island from your list?&#39;))removeW(43)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(25,14)" title="Click to edit rank">14</div>
+      <div id="p-37" class="rank-poster"><img alt="The Roses" src="./index_files/99O8HLHklXGzvF2TqiRqr7WddzT.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Roses</div>
+        <div class="rank-meta">2025 · Comedy-Drama · Jay Roach</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(25,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(25,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Roses from your list?&#39;))removeW(25)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(44,15)" title="Click to edit rank">15</div>
+      <div id="p-38" class="rank-poster"><img alt="Steel Magnolias" src="./index_files/5DlWHYb5Q65GaHYHDo6PqGOuoF1.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Steel Magnolias</div>
+        <div class="rank-meta">1989 · Drama · Herbert Ross</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(44,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(44,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Steel Magnolias from your list?&#39;))removeW(44)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(35,16)" title="Click to edit rank">16</div>
+      <div id="p-39" class="rank-poster"><img alt="Now You See Me" src="./index_files/tWsNYbrqy1p1w6K9zRk0mSchztT.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Now You See Me</div>
+        <div class="rank-meta">2013 · Thriller · Louis Leterrier</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(35,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(35,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Now You See Me from your list?&#39;))removeW(35)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(32,17)" title="Click to edit rank">17</div>
+      <div id="p-40" class="rank-poster"><img alt="A Fish Called Wanda" src="./index_files/cHwnYGZh1fVuVWqT28GpCN0usYF.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">A Fish Called Wanda</div>
+        <div class="rank-meta">1988 · Comedy · Charles Crichton</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(32,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(32,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove A Fish Called Wanda from your list?&#39;))removeW(32)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(27,18)" title="Click to edit rank">18</div>
+      <div id="p-41" class="rank-poster"><img alt="The Royal Tenenbaums" src="./index_files/nG7hZJn7wQTSDCQT39Gy3s3tbrp.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Royal Tenenbaums</div>
+        <div class="rank-meta">2001 · Comedy-Drama · Wes Anderson</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(27,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(27,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Royal Tenenbaums from your list?&#39;))removeW(27)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(31,19)" title="Click to edit rank">19</div>
+      <div id="p-42" class="rank-poster"><img alt="The Talented Mr. Ripley" src="./index_files/6ojHgqtIR41O2qLKa7LFUVj0cZa.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">The Talented Mr. Ripley</div>
+        <div class="rank-meta">1999 · Thriller · Anthony Minghella</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(31,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(31,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove The Talented Mr. Ripley from your list?&#39;))removeW(31)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(37,20)" title="Click to edit rank">20</div>
+      <div id="p-43" class="rank-poster"><img alt="Mr. &amp; Mrs. Smith" src="./index_files/4TOJiqayrIZQGtmmGjM3d7lp5gM.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Mr. &amp; Mrs. Smith</div>
+        <div class="rank-meta">2005 · Action · Doug Liman</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(37,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(37,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Mr. &amp; Mrs. Smith from your list?&#39;))removeW(37)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(46,21)" title="Click to edit rank">21</div>
+      <div id="p-44" class="rank-poster"><img alt="Mission: Impossible" src="./index_files/l5uxY5m5OInWpcExIpKG6AR3rgL.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Mission: Impossible</div>
+        <div class="rank-meta">1996 · Action · Brian De Palma</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(46,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(46,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Mission: Impossible from your list?&#39;))removeW(46)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(40,22)" title="Click to edit rank">22</div>
+      <div id="p-45" class="rank-poster"><img alt="If I Had Legs I&#39;d Kick You" src="./index_files/va0TQ9WprMXRqQAzY56vyqY0Yd5.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">If I Had Legs I'd Kick You</div>
+        <div class="rank-meta">2025 · Drama · Mary Bronstein</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(40,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(40,&#39;down&#39;)">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove If I Had Legs I\&#39;d Kick You from your list?&#39;))removeW(40)" title="Remove">✕</button>
+      </div>
+    </div><div class="rank-item">
+      <div class="rank-num" onclick="editRank(42,23)" title="Click to edit rank">23</div>
+      <div id="p-46" class="rank-poster"><img alt="Blue Jasmine" src="./index_files/MV5BMTc0ODk5MzEyMV5BMl5BanBnXkFtZTcwMzI0MDY1OQ@@._V1_SX342.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div>
+      <div class="rank-info">
+        <div class="rank-title">Blue Jasmine</div>
+        <div class="rank-meta">2013 · Drama · Woody Allen</div>
+      </div>
+      <div class="rank-arrows">
+        <button class="rank-ab" onclick="moveRank(42,&#39;up&#39;)">▲</button>
+        <button class="rank-ab" onclick="moveRank(42,&#39;down&#39;)" disabled="">▼</button>
+        <button class="rank-remove" onclick="if(confirm(&#39;Remove Blue Jasmine from your list?&#39;))removeW(42)" title="Remove">✕</button>
+      </div>
+    </div></div>
     <div id="rankEmpty" class="empty" style="display:none">
       <span class="empty-icon">🏆</span>
       <div class="empty-title">No films to rank yet</div>
@@ -1574,7 +1848,47 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
     <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
     <div class="genre-chart" style="margin-bottom:2rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Genre Breakdown</div>
-      <div id="genreBars"></div>
+      <div id="genreBars">
+    <div class="gbr">
+      <div class="gbr-label">Drama</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:100%"></div></div>
+      <div class="gbr-count">6</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Romance</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:67%"></div></div>
+      <div class="gbr-count">4</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Comedy-Drama</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:50%"></div></div>
+      <div class="gbr-count">3</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Thriller</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:50%"></div></div>
+      <div class="gbr-count">3</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Comedy</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:33%"></div></div>
+      <div class="gbr-count">2</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">War</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:33%"></div></div>
+      <div class="gbr-count">2</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Action</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:33%"></div></div>
+      <div class="gbr-count">2</div>
+    </div>
+    <div class="gbr">
+      <div class="gbr-label">Horror</div>
+      <div class="gbr-track"><div class="gbr-fill" style="width:17%"></div></div>
+      <div class="gbr-count">1</div>
+    </div></div>
     </div>
     <div class="decade-section">
       <div class="sec-label" style="margin-bottom:1.3rem">Films by Decade</div>
@@ -1586,8 +1900,630 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
     </div>
     <div style="margin-top:2.5rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Actor Appearances</div>
-      <div id="actorList">
-</div>
+      <div id="actorList"><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Gwyneth Paltrow</div>
+        <div class="actor-count">3 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Alec Baldwin</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Brad Pitt</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mr. &amp; Mrs. Smith <span style="opacity:.5">2005</span></span><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Cate Blanchett</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Emma Thompson</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Hugh Grant</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Julia Roberts</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Leonardo DiCaprio</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mark Ruffalo</div>
+        <div class="actor-count">2 films</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">A$AP Rocky</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">If I Had Legs I'd Kick You <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Allison Janney</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Andy Samberg</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Angelina Jolie</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mr. &amp; Mrs. Smith <span style="opacity:.5">2005</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Anjelica Huston</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Audrey Tautou</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Amélie <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ben Kingsley</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ben Stiller</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Benedict Cumberbatch</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Benicio del Toro</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Bobby Cannavale</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Christoph Waltz</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Christopher Eccleston</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Others <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Colin Firth</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Conan O'Brien</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">If I Had Legs I'd Kick You <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Daryl Hannah</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Dave Franco</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Diane Kruger</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Dolly Parton</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Dustin Hoffman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Elisabeth Shue</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Leaving Las Vegas <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Emma Chambers</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Emmanuelle Béart</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ethan Hawke</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Before Sunrise <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Fionnula Flanagan</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Others <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Fran Drescher</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Gene Hackman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Gina McKee</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Glen Powell</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Bugonia <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Hugh Bonneville</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Isla Fisher</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jamie Lee Curtis</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jean Reno</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jesse Eisenberg</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">John Cleese</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jon Voight</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Jude Law</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Julian Sands</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Leaving Las Vegas <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Julie Delpy</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Before Sunrise <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Karren Karagulian</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Anora <span style="opacity:.5">2024</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Kate McKinnon</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Keira Knightley</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Kevin Kline</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Liam Neeson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Luke Wilson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Maggie Gyllenhaal</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Martine McCutcheon</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Love Actually <span style="opacity:.5">2003</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mathieu Kassovitz</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Amélie <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Matt Damon</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Talented Mr. Ripley <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mélanie Laurent</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Inglourious Basterds <span style="opacity:.5">2009</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Michael Palin</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">A Fish Called Wanda <span style="opacity:.5">1988</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Michelle Williams</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Shutter Island <span style="opacity:.5">2010</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Mikey Madison</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Anora <span style="opacity:.5">2024</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ncuti Gatwa</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Nicolas Cage</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Leaving Las Vegas <span style="opacity:.5">1995</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Nicole Kidman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Others <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Odessa A'zion</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Olivia Colman</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Roses <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Olympia Dukakis</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Owen Wilson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">The Royal Tenenbaums <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Queen Latifah</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Regina Hall</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Rhys Ifans</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Rose Byrne</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">If I Had Legs I'd Kick You <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Rufus</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Amélie <span style="opacity:.5">2001</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sally Field</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sally Hawkins</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Blue Jasmine <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sean Penn</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Shirley MacLaine</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Steel Magnolias <span style="opacity:.5">1989</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Sydney Sweeney</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Bugonia <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Teyana Taylor</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">One Battle After Another <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Tim McInnerny</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Notting Hill <span style="opacity:.5">1999</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Timothée Chalamet</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Tom Cruise</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Tyler, the Creator</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Marty Supreme <span style="opacity:.5">2025</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Vince Vaughn</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mr. &amp; Mrs. Smith <span style="opacity:.5">2005</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Ving Rhames</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Mission: Impossible <span style="opacity:.5">1996</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Will Ferrell</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Stranger Than Fiction <span style="opacity:.5">2006</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Woody Harrelson</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Now You See Me <span style="opacity:.5">2013</span></span></div>
+    </div><div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">Yura Borisov</div>
+        <div class="actor-count">1 film</div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films"><span class="actor-film-pill">Anora <span style="opacity:.5">2024</span></span></div>
+    </div></div>
     </div>
   </div>
 </div>
@@ -3132,9 +4068,8 @@ function renderStats(){
     const pct=Math.round(count/total*100);
     const barW=Math.round(count/maxCount*100);
     const col=GCOLS[idx%GCOLS.length];
-    const rank=idx+1;
     return `<div class="genre-rank-row">
-      <div class="genre-rank-num">${rank}</div>
+      <div class="genre-rank-num">${idx+1}</div>
       <div class="genre-rank-body">
         <div class="genre-rank-label">
           <span class="genre-rank-name">${genre}</span>
@@ -3145,7 +4080,7 @@ function renderStats(){
         </div>
       </div>
     </div>`;
-  }).join('')  window._PIE_DATA=slices;
+  }).join('');  window._PIE_DATA=slices;
 
   renderDecades(films);
     renderDays(films);
@@ -3285,7 +4220,7 @@ function renderDays(films){
         '<div class="hbar-track">'+
           '<div class="hbar-fill" style="width:'+barW+'%;background:'+col+';">'+
             '<span class="hbar-count">'+count+'</span>'+
-            '</div>'+
+          '</div>'+
         '</div>'+
         '<div class="hbar-meta">'+
           '<div class="hbar-dot" style="background:'+dotCol+'"></div>'+
