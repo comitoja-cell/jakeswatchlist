@@ -3856,7 +3856,6 @@ function _updateStreamCell(filmId, srcs) {
 function renderRankings(){
   const el=document.getElementById('rankList');
   if(!el)return;
-  el.innerHTML='';
   if(!W.length){el.innerHTML='';document.getElementById('rankEmpty').style.display='block';return}
   document.getElementById('rankEmpty').style.display='none';
   const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
@@ -4061,7 +4060,7 @@ function renderStats(){
   const gs=Object.entries(gc).sort((a,b)=>b[1]-a[1]);
   const gb=document.getElementById('genreBars');if(!gb)return;
   if(!gs.length){gb.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see your genre breakdown</div>';return;}
-  const total=gs.reduce((s,[,c])=>s+c,0);
+  const total=gs.reduce((t,[,c])=>t+c,0);
   const ranked=gs.slice().sort((a,b)=>b[1]-a[1]);
   const GCOLS=['#c9a84c','#e0c870','#a07830','#f0e090','#7a5c20','#d4b060','#b89040','#f8e8a0','rgba(201,168,76,0.5)'];
   const maxCount=ranked[0][1];
@@ -4081,7 +4080,7 @@ function renderStats(){
         </div>
       </div>
     </div>`;
-  }).join('');  window._PIE_DATA=slices;
+  }).join('');
 
   renderDecades(films);
     renderDays(films);
@@ -4342,7 +4341,6 @@ function _lbClick(e){
 function renderActors(films){
   const el=document.getElementById('actorList');
   if(!el)return;
-  el.innerHTML='';
   if(!films.length){
     el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see actor appearances.</div>';
     return;
