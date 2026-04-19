@@ -288,8 +288,9 @@ thead th:hover .sort-arrow{opacity:.7;}
 .movies-table th{
   font-family:"Times New Roman",Times,serif;
   font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--white-50);border-bottom:1px solid var(--border);
-  padding:.7rem 1rem;text-align:left;font-weight:400;
+  color:var(--white-50);border-bottom:2px solid var(--border);
+  padding:.6rem 1rem .6rem;text-align:left;font-weight:400;
+  background:rgba(255,255,255,.018);white-space:nowrap;
 }
 .movies-table td{
   padding:.85rem 1rem;
@@ -1058,6 +1059,19 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .hbar-track{flex:1;height:26px;position:relative;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden}
 .hbar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);display:flex;align-items:center}
 .hbar-count{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:rgba(0,0,0,0.75);padding-left:8px;white-space:nowrap}
+
+/* Genre ranked rows */
+.genre-rank-row{display:flex;align-items:center;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--white-04)}
+.genre-rank-row:last-child{border-bottom:none}
+.genre-rank-num{font-family:"Times New Roman",Times,serif;font-size:1.1rem;font-weight:700;color:var(--white-20);min-width:1.6rem;text-align:center;flex-shrink:0}
+.genre-rank-body{flex:1;min-width:0}
+.genre-rank-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.35rem}
+.genre-rank-name{font-family:"Times New Roman",Times,serif;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--white)}
+.genre-rank-meta{font-size:.7rem;color:var(--white-50);letter-spacing:.04em;white-space:nowrap;margin-left:.5rem}
+.genre-rank-track{height:4px;background:var(--white-04);border-radius:2px;overflow:hidden}
+.genre-rank-fill{height:100%;border-radius:2px;transition:width .4s ease}
+/* Actor rank badge */
+.actor-rank-badge{font-family:"Times New Roman",Times,serif;font-size:.75rem;font-weight:700;color:var(--gold);min-width:2rem;text-align:center;flex-shrink:0;letter-spacing:.03em}
 .hbar-pct{font-family:"Times New Roman",Times,serif;font-size:.6rem;color:rgba(0,0,0,0.55);padding-left:4px}
 .hbar-meta{width:90px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:6px;padding-left:12px}
 .hbar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
@@ -3850,7 +3864,7 @@ function renderRankings(){
     const f=film(w.id);if(!f)return'';
     const rank=i+1;
     return `<div class="rank-item">
-      <div class="rank-num${rank<=3?' t3':''}" onclick="editRank(${f.id},${rank})" title="Click to edit rank">${rank}</div>
+      <div class="rank-num${rank<=Math.ceil(sorted.length*.10)?' t3':''}" onclick="editRank(${f.id},${rank})" title="Click to edit rank">${rank}</div>
       ${posterEl(f.t,'rank-poster')}
       <div class="rank-info">
         <div class="rank-title">${f.t}</div>
@@ -4048,24 +4062,27 @@ function renderStats(){
   const gb=document.getElementById('genreBars');if(!gb)return;
   if(!gs.length){gb.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see your genre breakdown</div>';return;}
   const total=gs.reduce((s,[,c])=>s+c,0);
-  const PCOLS=['#c9a84c','#e0c870','#a07830','#f0e090','#7a5c20','#d4b060','#b89040','#f8e8a0','rgba(201,168,76,0.5)'];
-  const CX=130,CY=130,OR=110,IR=54,SC=220/260;
-  let ang=-Math.PI/2;
-  const slices=gs.map(([g,c],i)=>{
-    const frac=c/total,sweep=frac*2*Math.PI,mid=ang+sweep/2;
-    const x1=CX+OR*Math.cos(ang),y1=CY+OR*Math.sin(ang);ang+=sweep;
-    const x2=CX+OR*Math.cos(ang),y2=CY+OR*Math.sin(ang);
-    const ix2=CX+IR*Math.cos(ang),iy2=CY+IR*Math.sin(ang);
-    const ix1=CX+IR*Math.cos(ang-sweep),iy1=CY+IR*Math.sin(ang-sweep);
-    const large=sweep>Math.PI?1:0;
-    const d=`M${x1},${y1} A${OR},${OR},0,${large},1,${x2},${y2} L${ix2},${iy2} A${IR},${IR},0,${large},0,${ix1},${iy1} Z`;
-    const ox=Math.cos(mid)*10*SC,oy=Math.sin(mid)*10*SC;
-    return {g,c,col:PCOLS[i%PCOLS.length],d,ox,oy,pct:Math.round(frac*100)};
-  });
-  const svgPaths=slices.map((s,i)=>`<path class="pie-slice" d="${s.d}" fill="${s.col}" onmouseenter="_pieEnter(event,${i})" onmouseleave="_pieLeave(event,${i})" onmousemove="_pieMove(event)"/>`).join('');
-  const legend=slices.map(s=>`<div class="pie-legend-row"><div class="pie-dot" style="background:${s.col}"></div><div class="pie-lname">${s.g}</div><div class="pie-lcount">${s.c}</div></div>`).join('');
-  gb.innerHTML=`<div class="pie-wrap"><svg class="pie-svg" viewBox="0 0 260 260" width="220" height="220" style="overflow:visible">${svgPaths}<circle cx="${CX}" cy="${CY}" r="${IR-1}" fill="var(--black)"/></svg><div class="pie-legend">${legend}</div></div><div class="pie-tip" id="pieTip"><div class="pie-tip-genre" id="pieTipGenre"></div><div class="pie-tip-pct" id="pieTipPct"></div><div class="pie-tip-count" id="pieTipCount"></div></div>`;
-  window._PIE_DATA=slices;
+  const ranked=gs.slice().sort((a,b)=>b[1]-a[1]);
+  const GCOLS=['#c9a84c','#e0c870','#a07830','#f0e090','#7a5c20','#d4b060','#b89040','#f8e8a0','rgba(201,168,76,0.5)'];
+  const maxCount=ranked[0][1];
+  gb.innerHTML=ranked.map(([genre,count],idx)=>{
+    const pct=Math.round(count/total*100);
+    const barW=Math.round(count/maxCount*100);
+    const col=GCOLS[idx%GCOLS.length];
+    const rank=idx+1;
+    return `<div class="genre-rank-row">
+      <div class="genre-rank-num">${rank}</div>
+      <div class="genre-rank-body">
+        <div class="genre-rank-label">
+          <span class="genre-rank-name">${genre}</span>
+          <span class="genre-rank-meta">${count} film${count===1?'':'s'} &middot; ${pct}%</span>
+        </div>
+        <div class="genre-rank-track">
+          <div class="genre-rank-fill" style="width:${barW}%;background:${col}"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('')  window._PIE_DATA=slices;
 
   renderDecades(films);
     renderDays(films);
@@ -4117,14 +4134,13 @@ function renderDecades(films){
       const isBest=avg!==null&&avg===bestAvg;
       const col=isBest?BEST_COL:BASE_COL;
       const dotCol=isBest?'#d4a017':'rgba(255,255,255,0.25)';
-      const avgDisplay=avg!==null?(isBest?'<span style="color:#f0c040;font-weight:600">'+avg+'</span> <span style="color:#f0c040">&#9733;</span>':'<span>'+avg+'</span>'):'—';
+      const avgDisplay=avg!==null?(isBest?'<span style="color:#c9a84c;font-weight:600">'+avg+'</span> <span style="color:#c9a84c">&#9733;</span>':'<span>'+avg+'</span>'):'—';
       return '<div class="hbar-row" data-decade="'+decade+'">'+
-        '<div class="hbar-label" style="'+(isBest?'color:#f0c040':'')+'">'+decade+'s</div>'+
+        '<div class="hbar-label" style="'+(isBest?'color:#c9a84c':'')+'">'+decade+'s</div>'+
         '<div class="hbar-track">'+
           '<div class="hbar-fill" style="width:'+barW+'%;background:'+col+';">'+
             '<span class="hbar-count">'+count+'</span>'+
-            '<span class="hbar-pct">'+pct+'%</span>'+
-          '</div>'+
+            '</div>'+
         '</div>'+
         '<div class="hbar-meta">'+
           '<div class="hbar-dot" style="background:'+dotCol+'"></div>'+
@@ -4144,7 +4160,7 @@ function renderDecades(films){
     const avg=avgRanks[decade];
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+decade+'s — '+filmList.length+' film'+(filmList.length>1?'s':'')+'</div>'+
-        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
@@ -4200,14 +4216,13 @@ function renderDays(films){
       const col=isBest?BEST_COL:BASE_COL;
       const dotCol=isBest?'#c17f3a':'rgba(255,255,255,0.25)';
       const shortDay=day.substring(0,3);
-      const avgDisplay=avg!==null?(isBest?'<span style="color:#e8a050;font-weight:600">'+avg+'</span> <span style="color:#e8a050">&#9733;</span>':'<span>'+avg+'</span>'):'—';
+      const avgDisplay=avg!==null?(isBest?'<span style="color:#c9a84c;font-weight:600">'+avg+'</span> <span style="color:#c9a84c">&#9733;</span>':'<span>'+avg+'</span>'):'—';
       return '<div class="hbar-row" data-day="'+day+'">'+
-        '<div class="hbar-label" style="'+(isBest?'color:#e8a050':'')+'">'+shortDay+'</div>'+
+        '<div class="hbar-label" style="'+(isBest?'color:#c9a84c':'')+'">'+shortDay+'</div>'+
         '<div class="hbar-track">'+
           '<div class="hbar-fill" style="width:'+barW+'%;background:'+col+';">'+
             '<span class="hbar-count">'+count+'</span>'+
-            '<span class="hbar-pct">'+pct+'%</span>'+
-          '</div>'+
+            '</div>'+
         '</div>'+
         '<div class="hbar-meta">'+
           '<div class="hbar-dot" style="background:'+dotCol+'"></div>'+
@@ -4227,7 +4242,7 @@ function renderDays(films){
     const avg=avgRanks[day];
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+day+' — '+filmList.length+' film'+(filmList.length!==1?'s':'')+'</div>'+
-        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
@@ -4351,6 +4366,7 @@ function renderActors(films){
     const label=count===1?'1 film':`${count} films`;
     return `<div class="actor-row">
       <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-rank-badge">#${i+1}</div>
         <div class="actor-name">${actor}</div>
         <div class="actor-count">${label}</div>
         <span class="actor-chevron">▼</span>
