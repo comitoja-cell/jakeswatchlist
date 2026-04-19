@@ -3856,6 +3856,7 @@ function _updateStreamCell(filmId, srcs) {
 function renderRankings(){
   const el=document.getElementById('rankList');
   if(!el)return;
+  el.innerHTML='';
   if(!W.length){el.innerHTML='';document.getElementById('rankEmpty').style.display='block';return}
   document.getElementById('rankEmpty').style.display='none';
   const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
@@ -4341,6 +4342,7 @@ function _lbClick(e){
 function renderActors(films){
   const el=document.getElementById('actorList');
   if(!el)return;
+  el.innerHTML='';
   if(!films.length){
     el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see actor appearances.</div>';
     return;
