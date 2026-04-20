@@ -1075,6 +1075,7 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .actor-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .actor-count-label{font-size:.75rem;color:var(--white-50);letter-spacing:.03em}
 .actor-sort-controls{display:flex;align-items:center;gap:.5rem;margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid var(--white-04)}
+.insight-divider{border:none;border-top:1px solid rgba(201,168,76,0.15);margin:2.5rem 0;width:100%}
 .genre-rank-row{display:flex;align-items:center;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--white-04)}
 .genre-rank-row:last-child{border-bottom:none}
 .genre-rank-num{font-family:"Times New Roman",Times,serif;font-size:1.1rem;font-weight:700;color:var(--white-20);min-width:1.6rem;text-align:center;flex-shrink:0}
@@ -1860,6 +1861,7 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       </div>
     </div>
     <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
+    <hr class="insight-divider">
     <div class="genre-chart" style="margin-bottom:2rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Genre Breakdown</div>
       <div id="genreBars">
@@ -1904,17 +1906,20 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div class="gbr-count">1</div>
     </div></div>
     </div>
+    <hr class="insight-divider">
     <div class="decade-section">
       <div class="sec-label" style="margin-bottom:1.3rem">Films by Decade</div>
       <div class="decade-bars" id="decadeBars"></div>
     </div>
+    <hr class="insight-divider">
     <div class="decade-section" style="margin-top:2.5rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Films by Day</div>
       <div class="decade-bars" id="dayBars"></div>
     </div>
     <div style="margin-top:2.5rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Actor Appearances</div>
-      <div id="actorSortControls" class="actor-sort-controls"></div>
+      <hr class="insight-divider">
+    <div id="actorSortControls" class="actor-sort-controls"></div>
     <div id="actorList"><div class="actor-row">
       <div class="actor-header" onclick="toggleActor(this)">
         <div class="actor-name">Gwyneth Paltrow</div>
@@ -4091,7 +4096,7 @@ function renderStats(){
   if(!gTip){gTip=document.createElement('div');gTip.id='genreTip';gTip.className='decade-tooltip';document.body.appendChild(gTip);}
   gb.querySelectorAll('.hbar-row').forEach(row=>{
     const gn=row.getAttribute('data-genre')||'',avg=gAR[gn],fl=(gf[gn]||[]).slice().sort((a,b)=>a.y-b.y);
-    row.addEventListener('mouseenter',()=>{gTip.innerHTML='<div class="decade-tip-label">'+gn+'</div>'+(avg!=null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">Avg. Rank: #'+avg+'</div>':'')+fl.slice(0,8).map(f=>'<div class="decade-tip-film">'+f.t+' <span class="tip-year">'+f.y+'</span></div>').join('');gTip.classList.add('show');});
+    row.addEventListener('mouseenter',()=>{gTip.innerHTML='<div class="decade-tip-label">'+gn+'</div>'+(avg!=null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+fl.slice(0,8).map(f=>'<div class="decade-tip-film">'+f.t+' <span class="tip-year">'+f.y+'</span></div>').join('');gTip.classList.add('show');});
     row.addEventListener('mousemove',e=>{const tw=gTip.offsetWidth||180,th=gTip.offsetHeight||120;gTip.style.left=(e.clientX+tw+12>window.innerWidth?e.clientX-tw-8:e.clientX+12)+'px';gTip.style.top=(e.clientY+th+8>window.innerHeight?e.clientY-th-8:e.clientY+8)+'px';});
     row.addEventListener('mouseleave',()=>gTip.classList.remove('show'));
   });
@@ -4173,7 +4178,7 @@ function renderDecades(films){
     const avg=avgRanks[decade];
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+decade+'s — '+filmList.length+' film'+(filmList.length>1?'s':'')+'</div>'+
-        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">Avg. Rank: #'+avg+'</div>':'')+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
@@ -4256,7 +4261,7 @@ function renderDays(films){
     const avg=avgRanks[day];
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+day+' — '+filmList.length+' film'+(filmList.length!==1?'s':'')+'</div>'+
-        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">Avg. Rank: #'+avg+'</div>':'')+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
