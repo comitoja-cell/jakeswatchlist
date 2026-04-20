@@ -4176,6 +4176,7 @@ function renderDecades(films){
     const decade=Number(row.dataset.decade);
     const filmList=map[decade].slice().sort((a,b)=>a.y-b.y);
     const avg=avgRanks[decade];
+    const pct=Math.round(filmList.length/films.length*100);
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+decade+'s — '+filmList.length+' film'+(filmList.length>1?'s':'')+'</div>'+
         (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
@@ -4259,6 +4260,7 @@ function renderDays(films){
     const day=row.dataset.day;
     const filmList=map[day];
     const avg=avgRanks[day];
+    const pct=Math.round((filmList||[]).length/films.length*100);
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+day+' — '+filmList.length+' film'+(filmList.length!==1?'s':'')+'</div>'+
         (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
