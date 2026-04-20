@@ -489,7 +489,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 }
 
 /* \u2500\u2500 STATS / INSIGHTS page \u2500\u2500 */
-.stats-page{max-width:1200px;margin:0 auto;padding:3rem 2.5rem}
+.stats-page{display:flex;flex-direction:column;max-width:1200px;margin:0 auto;padding:3rem 2.5rem}
 /* \u2500\u2500 HEATMAP \u2500\u2500 */
 .hm-section{margin-bottom:2.5rem}
 .hm-nav{display:flex;align-items:center;gap:.5rem}
@@ -1061,6 +1061,17 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .hbar-count{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:rgba(0,0,0,0.75);padding-left:8px;white-space:nowrap}
 
 /* Genre ranked rows */
+/* Genre to bottom */
+.genre-chart{order:99}
+/* Actor avg rank */
+.actor-avg-rank{font-size:.68rem;color:var(--gold);margin-left:.5rem;letter-spacing:.02em}
+.actor-count{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}
+/* Genre tooltip */
+.genre-tooltip{position:fixed;pointer-events:none;background:var(--black-80);border:1px solid var(--border);border-radius:6px;padding:.75rem 1rem;width:180px;font-family:"Times New Roman",Times,serif;font-size:.8rem;color:var(--white);z-index:9999;opacity:0;transition:opacity .15s}
+.genre-tooltip.show{opacity:1}
+.genre-tip-label{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem;font-weight:600}
+.genre-tip-pct{font-size:.7rem;color:var(--gold);margin-bottom:.5rem}
+.genre-tip-film{font-size:.72rem;color:var(--white-50);padding:.1rem 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .genre-rank-row{display:flex;align-items:center;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--white-04)}
 .genre-rank-row:last-child{border-bottom:none}
 .genre-rank-num{font-family:"Times New Roman",Times,serif;font-size:1.1rem;font-weight:700;color:var(--white-20);min-width:1.6rem;text-align:center;flex-shrink:0}
@@ -3856,6 +3867,7 @@ function _updateStreamCell(filmId, srcs) {
 function renderRankings(){
   const el=document.getElementById('rankList');
   if(!el)return;
+  el.innerHTML='';
   if(!W.length){el.innerHTML='';document.getElementById('rankEmpty').style.display='block';return}
   document.getElementById('rankEmpty').style.display='none';
   const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
@@ -4055,8 +4067,8 @@ function renderStats(){
   const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
 
 
-  const gc={};
-  films.forEach(w=>gc[w.f.g]=(gc[w.f.g]||0)+1);
+  const gc={},gf={};
+  films.forEach(w=>{gc[w.f.g]=(gc[w.f.g]||0)+1;if(!gf[w.f.g])gf[w.f.g]=[];gf[w.f.g].push({t:w.f.t,y:w.f.y});});
   const gs=Object.entries(gc).sort((a,b)=>b[1]-a[1]);
   const gb=document.getElementById('genreBars');if(!gb)return;
   if(!gs.length){gb.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see your genre breakdown</div>';return;}
@@ -4081,6 +4093,26 @@ function renderStats(){
       </div>
     </div>`;
   }).join('');
+  // Genre hover tooltip
+  let gTip=document.getElementById('genreTip');
+  if(!gTip){gTip=document.createElement('div');gTip.id='genreTip';gTip.className='genre-tooltip';document.body.appendChild(gTip);}
+  gb.querySelectorAll('.genre-rank-row').forEach(row=>{
+    const gName=row.querySelector('.genre-rank-name')?.textContent||'';
+    const gMeta=row.querySelector('.genre-rank-meta')?.textContent||'';
+    const filmList=(gf[gName]||[]).slice().sort((a,b)=>a.y-b.y);
+    row.addEventListener('mouseenter',()=>{
+      gTip.innerHTML='<div class="genre-tip-label">'+gName+'</div>'+
+        (gMeta?'<div class="genre-tip-pct">'+gMeta+'</div>':'')+
+        filmList.slice(0,8).map(f=>'<div class="genre-tip-film">'+f.t+' <span style="opacity:.5">'+f.y+'</span></div>').join('');
+      gTip.classList.add('show');
+    });
+    row.addEventListener('mousemove',e=>{
+      const tw=gTip.offsetWidth||180,th=gTip.offsetHeight||120;
+      gTip.style.left=(e.clientX+tw+12>window.innerWidth?e.clientX-tw-8:e.clientX+12)+'px';
+      gTip.style.top=(e.clientY+th+8>window.innerHeight?e.clientY-th-8:e.clientY+8)+'px';
+    });
+    row.addEventListener('mouseleave',()=>gTip.classList.remove('show'));
+  });
 
   renderDecades(films);
     renderDays(films);
@@ -4090,6 +4122,7 @@ function renderStats(){
 function renderDecades(films){
   const el=document.getElementById('decadeBars');
   if(!el)return;
+  el.innerHTML='';
   if(!films.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see the decade breakdown</div>';return;}
   const BEST_COL='#d4a017';
   const BASE_COL='#c9a84c';
@@ -4158,7 +4191,7 @@ function renderDecades(films){
     const avg=avgRanks[decade];
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+decade+'s — '+filmList.length+' film'+(filmList.length>1?'s':'')+'</div>'+
-        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
@@ -4170,6 +4203,7 @@ function renderDecades(films){
 function renderDays(films){
   const el=document.getElementById('dayBars');
   if(!el)return;
+  el.innerHTML='';
   if(!films.length){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see the day breakdown</div>';return;}
   const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   const BEST_COL='#c17f3a';
@@ -4240,7 +4274,7 @@ function renderDays(films){
     const avg=avgRanks[day];
     row.addEventListener('mouseenter',e=>{
       tip.innerHTML='<div class="decade-tip-label">'+day+' — '+filmList.length+' film'+(filmList.length!==1?'s':'')+'</div>'+
-        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">'+pct+'% of watches</div>':'')+
+        (avg!==null?'<div style="font-size:.7rem;color:var(--gold);margin-bottom:.3rem">avg rank: #'+avg+'</div>':'')+
         filmList.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
       tip.classList.add('show');
       _moveTip(e,tip);
@@ -4341,6 +4375,7 @@ function _lbClick(e){
 function renderActors(films){
   const el=document.getElementById('actorList');
   if(!el)return;
+  el.innerHTML='';
   if(!films.length){
     el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see actor appearances.</div>';
     return;
@@ -4350,15 +4385,24 @@ function renderActors(films){
   films.forEach(w=>{
     (w.f.a||[]).forEach(a=>{
       if(!ac[a])ac[a]=[];
-      ac[a].push({t:w.f.t,y:w.f.y});
+      ac[a].push({t:w.f.t,y:w.f.y,rank:w.rank});
     });
   });
   // Sort by count desc, then alpha; only show actors in 2+ films
   const sorted=Object.entries(ac)
-    .sort((a,b)=>b[1].length-a[1].length||a[0].localeCompare(b[0]))
-    .filter(([,movies])=>movies.length>=2);
+    .filter(([,movies])=>movies.length>=2)
+    .map(([actor,movies])=>{
+      const ranked=movies.filter(m=>m.rank!=null&&m.rank>0);
+      const avgRank=ranked.length?Math.round(ranked.reduce((sum,m)=>sum+m.rank,0)/ranked.length*10)/10:null;
+      return [actor,movies,avgRank];
+    })
+    .sort((a,b)=>{
+      if(a[2]==null&&b[2]==null)return a[0].localeCompare(b[0]);
+      if(a[2]==null)return 1; if(b[2]==null)return -1;
+      return a[2]-b[2];
+    });
 
-  el.innerHTML=sorted.map(([actor,movies],i)=>{
+  el.innerHTML=sorted.map(([actor,movies,avgRank],i)=>{
     const count=movies.length;
     const pills=movies.sort((a,b)=>a.y-b.y).map(m=>`<span class="actor-film-pill">${m.t} <span style="opacity:.5">${m.y}</span></span>`).join('');
     const label=count===1?'1 film':`${count} films`;
@@ -4366,7 +4410,10 @@ function renderActors(films){
       <div class="actor-header" onclick="toggleActor(this)">
         <div class="actor-rank-badge">#${i+1}</div>
         <div class="actor-name">${actor}</div>
-        <div class="actor-count">${label}</div>
+        <div class="actor-count">
+          <span>${label}</span>
+          ${avgRank!=null?'<span class="actor-avg-rank">avg rank: #${avgRank}</span>':''}
+        </div>
         <span class="actor-chevron">▼</span>
       </div>
       <div class="actor-films">${pills}</div>
