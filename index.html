@@ -1914,7 +1914,8 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
     </div>
     <div style="margin-top:2.5rem">
       <div class="sec-label" style="margin-bottom:1.3rem">Actor Appearances</div>
-      <div id="actorList"><div class="actor-row">
+      <div id="actorSortControls" class="actor-sort-controls"></div>
+    <div id="actorList"><div class="actor-row">
       <div class="actor-header" onclick="toggleActor(this)">
         <div class="actor-name">Gwyneth Paltrow</div>
         <div class="actor-count">3 films</div>
@@ -4071,7 +4072,7 @@ function renderStats(){
 
 
   const gc={},gf={};
-  films.forEach(w=>{gc[w.f.g]=(gc[w.f.g]||0)+1;if(!gf[w.f.g])gf[w.f.g]=[];gf[w.f.g].push({t:w.f.t,y:w.f.y});});
+  films.forEach(w=>{gc[w.f.g]=(gc[w.f.g]||0)+1;if(!gf[w.f.g])gf[w.f.g]=[];gf[w.f.g].push({t:w.f.t,y:w.f.y,rank:w.rank});});
   const gs=Object.entries(gc).sort((a,b)=>b[1]-a[1]);
   const gb=document.getElementById('genreBars');if(!gb)return;
   gb.innerHTML='';
