@@ -4379,8 +4379,9 @@ function renderActors(films,_sort){if(_sort)window._actorSort=_sort;const sortBy
       return [actor,movies,avgRank];
     })
     .sort((a,b)=>{
+      if(sortBy==='count')return b[1].length-a[1].length||a[0].localeCompare(b[0]);
       if(a[2]==null&&b[2]==null)return a[0].localeCompare(b[0]);
-      if(a[2]==null)return 1; if(b[2]==null)return -1;
+      if(a[2]==null)return 1;if(b[2]==null)return -1;
       return a[2]-b[2];
     });
 
