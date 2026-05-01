@@ -496,7 +496,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-nav-btn{background:none;border:none;color:var(--white-50);font-size:2.2rem;line-height:1;cursor:pointer;padding:.1rem .5rem;transition:color .15s;flex-shrink:0;font-family:"Times New Roman",Times,serif;margin-top:-.2rem}
 .hm-nav-btn:hover:not(:disabled){color:var(--gold)}
 .hm-nav-btn:disabled{opacity:.2;cursor:default}
-.hm-months-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;flex:1;min-width:0}
+.hm-months-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 .hm-month{display:flex;flex-direction:column;gap:2px}
 .hm-month-name{font-family:"Times New Roman",Times,serif;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;text-align:center}
 .hm-count-pill{display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.45);font-family:"Times New Roman",Times,serif;font-size:.52rem;letter-spacing:.05em;padding:.08rem .32rem;border-radius:999px;margin-left:.4rem;vertical-align:middle;line-height:1.5}
@@ -1844,14 +1844,10 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div class="sec-title">Viewing Activity</div>
     </div>
         <div class="hm-section" id="hmSection">
-      <div class="hm-nav">
-        <button class="hm-nav-btn" id="hmPrev" onclick="_hmNav(-1)">&#8249;</button>
-        <div class="hm-months-row" id="hmCalGrid"></div>
-        <button class="hm-nav-btn" id="hmNext" onclick="_hmNav(1)">&#8250;</button>
-      </div>
+      <div class="hm-months-row" id="hmCalGrid"></div>
       <div class="hm-legend">
-        <span class="hm-legend-label">No activity</span>
         <div class="hm-legend-swatch hm-inactive"></div>
+        <span class="hm-legend-label">No activity</span>
         <div class="hm-legend-swatch hm-active"></div>
         <span class="hm-legend-label">Watched</span>
         <div class="hm-legend-swatch hm-multi" style="margin-left:.5rem"></div>
@@ -3979,32 +3975,27 @@ function buildHeatmap(){_hmOffset=0;_hmRender();}
 function _hmNav(delta){_hmOffset+=delta;_hmRender();}
 function _hmRender(){
   const grid=document.getElementById('hmCalGrid');
-  const prevBtn=document.getElementById('hmPrev');
-  const nextBtn=document.getElementById('hmNext');
   if(!grid)return;
+  const W=JSON.parse(localStorage.getItem('jwl3_w')||'[]');
   const dayMap={};
   for(const w of W){
     if(!w.d)continue;
     const key=w.d.slice(0,10);
-    const f=film(w.id);
     if(!dayMap[key])dayMap[key]=[];
-    if(f)dayMap[key].push(f.t);
+    const f=w.f;
+    if(f)dayMap[key].push(f.t||'');
   }
   const todayD=new Date();todayD.setHours(0,0,0,0);
   const todayKey=todayD.getFullYear()+'-'+String(todayD.getMonth()+1).padStart(2,'0')+'-'+String(todayD.getDate()).padStart(2,'0');
+  const months=[];
+  const startY=2026,startM=0;
   const curY=todayD.getFullYear();
   const curM=todayD.getMonth();
-  const months=[];
-  for(let i=-3;i<=0;i++){
-    let tm=(curY*12+curM)+i+_hmOffset;
-    let y=Math.floor(tm/12);
-    let m=tm%12;
-    if(m<0){m+=12;y--;}
+  let y=startY,m=startM;
+  while(y<curY||(y===curY&&m<=curM)){
     months.push({y,m});
+    m++;if(m>11){m=0;y++;}
   }
-  const firstTm=(curY*12+curM)-3+_hmOffset;
-  prevBtn.disabled=firstTm<=2026*12+0;
-  nextBtn.disabled=_hmOffset>=0;
   grid.innerHTML=months.map(({y,m})=>_hmMonthHtml(y,m,dayMap,todayKey)).join('');
 }
 function _hmMonthHtml(year,month,dayMap,todayKey){
