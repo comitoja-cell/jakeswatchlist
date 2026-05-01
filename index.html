@@ -2612,7 +2612,7 @@ const FILMS=[
   {id:33,t:"The Others",y:2001,g:"Horror",e:"👻",d:"Alejandro Amenábar",a:["Nicole Kidman","Fionnula Flanagan","Christopher Eccleston"],tmdbId:1933,poster:"/p8g1vlTvpM6nr2hMMiZ1fUlKF0D.jpg"},
   {id:34,t:"Anora",y:2024,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"],tmdbId:1218846},
   {id:35,t:"Now You See Me",y:2013,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"],tmdbId:75656},
-  {id:36,t:"Love Actually",y:2003,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Keira Knightley","Colin Firth","Emma Thompson","Liam Neeson","Martine McCutcheon"],tmdbId:508},
+  {id:36,t:"Love Actually",y:2003,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Alan Rickman","Emma Thompson","Liam Neeson","Martine McCutcheon","Colin Firth","Bill Nighy","Laura Linney","L\u00facia Moniz","Andrew Lincoln","Keira Knightley","Chiwetel Ejiofor"],tmdbId:508},
   {id:37,t:"Mr. & Mrs. Smith",y:2005,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"],tmdbId:14979},
   {id:38,t:"Bugonia",y:2025,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"],tmdbId:701387},
   {id:39,t:"Notting Hill",y:1999,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"],tmdbId:1094},
@@ -4377,9 +4377,9 @@ function renderActors(films,_sort){if(_sort)window._actorSort=_sort;const sortBy
       ac[a].push({t:w.f.t,y:w.f.y,rank:w.rank});
     });
   });
-  // Sort by count desc, then alpha; only show actors in 1+ films
+  // Sort by count desc, then alpha; only show actors in 2+ films
   const sorted=Object.entries(ac)
-    .filter(([,movies])=>movies.length>=1)
+    .filter(([,movies])=>movies.length>=2)
     .map(([actor,movies])=>{
       const ranked=movies.filter(m=>m.rank!=null&&m.rank>0);
       const avgRank=ranked.length?Math.round(ranked.reduce((sum,m)=>sum+m.rank,0)/ranked.length*10)/10:null;
