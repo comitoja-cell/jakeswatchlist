@@ -510,7 +510,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-today{background:rgba(139,92,246,.35);outline:1px solid rgba(139,92,246,.65);outline-offset:-1px}
 .hm-legend{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding-left:.5rem}
 .hm-legend-label{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.hm-legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.hm-legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}.hm-legend .hm-inactive{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.3)}
 .hm-tip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;max-width:220px}
 .hm-tip.show{opacity:1}
 .hm-tip-date{font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
@@ -3977,12 +3977,14 @@ function _hmRender(){
   const grid=document.getElementById('hmCalGrid');
   if(!grid)return;
   const W=JSON.parse(localStorage.getItem('jwl3_w')||'[]');
+  const filmIdx={};
+  if(typeof FILMS!=='undefined')FILMS.forEach(f=>filmIdx[f.id]=f);
   const dayMap={};
   for(const w of W){
     if(!w.d)continue;
     const key=w.d.slice(0,10);
     if(!dayMap[key])dayMap[key]=[];
-    const f=w.f;
+    const f=filmIdx[w.id];
     if(f)dayMap[key].push(f.t||'');
   }
   const todayD=new Date();todayD.setHours(0,0,0,0);
