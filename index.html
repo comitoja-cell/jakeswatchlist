@@ -4377,9 +4377,9 @@ function renderActors(films,_sort){if(_sort)window._actorSort=_sort;const sortBy
       ac[a].push({t:w.f.t,y:w.f.y,rank:w.rank});
     });
   });
-  // Sort by count desc, then alpha; only show actors in 2+ films
+  // Sort by count desc, then alpha; only show actors in 1+ films
   const sorted=Object.entries(ac)
-    .filter(([,movies])=>movies.length>=2)
+    .filter(([,movies])=>movies.length>=1)
     .map(([actor,movies])=>{
       const ranked=movies.filter(m=>m.rank!=null&&m.rank>0);
       const avgRank=ranked.length?Math.round(ranked.reduce((sum,m)=>sum+m.rank,0)/ranked.length*10)/10:null;
