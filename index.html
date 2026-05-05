@@ -2126,7 +2126,7 @@ try {
 let curSort='rank', mId=null;
 
 function save(){
-  if (!isOwner) return; // public watchlist — visitors are read-only
+  if (!isOwner()) return; // public watchlist — visitors are read-only
   try {
     localStorage.setItem('jwl3_w', JSON.stringify(W));
     localStorage.setItem('jwl3_wl', JSON.stringify(WL));
@@ -2163,7 +2163,20 @@ function _setCookie(name, val, days) {
 }
 
 // True only on Jake's own browser — controls write access and visitor-mode UI
-const isOwner = (localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid')) === JAKE_UID;
+// isOwner() is a live function — always re-checks so UID restoration works
+function isOwner() {
+  return (localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid')) === JAKE_UID;
+}
+// Self-heal: on every page load, if either storage has Jake's UID, restore the other.
+// This fixes browsers where localStorage or cookie was cleared independently.
+(function restoreJakeUid() {
+  const lsUid = localStorage.getItem('jwl3_uid');
+  const ckUid = _getCookie('jwl3_uid');
+  if (lsUid === JAKE_UID || ckUid === JAKE_UID) {
+    try { localStorage.setItem('jwl3_uid', JAKE_UID); } catch(e) {}
+    _setCookie('jwl3_uid', JAKE_UID, 3650);
+  }
+})();
 
 function getOrCreateUserId() {
   let uid = localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid');
@@ -2225,7 +2238,7 @@ async function cloudLoad() {
     const cloud = await res.json();
     if (!cloud || !Array.isArray(cloud.w) || cloud.w.length === 0) return;
     const cloudTs = cloud._ts || 0; // declared here so it's in scope for all visitors too
-    if (isOwner) {
+    if (isOwner()) {
       // Jake's own browser: only apply if cloud has better/newer data
       const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
       const cloudHasMore = cloud.w.length > W.length;
@@ -2255,7 +2268,7 @@ async function cloudLoad() {
     // Re-render everything with restored data
     try { renderTable(); renderRankings(); renderRecentlyWatched(); renderWL(); renderStats(); renderFacts(); } catch(e) {}
     setSyncStatus('synced');
-    if (isOwner) showToast('✓ Data restored from cloud (' + cloud.w.length + ' films)');
+    if (isOwner()) showToast('✓ Data restored from cloud (' + cloud.w.length + ' films)');
   } catch(e) { /* cloud unavailable — local data still intact */ }
 }
 
@@ -3829,7 +3842,7 @@ async function renderRecentlyWatched() {
        .forEach(f => enrichFilmFromTMDB(f));
 })();
 
-if (isOwner) {
+if (isOwner()) {
   // Jake: render immediately from localStorage, then sync with cloud
   renderRecentlyWatched();
   renderTable();
