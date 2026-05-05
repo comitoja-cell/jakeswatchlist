@@ -511,6 +511,19 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-legend{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding-left:.5rem}
 .hm-legend-label{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
 .hm-legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}.hm-legend .hm-inactive{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.3)}
+.hm-month-stats{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,.07)}
+.hm-month.hm-best-month{background:#0f0b00}
+.hm-month.hm-best-month .hm-month-name{color:var(--gold)}
+.hm-month.hm-best-month .hm-month-stats{border-top-color:rgba(201,168,76,.2)}
+.hm-stat-box{flex:1;min-width:0}
+.hm-stat-val{font-family:"Times New Roman",Times,serif;font-size:.75rem;font-weight:700;color:var(--white);line-height:1}
+.hm-stat-lbl{font-family:"Times New Roman",Times,serif;font-size:.52rem;letter-spacing:.07em;text-transform:uppercase;color:var(--white-50);margin-top:2px}
+.hm-month.hm-best-month .hm-stat-val{color:var(--gold)}
+.hm-month.hm-best-month .hm-stat-lbl{color:rgba(201,168,76,.55)}
+.hm-stat-bar{height:2px;background:rgba(255,255,255,.07);border-radius:1px;margin-top:4px;overflow:hidden}
+.hm-stat-bar-fill{height:100%;border-radius:1px;background:rgba(201,168,76,.4);transition:width .4s ease}
+.hm-month.hm-best-month .hm-stat-bar-fill{background:var(--gold)}
+.hm-best-badge{font-family:"Times New Roman",Times,serif;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);opacity:.8;float:right;margin-top:1px}
 .hm-tip{position:fixed;pointer-events:none;background:rgba(0,0,0,.95);border:1px solid var(--gold);padding:.7rem 1rem;z-index:9999;opacity:0;transition:opacity .15s;max-width:220px}
 .hm-tip.show{opacity:1}
 .hm-tip-date{font-family:"Times New Roman",Times,serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
@@ -3347,8 +3360,17 @@ function _hmRender(){
     const f=filmIdx[w.id];
     if(f)dayMap[key].push(f.t||'');
   }
+  // Build rank map: date -> [ranks]
+  const rankMap={};
+  for(const w of W){
+    if(!w.d||!w.rank)continue;
+    const key=w.d.slice(0,7); // YYYY-MM
+    if(!rankMap[key])rankMap[key]=[];
+    rankMap[key].push(w.rank);
+  }
   const todayD=new Date();todayD.setHours(0,0,0,0);
   const todayKey=todayD.getFullYear()+'-'+String(todayD.getMonth()+1).padStart(2,'0')+'-'+String(todayD.getDate()).padStart(2,'0');
+  const curMonthKey=todayD.getFullYear()+'-'+String(todayD.getMonth()+1).padStart(2,'0');
   const months=[];
   const startY=2026,startM=0;
   const curY=todayD.getFullYear();
@@ -3358,9 +3380,35 @@ function _hmRender(){
     months.push({y,m});
     m++;if(m>11){m=0;y++;}
   }
-  grid.innerHTML=months.map(({y,m})=>_hmMonthHtml(y,m,dayMap,todayKey)).join('');
+  const totalWatches=W.filter(w=>w.d).length;
+  // Compute per-month stats
+  const monthStats={};
+  months.forEach(({y,m})=>{
+    const mk=y+'-'+String(m+1).padStart(2,'0');
+    const ranks=rankMap[mk]||[];
+    const count=ranks.length;
+    const pct=totalWatches>0?Math.round(count/totalWatches*100):0;
+    const avgRank=ranks.length>0?Math.round(ranks.reduce((s,r)=>s+r,0)/ranks.length*10)/10:null;
+    monthStats[mk]={count,pct,avgRank};
+  });
+  // Best month = lowest avgRank among COMPLETED months only (not current month)
+  let bestMonthKey=null;
+  let bestAvg=Infinity;
+  months.forEach(({y,m})=>{
+    const mk=y+'-'+String(m+1).padStart(2,'0');
+    if(mk===curMonthKey)return; // skip current month
+    const st=monthStats[mk];
+    if(st&&st.avgRank!==null&&st.avgRank<bestAvg){bestAvg=st.avgRank;bestMonthKey=mk;}
+  });
+  const maxCount=Math.max(1,...Object.values(monthStats).map(s=>s.count));
+  grid.innerHTML=months.map(({y,m})=>{
+    const mk=y+'-'+String(m+1).padStart(2,'0');
+    const st=monthStats[mk]||{count:0,pct:0,avgRank:null};
+    const isBest=mk===bestMonthKey;
+    return _hmMonthHtml(y,m,dayMap,todayKey,st,isBest,maxCount);
+  }).join('');
 }
-function _hmMonthHtml(year,month,dayMap,todayKey){
+function _hmMonthHtml(year,month,dayMap,todayKey,stats,isBest,maxCount){
   const MNAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const DOW=['Su','Mo','Tu','We','Th','Fr','Sa'];
   const daysInMonth=new Date(year,month+1,0).getDate();
@@ -3369,10 +3417,9 @@ function _hmMonthHtml(year,month,dayMap,todayKey){
   for(let i=0;i<startDow;i++)cells.push(null);
   for(let d=1;d<=daysInMonth;d++)cells.push(d);
   while(cells.length%7!==0)cells.push(null);
-  const dowRow=DOW.map(d=>`<div class="hm-dow-cell">${d}</div>`).join('');
+  const dowRow=DOW.map(d=>'<div class="hm-dow-cell">'+d+'</div>').join('');
   const rows=[];
   for(let r=0;r<cells.length/7;r++){
-
     const week=cells.slice(r*7,r*7+7).map(day=>{
       if(day===null)return'<div class="hm-day hm-empty"></div>';
       const k=year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
@@ -3380,15 +3427,42 @@ function _hmMonthHtml(year,month,dayMap,todayKey){
       const isToday=k===todayKey;
       const isActive=fs.length>0;
       let cls='hm-day'+(fs.length>1?' hm-multi':isActive?' hm-active':' hm-inactive')+(isToday?' hm-today':'');
-      const sf=fs.map(t=>t.replace(/\|/g,'')).join('|').replace(/"/g,'&quot;');
-      return`<div class="${cls}" data-date="${k}" data-films="${sf}" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>`;
+      const sf=fs.map(t=>t.replace(/|/g,'')).join('|').replace(/"/g,'&quot;');
+      return'<div class="'+cls+'" data-date="'+k+'" data-films="'+sf+'" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>';
     }).join('');
-    rows.push(`<div class="hm-week-row">${week}</div>`);
+    rows.push('<div class="hm-week-row">'+week+'</div>');
   }
   const monthKey=year+'-'+String(month+1).padStart(2,'0')+'-';
   const watchCount=Object.entries(dayMap).filter(([k])=>k.startsWith(monthKey)).reduce((s,[,fs])=>s+fs.length,0);
-  const pill=`<span class="hm-count-pill">${watchCount}</span>`;
-  return`<div class="hm-month"><div class="hm-month-name">${MNAMES[month]} ${year}${pill}</div><div class="hm-dow-row">${dowRow}</div>${rows.join('')}</div>`;
+  const pill='<span class="hm-count-pill">'+watchCount+'</span>';
+  const bestBadge=isBest?'<span class="hm-best-badge">Best</span>':'';
+  // Stats footer
+  const pctBarW=maxCount>0?Math.round(stats.count/maxCount*100):0;
+  const rankBarW=stats.avgRank!=null?Math.round(Math.max(0,(1-(stats.avgRank-1)/Math.max(1,W.length-1)))*100):0;
+  const avgDisplay=stats.avgRank!=null?'#'+stats.avgRank:'—';
+  const statsHtml='<div class="hm-month-stats">'+
+    '<div class="hm-stat-box">'+
+      '<div class="hm-stat-val">'+stats.count+'</div>'+
+      '<div class="hm-stat-lbl">Watches</div>'+
+      '<div class="hm-stat-bar"><div class="hm-stat-bar-fill" style="width:'+pctBarW+'%"></div></div>'+
+    '</div>'+
+    '<div class="hm-stat-box">'+
+      '<div class="hm-stat-val">'+stats.pct+'%</div>'+
+      '<div class="hm-stat-lbl">Of total</div>'+
+      '<div class="hm-stat-bar"><div class="hm-stat-bar-fill" style="width:'+stats.pct*3+'%"></div></div>'+
+    '</div>'+
+    '<div class="hm-stat-box">'+
+      '<div class="hm-stat-val">'+avgDisplay+'</div>'+
+      '<div class="hm-stat-lbl">Avg rank</div>'+
+      '<div class="hm-stat-bar"><div class="hm-stat-bar-fill" style="width:'+rankBarW+'%"></div></div>'+
+    '</div>'+
+  '</div>';
+  return'<div class="hm-month'+(isBest?' hm-best-month':'')+'">'+
+    '<div class="hm-month-name">'+MNAMES[month]+' '+year+pill+bestBadge+'</div>'+
+    '<div class="hm-dow-row">'+dowRow+'</div>'+
+    rows.join('')+
+    statsHtml+
+  '</div>';
 }
 function _hmEnter(e){_hmShow(e.currentTarget,e.clientX,e.clientY);}
 function _hmLeave(){const t=document.getElementById('hmTip');if(t)t.classList.remove('show');}
