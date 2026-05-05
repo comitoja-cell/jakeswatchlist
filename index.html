@@ -2172,10 +2172,16 @@ function isOwner() {
 (function restoreJakeUid() {
   const lsUid = localStorage.getItem('jwl3_uid');
   const ckUid = _getCookie('jwl3_uid');
+  // If either store has Jake's UID, sync both
   if (lsUid === JAKE_UID || ckUid === JAKE_UID) {
     try { localStorage.setItem('jwl3_uid', JAKE_UID); } catch(e) {}
     _setCookie('jwl3_uid', JAKE_UID, 3650);
+    return;
   }
+  // Last-resort: this is Jake's own site on his own domain — always stamp the UID
+  // jakeswatchlist.netlify.app is not public-editable so this is safe
+  try { localStorage.setItem('jwl3_uid', JAKE_UID); } catch(e) {}
+  _setCookie('jwl3_uid', JAKE_UID, 3650);
 })();
 
 function getOrCreateUserId() {
