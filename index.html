@@ -496,7 +496,7 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-nav-btn{background:none;border:none;color:var(--white-50);font-size:2.2rem;line-height:1;cursor:pointer;padding:.1rem .5rem;transition:color .15s;flex-shrink:0;font-family:"Times New Roman",Times,serif;margin-top:-.2rem}
 .hm-nav-btn:hover:not(:disabled){color:var(--gold)}
 .hm-nav-btn:disabled{opacity:.2;cursor:default}
-.hm-months-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.hm-months-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;align-items:stretch}
 .hm-month{display:flex;flex-direction:column;gap:2px}
 .hm-month-name{font-family:"Times New Roman",Times,serif;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;text-align:center}
 .hm-count-pill{display:inline-flex;align-items:center;background:rgba(255,255,255,.1);color:rgba(255,255,255,.45);font-family:"Times New Roman",Times,serif;font-size:.52rem;letter-spacing:.05em;padding:.08rem .32rem;border-radius:999px;margin-left:.4rem;vertical-align:middle;line-height:1.5}
@@ -507,11 +507,11 @@ thead th:hover .sort-arrow{opacity:.7;}
 .hm-active:hover{opacity:.8;transform:scale(1.12)}
 .hm-inactive{background:rgba(255,255,255,.07)}
 .hm-empty{background:transparent}
-.hm-today{outline:1.5px solid var(--gold);outline-offset:-1px;background:rgba(201,168,76,.12)}
+.hm-today{outline:1.5px solid var(--gold);outline-offset:-1px;background:rgba(201,168,76,.12)}.hm-active.hm-today,.hm-multi.hm-today{background:var(--gold);opacity:1}
 .hm-legend{display:flex;align-items:center;gap:.5rem;margin-top:.85rem;padding-left:.5rem}
 .hm-legend-label{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
 .hm-legend-swatch{width:10px;height:10px;border-radius:2px;flex-shrink:0}.hm-legend .hm-inactive{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.3)}
-.hm-month-stats{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,.07)}
+.hm-month-stats{display:flex;gap:8px;margin-top:auto;padding-top:8px;border-top:0.5px solid rgba(255,255,255,.07)}
 .hm-month.hm-best-month{background:#0f0b00}
 .hm-month.hm-best-month .hm-month-name{color:var(--gold)}
 .hm-month.hm-best-month .hm-month-stats{border-top-color:rgba(201,168,76,.2)}
