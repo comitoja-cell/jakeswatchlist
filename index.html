@@ -1076,6 +1076,39 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 /* Genre ranked rows */
 /* Genre to bottom */
 .genre-chart{order:99}
+/* Inline genre select in watched table */
+.mt-genre-select{
+  font-family:"Times New Roman",Times,serif;
+  font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold);
+  background:var(--black-80);
+  border:1px solid var(--gold-dim);
+  padding:.15rem .5rem;
+  cursor:pointer;
+  outline:none;
+  appearance:none;
+  -webkit-appearance:none;
+  min-width:130px;
+  transition:border-color .2s;
+}
+.mt-genre-select:hover,.mt-genre-select:focus{border-color:var(--gold)}
+.mt-genre-select option{background:var(--black-80);color:var(--white);text-transform:none;font-size:.75rem;letter-spacing:.02em}
+/* Missing data pill */
+.genre-missing-pill{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-family:"Times New Roman",Times,serif;
+  font-size:.72rem;letter-spacing:.04em;
+  color:var(--white-50);
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  padding:.25rem .7rem;
+  margin-bottom:1rem;
+  font-style:italic;
+}
+.genre-missing-pill .pill-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);opacity:.7;flex-shrink:0;
+}
 /* Actor avg rank */
 .actor-avg-rank{font-size:.68rem;color:var(--gold);margin-left:.5rem;letter-spacing:.02em}
 .actor-count{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}
@@ -1871,7 +1904,8 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
     </div>
     <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
     <div class="genre-chart" style="margin-top:1.5rem;margin-bottom:1.5rem">
-      <div class="sec-label" style="margin-bottom:1.3rem">Genre Breakdown</div>
+      <div class="sec-label" style="margin-bottom:.6rem">Genre Breakdown</div>
+      <div id="genreMissingPill" class="genre-missing-pill" style="display:none"><span class="pill-dot"></span><span class="pill-text"></span></div>
       <div id="genreBars"></div>
     </div>
     <hr class="insight-divider">
@@ -1906,7 +1940,15 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <label class="modal-lbl">Year</label>
       <input class="modal-input" type="number" id="mYear" placeholder="e.g. 2024" min="1888" max="2030">
       <label class="modal-lbl">Genre</label>
-      <input class="modal-input" type="text" id="mGenre" placeholder="e.g. Romance, Thriller, Drama…">
+      <select class="modal-input" id="mGenre" style="cursor:pointer">
+        <option value="">— Select Genre —</option>
+        <option value="Drama">Drama</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Action &amp; Adventure">Action &amp; Adventure</option>
+        <option value="Horror">Horror</option>
+        <option value="Thriller &amp; Mystery">Thriller &amp; Mystery</option>
+        <option value="Sci-Fi &amp; Fantasy">Sci-Fi &amp; Fantasy</option>
+      </select>
       <label class="modal-lbl">Director</label>
       <input class="modal-input" type="text" id="mDirector" placeholder="e.g. Richard Linklater">
     </div>
@@ -2107,6 +2149,42 @@ const CAST_PATCHES={120:['Cate Blanchett']};// Fellowship of the Ring — Galadr
   try {
     const custom = JSON.parse(localStorage.getItem('jwl3_custom')||'[]');
     custom.forEach(f => { if (!FILMS.find(x=>x.id===f.id)) FILMS.push(f); });
+
+// ── Genre Overrides: user-controlled manual classifications ──
+const GENRE_OPTIONS = ['Drama','Comedy','Action & Adventure','Horror','Thriller & Mystery','Sci-Fi & Fantasy'];
+const GENRE_MAP = {
+  'Drama':'Drama','Melodrama':'Drama','War':'Drama','History':'Drama','Biography':'Drama','Family':'Drama','Animation':'Drama','Music':'Drama','Musical':'Drama','Romance':'Drama','Sport':'Drama','Western':'Drama',
+  'Comedy':'Comedy',
+  'Action':'Action & Adventure','Adventure':'Action & Adventure','Superhero':'Action & Adventure',
+  'Horror':'Horror',
+  'Thriller':'Thriller & Mystery','Mystery':'Thriller & Mystery','Crime':'Thriller & Mystery','Noir':'Thriller & Mystery',
+  'Science Fiction':'Sci-Fi & Fantasy','Fantasy':'Sci-Fi & Fantasy','Sci-Fi':'Sci-Fi & Fantasy','Science-Fiction':'Sci-Fi & Fantasy','Sci Fi':'Sci-Fi & Fantasy'
+};
+let _genreOverrides = {};
+try { _genreOverrides = JSON.parse(localStorage.getItem('jwl3_genre_overrides') || '{}'); } catch(e) { _genreOverrides = {}; }
+function _saveGenreOverrides() { try { localStorage.setItem('jwl3_genre_overrides', JSON.stringify(_genreOverrides)); } catch(e) {} }
+function getFilmGenre(id) {
+  const key = String(id);
+  if (_genreOverrides[key] !== undefined) return _genreOverrides[key];
+  const f = FILMS.find(x => x.id === id);
+  return f ? (f.g || '') : '';
+}
+function setFilmGenre(id, genre) {
+  _genreOverrides[String(id)] = genre;
+  _saveGenreOverrides();
+}
+function _autoMapGenres() {
+  let changed = false;
+  W.forEach(w => {
+    const key = String(w.id);
+    if (_genreOverrides[key] !== undefined) return;
+    const f = FILMS.find(x => x.id === w.id);
+    if (!f || !f.g) return;
+    const mapped = GENRE_MAP[f.g];
+    if (mapped) { _genreOverrides[key] = mapped; changed = true; }
+  });
+  if (changed) _saveGenreOverrides();
+}
     // Apply permanent cast patches to all films so billing-cutoff omissions are corrected
     FILMS.forEach(f=>{ const p=f.tmdbId&&CAST_PATCHES[f.tmdbId]; if(p)p.forEach(n=>{if(!f.a.includes(n))f.a.push(n);}); });
   } catch(e) {}
@@ -2119,6 +2197,9 @@ try {
   W  = [...SEED_W];
   WL = [...SEED_WL];
 }
+
+// ── Auto-map genres on first load ──
+_autoMapGenres();
 
 // ── Migration v2: clear stale pre-sync data left over from the old SEED_W era ──
 // If jwl3_ts is 0 the data was never cloud-saved (it was hardcoded seed data).
@@ -2694,6 +2775,19 @@ function saveWatched(){
 // ══════════ REMOVE WATCHED ══════════
 function removeW(id){W=W.filter(w=>w.id!==id);save();showToast('Removed from diary');renderTable();renderRankings();renderFacts();renderStats();renderRecentlyWatched();}
 
+// ── Inline genre setter (watched table dropdown) ──
+window._setGenreInline = function(sel) {
+  const id = parseInt(sel.getAttribute('data-fid'));
+  const genre = sel.value;
+  setFilmGenre(id, genre);
+  renderStats();
+  const gf = document.getElementById('dbGenre');
+  if (gf) {
+    const cv = gf.value;
+    gf.innerHTML = '<option value="">All Genres</option>' + GENRE_OPTIONS.map(g=>`<option value="${g}"${g===cv?' selected':''}>${g}</option>`).join('');
+  }
+};
+
 // ══════════ RANKINGS ══════════
 function moveRank(id,dir){
   const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
@@ -2855,8 +2949,8 @@ function renderTable(){
   const releaseYear=document.getElementById('dbReleaseYear').value;
   
   let list=W.slice();
-  if(q)list=list.filter(w=>{const f=film(w.id);return f&&(f.t.toLowerCase().includes(q)||f.g.toLowerCase().includes(q)||f.d.toLowerCase().includes(q))});
-  if(genre)list=list.filter(w=>film(w.id)?.g===genre);
+  if(q)list=list.filter(w=>{const f=film(w.id);return f&&(f.t.toLowerCase().includes(q)||getFilmGenre(w.id).toLowerCase().includes(q)||f.d.toLowerCase().includes(q))});
+  if(genre)list=list.filter(w=>getFilmGenre(w.id)===genre);
   if(director)list=list.filter(w=>film(w.id)?.d===director);
   if(dateWatched)list=list.filter(w=>w.d&&w.d.substring(0,7)===dateWatched);
   if(releaseYear)list=list.filter(w=>film(w.id)?.y==releaseYear);
@@ -2871,7 +2965,7 @@ function renderTable(){
     list.sort((a,b)=>dir*(film(a.id)?.t.localeCompare(film(b.id)?.t||'')||0));
   } else if(curSort==='genre'){
     const dir=sortDir['genre']==='desc'?-1:1;
-    list.sort((a,b)=>dir*(film(a.id)?.g.localeCompare(film(b.id)?.g||'')||0));
+    list.sort((a,b)=>dir*(getFilmGenre(a.id).localeCompare(getFilmGenre(b.id))||0));
   } else if(curSort==='director'){
     const dir=sortDir['director']==='desc'?-1:1;
     list.sort((a,b)=>dir*(film(a.id)?.d.localeCompare(film(b.id)?.d||'')||0));
@@ -2880,9 +2974,8 @@ function renderTable(){
     list.sort((a,b)=>dir*((film(a.id)?.y||0)-(film(b.id)?.y||0)));
   }
 
-  const genres=[...new Set(W.map(w=>film(w.id)?.g).filter(Boolean))].sort();
   const gf=document.getElementById('dbGenre');const cv=gf.value;
-  gf.innerHTML='<option value="">All Genres</option>'+genres.map(g=>`<option value="${g}"${g===cv?' selected':''}>${g}</option>`).join('');
+  gf.innerHTML='<option value="">All Genres</option>'+GENRE_OPTIONS.map(g=>`<option value="${g}"${g===cv?' selected':''}>${g}</option>`).join('');
 
   const directors=[...new Set(W.map(w=>film(w.id)?.d).filter(Boolean))].sort();
   const df=document.getElementById('dbDirector');const dv=df.value;
@@ -2919,7 +3012,11 @@ function renderTable(){
       poster:`<td>${posterEl(f.t,'mt-poster')}</td>`,
       title:`<td><div class="mt-title">${f.t}</div></td>`,
       review:`<td class="lb-cell">${rev?`<span class="lb-icon" data-fid="${f.id}" onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)" onclick="_lbClick(event)">${lbStars(rev.rating)}</span>`:''}</td>`,
-      genre:`<td><span class="mt-genre">${f.g}</span></td>`,
+      genre:(()=>{
+        const gVal = getFilmGenre(f.id);
+        const opts = GENRE_OPTIONS.map(o=>`<option value="${o}"${o===gVal?' selected':''}>${o}</option>`).join('');
+        return `<td><select class="mt-genre-select" data-fid="${f.id}" onchange="window._setGenreInline(this)">${''}<option value=""${!gVal?' selected':''}></option>${opts}</select></td>`;
+      })(),
       director:`<td><div class="mt-year">${f.d}</div></td>`,
       year:`<td><div class="mt-year">${f.y}</div></td>`,
       date:`<td><div class="mt-date">${fmtDate(w.d)}</div></td>`,
@@ -3319,7 +3416,8 @@ function renderFacts(){
   const thisYr=films.filter(w=>w.d?.startsWith(yr));
   const gc={},dc={},ac={};
   films.forEach(w=>{
-    gc[w.f.g]=(gc[w.f.g]||0)+1;
+    const _g=getFilmGenre(w.id);
+    if(_g) gc[_g]=(gc[_g]||0)+1;
     dc[w.f.d]=(dc[w.f.d]||0)+1;
     (w.f.a||[]).forEach(a=>ac[a]=(ac[a]||0)+1);
   });
@@ -3503,10 +3601,22 @@ function renderStats(){
 
 
   const gc={},gf={};
-  films.forEach(w=>{gc[w.f.g]=(gc[w.f.g]||0)+1;if(!gf[w.f.g])gf[w.f.g]=[];gf[w.f.g].push({t:w.f.t,y:w.f.y,rank:w.rank});});
+  films.forEach(w=>{
+    const g=getFilmGenre(w.id)||'';
+    if(!g)return;
+    gc[g]=(gc[g]||0)+1;
+    if(!gf[g])gf[g]=[];
+    gf[g].push({t:w.f.t,y:w.f.y,rank:w.rank});
+  });
   const gs=Object.entries(gc).sort((a,b)=>b[1]-a[1]);
   const gb=document.getElementById('genreBars');if(!gb)return;
   gb.innerHTML='';
+  const uncatCount = films.filter(w=>!getFilmGenre(w.id)).length;
+  const pillEl = document.getElementById('genreMissingPill');
+  if(pillEl){
+    if(uncatCount>0){pillEl.style.display='inline-flex';pillEl.querySelector('.pill-text').textContent=uncatCount+' film'+(uncatCount===1?'':'s')+' not yet classified';}
+    else{pillEl.style.display='none';}
+  }
   if(!gs.length){gb.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see your genre breakdown</div>';return;}
   const GBEST='#c9a84c',GBASE='rgba(201,168,76,0.35)';
   const gTotal=gs.reduce((t,[,c])=>t+c,0),gMax=gs[0][1];
