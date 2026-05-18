@@ -2149,6 +2149,10 @@ const CAST_PATCHES={120:['Cate Blanchett']};// Fellowship of the Ring — Galadr
   try {
     const custom = JSON.parse(localStorage.getItem('jwl3_custom')||'[]');
     custom.forEach(f => { if (!FILMS.find(x=>x.id===f.id)) FILMS.push(f); });
+    // Apply permanent cast patches to all films so billing-cutoff omissions are corrected
+    FILMS.forEach(f=>{ const p=f.tmdbId&&CAST_PATCHES[f.tmdbId]; if(p)p.forEach(n=>{if(!f.a.includes(n))f.a.push(n);}); });
+  } catch(e) {}
+})();
 
 // ── Genre Overrides: user-controlled manual classifications ──
 const GENRE_OPTIONS = ['Drama','Comedy','Action & Adventure','Horror','Thriller & Mystery','Sci-Fi & Fantasy'];
@@ -2185,10 +2189,7 @@ function _autoMapGenres() {
   });
   if (changed) _saveGenreOverrides();
 }
-    // Apply permanent cast patches to all films so billing-cutoff omissions are corrected
-    FILMS.forEach(f=>{ const p=f.tmdbId&&CAST_PATCHES[f.tmdbId]; if(p)p.forEach(n=>{if(!f.a.includes(n))f.a.push(n);}); });
-  } catch(e) {}
-})();
+
 let W, WL;
 try {
   W  = JSON.parse(localStorage.getItem('jwl3_w')  || 'null') || [...SEED_W];
