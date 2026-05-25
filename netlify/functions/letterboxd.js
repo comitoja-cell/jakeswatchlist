@@ -1,9 +1,24 @@
-const CORS = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS' };
-const LB_USER = 'Jake_Comito';
-const LB_BASE = 'https://letterboxd.com/' + LB_USER;
-const LB_RSS  = LB_BASE + '/rss/';
-const MAX_PAGES = 8;
-const UA = { 'User-Agent': 'Mozilla/5.0 (compatible; JakesWatchList/1.0)' };
+Fix Letterboxd: RSS + hardcoded supplement for films beyond 50-entry window// RSS covers the 50 most recent diary entries; older films are supplemented below
+
+const CORS = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS'
+};
+
+const LB_RSS = 'https://letterboxd.com/Jake_Comito/rss/';
+const LB_BASE = 'https://letterboxd.com/jake_comito/film/';
+
+// Films that have aged off the 50-entry RSS window — add here when needed.
+// Format: { title, year, rating, link, review }
+// Rating: Letterboxd stars (0 = not rated, 3.5 = 3.5 stars, etc.)
+const SUPPLEMENT = [
+  { title: 'Anora',                                              year: 2024, rating: 0, link: LB_BASE + 'anora/',                review: '' },
+  { title: 'X',                                                 year: 2022, rating: 4, link: LB_BASE + 'x-2022/',              review: '' },
+  { title: 'Marty Supreme',                                     year: 2025, rating: 0, link: LB_BASE + 'marty-supreme/',        review: '' },
+  { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, rating: 0, link: LB_BASE + 'the-lord-of-the-rings-the-fellowship-of-the-ring/', review: '' },
+  { title: 'Spy',                                               year: 2015, rating: 0, link: LB_BASE + 'spy-2015/',            review: '' },
+];
 
 function extractTag(xml, tag) {
   const m = xml.match(new RegExp('<' + tag + '[^>]*>([^<]*)</' + tag + '>'));
@@ -20,13 +35,15 @@ function decode(s) {
 }
 function stripHtml(h) { return decode(h.replace(/<[^>]+>/g,' ')).replace(/ +/g,' ').trim(); }
 
-async function buildRssMap() {
-  const map = {};
+exports.handler = async function(event) {
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
   try {
-    const r = await fetch(LB_RSS, { headers: UA });
-    if (!r.ok) return map;
+    const r = await fetch(LB_RSS, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JakesWatchList/1.0)' } });
+    if (!r.ok) return { statusCode: 502, headers: CORS, body: JSON.stringify(SUPPLEMENT) };
     const xml = await r.text();
     const parts = xml.split('<item'); parts.shift();
+    const seen = new Set();
+    const results = [];
     for (const item of parts) {
       const title  = decode(extractTag(item, 'letterboxd:filmTitle'));
       const year   = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
@@ -34,70 +51,15 @@ async function buildRssMap() {
       const lm     = item.match(/<link>([^<]+)<\/link>/);
       const link   = lm ? lm[1].trim() : '';
       const review = stripHtml(extractCdata(item, 'description'));
-      if (title) {
+      if (title && (rating > 0 || review.length > 5)) {
         const key = title.toLowerCase().trim() + '|' + year;
-        if (!map[key]) map[key] = { review, link, rating };
+        if (!seen.has(key)) { seen.add(key); results.push({ title, year, rating, link, review }); }
       }
     }
-  } catch(_) {}
-  return map;
-}
-
-// Parse Letterboxd /films/ page HTML
-// Each film: <div class="film-poster" data-film-slug="X" data-film-name="X" data-film-release-year="2022">
-//            <span class="rating rated-8"> (rating, optional)
-function parseFilmsPage(html) {
-  const out = [];
-  // Split on film-poster div openings
-  const chunks = html.split('data-film-slug=');
-  for (let i = 1; i < chunks.length; i++) {
-    const chunk = chunks[i];
-    // slug is the first quoted value
-    const sm = chunk.match(/^"([^"]+)"/);
-    if (!sm) continue;
-    const slug = sm[1];
-    // film name
-    const nm = chunk.match(/data-film-name="([^"]+)"/);
-    // year
-    const ym = chunk.match(/data-film-release-year="([^"]+)"/);
-    if (!nm || !ym) continue;
-    const title  = decode(nm[1]);
-    const year   = parseInt(ym[1]) || 0;
-    // rating — look ahead in the next 500 chars for a rated-N class
-    const nearby = chunk.slice(0, 500);
-    const rm     = nearby.match(/rated-(\d+)/);
-    const rating = rm ? parseInt(rm[1]) / 2 : 0;
-    out.push({ title, year, rating, link: LB_BASE + '/film/' + slug + '/' });
-  }
-  return out;
-}
-
-async function getFilmsPage(page) {
-  const url = LB_BASE + '/films/by/date/' + (page > 1 ? 'page/' + page + '/' : '');
-  try {
-    const r = await fetch(url, { headers: UA });
-    return r.ok ? r.text() : '';
-  } catch(_) { return ''; }
-}
-
-exports.handler = async function(event) {
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
-  try {
-    const pageNums = Array.from({ length: MAX_PAGES }, (_, i) => i + 1);
-    const [rssMap, ...htmlPages] = await Promise.all([buildRssMap(), ...pageNums.map(getFilmsPage)]);
-    const seen = new Set();
-    const results = [];
-    for (const html of htmlPages) {
-      if (!html) continue;
-      const entries = parseFilmsPage(html);
-      if (entries.length === 0) break;
-      for (const e of entries) {
-        const key = e.title.toLowerCase().trim() + '|' + e.year;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        const rss = rssMap[key] || {};
-        results.push({ title: e.title, year: e.year, rating: e.rating || rss.rating || 0, link: rss.link || e.link, review: rss.review || '' });
-      }
+    // Merge supplement entries (skip any already in RSS)
+    for (const s of SUPPLEMENT) {
+      const key = s.title.toLowerCase().trim() + '|' + s.year;
+      if (!seen.has(key)) results.push(s);
     }
     return { statusCode: 200, headers: CORS, body: JSON.stringify(results) };
   } catch(e) {
