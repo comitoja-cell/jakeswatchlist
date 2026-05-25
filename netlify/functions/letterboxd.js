@@ -1,5 +1,5 @@
 // Netlify Function — Letterboxd RSS proxy
-// GET → fetches Jake_Comito's Letterboxd RSS and returns parsed reviews as JSON
+// GET → fetches Jake_Comito's Letterboxd RSS (multiple pages) and returns parsed reviews as JSON
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -7,7 +7,8 @@ const CORS = {
   'Access-Control-Allow-Methods': 'GET, OPTIONS'
 };
 
-const LB_RSS = 'https://letterboxd.com/Jake_Comito/rss/';
+const LB_BASE = 'https://letterboxd.com/Jake_Comito/rss/';
+const MAX_PAGES = 5; // fetch up to 5 pages (~250 entries) to cover full history
 
 function extractTag(xml, tag) {
   const m = xml.match(new RegExp('<' + tag + '[^>]*>([^<]*)</' + tag + '>'));
@@ -40,43 +41,58 @@ function stripHtml(html) {
     .trim();
 }
 
+function parseItems(xml) {
+  const rawItems = xml.split(/<item[\s>]/);
+  rawItems.shift();
+  const results = [];
+  for (const item of rawItems) {
+    const filmTitle = decodeEntities(extractTag(item, 'letterboxd:filmTitle'));
+    const filmYear = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
+    const ratingStr = extractTag(item, 'letterboxd:memberRating');
+    const rating = ratingStr ? parseFloat(ratingStr) : 0;
+
+    // Prefer <guid> for the film URL — more reliable than <link> in Letterboxd RSS
+    const guidMatch = item.match(/<guid[^>]*>([^<]+)<\/guid>/);
+    const linkMatch = item.match(/<link>([^<]+)<\/link>/);
+    const link = (guidMatch ? guidMatch[1].trim() : '') || (linkMatch ? linkMatch[1].trim() : '');
+
+    const descHtml = extractCdata(item, 'description');
+    const review = stripHtml(descHtml);
+
+    // Include any entry that has a title AND (a rating OR a written review)
+    if (filmTitle && (rating > 0 || review.length > 5)) {
+      results.push({ title: filmTitle, year: filmYear, rating, link, review: review || '' });
+    }
+  }
+  return results;
+}
+
 exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: CORS, body: '' };
   }
 
   try {
-    const res = await fetch(LB_RSS, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JakesWatchList/1.0)' }
-    });
-    if (!res.ok) {
-      return { statusCode: 502, headers: CORS, body: JSON.stringify([]) };
-    }
-    const xml = await res.text();
+    // Fetch multiple pages in parallel to get full diary history
+    const pageNums = Array.from({ length: MAX_PAGES }, (_, i) => i + 1);
+    const fetches = pageNums.map(p =>
+      fetch(p === 1 ? LB_BASE : LB_BASE + '?page=' + p, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JakesWatchList/1.0)' }
+      }).then(r => r.ok ? r.text() : '').catch(() => '')
+    );
+    const pages = await Promise.all(fetches);
 
-    const rawItems = xml.split(/<item[\s>]/);
-    rawItems.shift();
-
+    // Parse all pages and deduplicate by title+year (keep first occurrence = most recent)
+    const seen = new Set();
     const reviews = [];
-
-    for (const item of rawItems) {
-      const filmTitle = decodeEntities(extractTag(item, 'letterboxd:filmTitle'));
-      const filmYear = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
-      const ratingStr = extractTag(item, 'letterboxd:memberRating');
-      const rating = ratingStr ? parseFloat(ratingStr) : 0;
-
-      // Prefer <guid> for the film URL (more reliable than <link> in RSS)
-      const guidMatch = item.match(/<guid[^>]*>([^<]+)<\/guid>/);
-      const linkMatch = item.match(/<link>([^<]+)<\/link>/);
-      const link = (guidMatch ? guidMatch[1].trim() : '') || (linkMatch ? linkMatch[1].trim() : '');
-
-      const descHtml = extractCdata(item, 'description');
-      const review = stripHtml(descHtml);
-
-      // Include any entry that has a title AND (a rating OR a written review)
-      // Previously strict review.length > 5 was dropping rating-only entries
-      if (filmTitle && (rating > 0 || review.length > 5)) {
-        reviews.push({ title: filmTitle, year: filmYear, rating, link, review: review || '' });
+    for (const xml of pages) {
+      if (!xml) continue;
+      for (const entry of parseItems(xml)) {
+        const key = entry.title.toLowerCase().trim() + '|' + entry.year;
+        if (!seen.has(key)) {
+          seen.add(key);
+          reviews.push(entry);
+        }
       }
     }
 
