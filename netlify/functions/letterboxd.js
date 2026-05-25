@@ -1,5 +1,5 @@
 // Netlify Function — Letterboxd RSS proxy
-// GET → fetches Jake_Comito's Letterboxd RSS (multiple pages) and returns parsed reviews as JSON
+// Fetches multiple pages of Jake_Comito's Letterboxd diary
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -8,7 +8,6 @@ const CORS = {
 };
 
 const LB_BASE = 'https://letterboxd.com/Jake_Comito/rss/';
-const MAX_PAGES = 5; // fetch up to 5 pages (~250 entries) to cover full history
 
 function extractTag(xml, tag) {
   const m = xml.match(new RegExp('<' + tag + '[^>]*>([^<]*)</' + tag + '>'));
@@ -50,16 +49,10 @@ function parseItems(xml) {
     const filmYear = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
     const ratingStr = extractTag(item, 'letterboxd:memberRating');
     const rating = ratingStr ? parseFloat(ratingStr) : 0;
-
-    // Prefer <guid> for the film URL — more reliable than <link> in Letterboxd RSS
-    const guidMatch = item.match(/<guid[^>]*>([^<]+)<\/guid>/);
     const linkMatch = item.match(/<link>([^<]+)<\/link>/);
-    const link = (guidMatch ? guidMatch[1].trim() : '') || (linkMatch ? linkMatch[1].trim() : '');
-
+    const link = linkMatch ? linkMatch[1].trim() : '';
     const descHtml = extractCdata(item, 'description');
     const review = stripHtml(descHtml);
-
-    // Include any entry that has a title AND (a rating OR a written review)
     if (filmTitle && (rating > 0 || review.length > 5)) {
       results.push({ title: filmTitle, year: filmYear, rating, link, review: review || '' });
     }
@@ -67,25 +60,50 @@ function parseItems(xml) {
   return results;
 }
 
+async function fetchPage(url) {
+  try {
+    const r = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JakesWatchList/1.0)' }
+    });
+    if (!r.ok) return { xml: '', status: r.status };
+    return { xml: await r.text(), status: r.status };
+  } catch(e) {
+    return { xml: '', status: 0, error: e.message };
+  }
+}
+
 exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: CORS, body: '' };
   }
 
-  try {
-    // Fetch multiple pages in parallel to get full diary history
-    const pageNums = Array.from({ length: MAX_PAGES }, (_, i) => i + 1);
-    const fetches = pageNums.map(p =>
-      fetch(p === 1 ? LB_BASE : LB_BASE + '?page=' + p, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JakesWatchList/1.0)' }
-      }).then(r => r.ok ? r.text() : '').catch(() => '')
-    );
-    const pages = await Promise.all(fetches);
+  // If ?debug=1, return diagnostic info about pagination
+  if (event.queryStringParameters && event.queryStringParameters.debug) {
+    const pages = await Promise.all([1,2,3,4].map(p =>
+      fetchPage(p === 1 ? LB_BASE : LB_BASE + '?page=' + p)
+    ));
+    const diag = pages.map((p, i) => {
+      const items = parseItems(p.xml);
+      return {
+        page: i + 1,
+        status: p.status,
+        count: items.length,
+        first: items[0] ? items[0].title : null,
+        last: items[items.length-1] ? items[items.length-1].title : null
+      };
+    });
+    return { statusCode: 200, headers: CORS, body: JSON.stringify(diag) };
+  }
 
-    // Parse all pages and deduplicate by title+year (keep first occurrence = most recent)
+  try {
+    // Fetch pages 1-4 in parallel (Letterboxd RSS: ~50 entries per page)
+    const pages = await Promise.all([1,2,3,4].map(p =>
+      fetchPage(p === 1 ? LB_BASE : LB_BASE + '?page=' + p)
+    ));
+
     const seen = new Set();
     const reviews = [];
-    for (const xml of pages) {
+    for (const { xml } of pages) {
       if (!xml) continue;
       for (const entry of parseItems(xml)) {
         const key = entry.title.toLowerCase().trim() + '|' + entry.year;
