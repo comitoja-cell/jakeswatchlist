@@ -1,12 +1,4 @@
-// Netlify Function — Letterboxd full diary scraper
-// Scrapes /films/diary/ HTML pages (bypasses 50-entry RSS limit) + RSS for review text
-
-const CORS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS'
-};
-
+const CORS = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS' };
 const LB_USER = 'Jake_Comito';
 const LB_BASE = 'https://letterboxd.com/' + LB_USER;
 const LB_RSS  = LB_BASE + '/rss/';
@@ -24,11 +16,9 @@ function extractCdata(xml, tag) {
   return xml.slice(s + 9, e);
 }
 function decode(s) {
-  return s
-    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"').replace(/&#0*39;/g, "'").replace(/&nbsp;/g, ' ');
+  return s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#0*39;/g,"'").replace(/&nbsp;/g,' ');
 }
-function stripHtml(h) { return decode(h.replace(/<[^>]+>/g, ' ')).replace(/  +/g, ' ').trim(); }
+function stripHtml(h) { return decode(h.replace(/<[^>]+>/g,' ')).replace(/ +/g,' ').trim(); }
 
 async function buildRssMap() {
   const map = {};
@@ -53,28 +43,37 @@ async function buildRssMap() {
   return map;
 }
 
-// Parse diary entries from HTML — split on 'diary-entry-row' strings (no complex regex)
-function parseDiary(html) {
+// Parse Letterboxd /films/ page HTML
+// Each film: <div class="film-poster" data-film-slug="X" data-film-name="X" data-film-release-year="2022">
+//            <span class="rating rated-8"> (rating, optional)
+function parseFilmsPage(html) {
   const out = [];
-  const chunks = html.split('diary-entry-row');
+  // Split on film-poster div openings
+  const chunks = html.split('data-film-slug=');
   for (let i = 1; i < chunks.length; i++) {
     const chunk = chunks[i];
-    const sm = chunk.match(/data-film-slug="([^"]+)"/);
-    const ym = chunk.match(/data-film-year="([^"]+)"/);
-    const tm = chunk.match(/<h3[^>]*>[^<]*<a[^>]*>([^<]+)<\/a>/);
-    if (!sm || !tm) continue;
-    const slug   = sm[1];
-    const year   = ym ? parseInt(ym[1]) : 0;
-    const title  = decode(tm[1].trim());
-    const rm     = chunk.match(/rated-(\d+)/);
+    // slug is the first quoted value
+    const sm = chunk.match(/^"([^"]+)"/);
+    if (!sm) continue;
+    const slug = sm[1];
+    // film name
+    const nm = chunk.match(/data-film-name="([^"]+)"/);
+    // year
+    const ym = chunk.match(/data-film-release-year="([^"]+)"/);
+    if (!nm || !ym) continue;
+    const title  = decode(nm[1]);
+    const year   = parseInt(ym[1]) || 0;
+    // rating — look ahead in the next 500 chars for a rated-N class
+    const nearby = chunk.slice(0, 500);
+    const rm     = nearby.match(/rated-(\d+)/);
     const rating = rm ? parseInt(rm[1]) / 2 : 0;
     out.push({ title, year, rating, link: LB_BASE + '/film/' + slug + '/' });
   }
   return out;
 }
 
-async function getDiaryPage(page) {
-  const url = LB_BASE + '/films/diary/' + (page > 1 ? 'page/' + page + '/' : '');
+async function getFilmsPage(page) {
+  const url = LB_BASE + '/films/by/date/' + (page > 1 ? 'page/' + page + '/' : '');
   try {
     const r = await fetch(url, { headers: UA });
     return r.ok ? r.text() : '';
@@ -85,25 +84,19 @@ exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
   try {
     const pageNums = Array.from({ length: MAX_PAGES }, (_, i) => i + 1);
-    const [rssMap, ...htmlPages] = await Promise.all([buildRssMap(), ...pageNums.map(getDiaryPage)]);
+    const [rssMap, ...htmlPages] = await Promise.all([buildRssMap(), ...pageNums.map(getFilmsPage)]);
     const seen = new Set();
     const results = [];
     for (const html of htmlPages) {
       if (!html) continue;
-      const entries = parseDiary(html);
+      const entries = parseFilmsPage(html);
       if (entries.length === 0) break;
       for (const e of entries) {
         const key = e.title.toLowerCase().trim() + '|' + e.year;
         if (seen.has(key)) continue;
         seen.add(key);
         const rss = rssMap[key] || {};
-        results.push({
-          title:  e.title,
-          year:   e.year,
-          rating: e.rating || rss.rating || 0,
-          link:   rss.link || e.link,
-          review: rss.review || ''
-        });
+        results.push({ title: e.title, year: e.year, rating: e.rating || rss.rating || 0, link: rss.link || e.link, review: rss.review || '' });
       }
     }
     return { statusCode: 200, headers: CORS, body: JSON.stringify(results) };
