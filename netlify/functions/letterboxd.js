@@ -15,7 +15,6 @@ function extractTag(xml, tag) {
 }
 
 function extractCdata(xml, tag) {
-  // Use indexOf to avoid backslash-in-RegExp string escaping pitfalls
   const open = xml.indexOf('<' + tag);
   if (open === -1) return '';
   const cdataStart = xml.indexOf('<![CDATA[', open);
@@ -31,7 +30,7 @@ function decodeEntities(str) {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#0*39;/g, "'")  // handles both &#39; and &#039;
+    .replace(/&#0*39;/g, "'")
     .replace(/&nbsp;/g, ' ');
 }
 
@@ -62,18 +61,22 @@ exports.handler = async function(event) {
 
     for (const item of rawItems) {
       const filmTitle = decodeEntities(extractTag(item, 'letterboxd:filmTitle'));
-      const filmYear  = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
+      const filmYear = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
       const ratingStr = extractTag(item, 'letterboxd:memberRating');
-      const rating    = ratingStr ? parseFloat(ratingStr) : 0;
+      const rating = ratingStr ? parseFloat(ratingStr) : 0;
 
+      // Prefer <guid> for the film URL (more reliable than <link> in RSS)
+      const guidMatch = item.match(/<guid[^>]*>([^<]+)<\/guid>/);
       const linkMatch = item.match(/<link>([^<]+)<\/link>/);
-      const link = linkMatch ? linkMatch[1].trim() : '';
+      const link = (guidMatch ? guidMatch[1].trim() : '') || (linkMatch ? linkMatch[1].trim() : '');
 
       const descHtml = extractCdata(item, 'description');
-      const review   = stripHtml(descHtml);
+      const review = stripHtml(descHtml);
 
-      if (filmTitle && review && review.length > 5) {
-        reviews.push({ title: filmTitle, year: filmYear, rating, link, review });
+      // Include any entry that has a title AND (a rating OR a written review)
+      // Previously strict review.length > 5 was dropping rating-only entries
+      if (filmTitle && (rating > 0 || review.length > 5)) {
+        reviews.push({ title: filmTitle, year: filmYear, rating, link, review: review || '' });
       }
     }
 
