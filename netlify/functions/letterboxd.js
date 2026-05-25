@@ -1,4 +1,5 @@
-Fix Letterboxd: RSS + hardcoded supplement for films beyond 50-entry window// RSS covers the 50 most recent diary entries; older films are supplemented below
+// Netlify Function — Letterboxd RSS proxy + supplement for older entries
+// RSS covers the 50 most recent diary entries; older films are supplemented below
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -11,13 +12,12 @@ const LB_BASE = 'https://letterboxd.com/jake_comito/film/';
 
 // Films that have aged off the 50-entry RSS window — add here when needed.
 // Format: { title, year, rating, link, review }
-// Rating: Letterboxd stars (0 = not rated, 3.5 = 3.5 stars, etc.)
 const SUPPLEMENT = [
-  { title: 'Anora',                                              year: 2024, rating: 0, link: LB_BASE + 'anora/',                review: '' },
-  { title: 'X',                                                 year: 2022, rating: 4, link: LB_BASE + 'x-2022/',              review: '' },
-  { title: 'Marty Supreme',                                     year: 2025, rating: 0, link: LB_BASE + 'marty-supreme/',        review: '' },
+  { title: 'Anora',                                              year: 2024, rating: 0, link: LB_BASE + 'anora/',                                              review: '' },
+  { title: 'X',                                                 year: 2022, rating: 4, link: LB_BASE + 'x-2022/',                                            review: '' },
+  { title: 'Marty Supreme',                                     year: 2025, rating: 0, link: LB_BASE + 'marty-supreme/',                                     review: '' },
   { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, rating: 0, link: LB_BASE + 'the-lord-of-the-rings-the-fellowship-of-the-ring/', review: '' },
-  { title: 'Spy',                                               year: 2015, rating: 0, link: LB_BASE + 'spy-2015/',            review: '' },
+  { title: 'Spy',                                               year: 2015, rating: 0, link: LB_BASE + 'spy-2015/',                                          review: '' },
 ];
 
 function extractTag(xml, tag) {
@@ -56,7 +56,7 @@ exports.handler = async function(event) {
         if (!seen.has(key)) { seen.add(key); results.push({ title, year, rating, link, review }); }
       }
     }
-    // Merge supplement entries (skip any already in RSS)
+    // Merge supplement entries (skip any already covered by RSS)
     for (const s of SUPPLEMENT) {
       const key = s.title.toLowerCase().trim() + '|' + s.year;
       if (!seen.has(key)) results.push(s);
