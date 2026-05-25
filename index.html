@@ -3013,7 +3013,7 @@ function renderTable(){
       rank:`<td><div class="mt-rank${isElite?' elite-rank':''}">${rank}</div></td>`,
       poster:`<td>${posterEl(f.t,'mt-poster')}</td>`,
       title:`<td><div class="mt-title">${f.t}</div></td>`,
-      review:`<td class="lb-cell">${rev?`<span class="lb-icon" data-fid="${f.id}" onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)" onclick="_lbClick(event)">${lbStars(rev.rating)}</span>`:''}</td>`,
+      review:`<td class="lb-cell"><span class="lb-icon" data-fid="${f.id}" ${rev?`onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)"`:''}  onclick="_lbClick(event)">${rev?lbStars(rev.rating)||'LB':'LB'}</span></td>`,
       genre:(()=>{
         const gVal = getFilmGenre(f.id);
         const opts = GENRE_OPTIONS.map(o=>`<option value="${o}"${o===gVal?' selected':''}>${o}</option>`).join('');
@@ -3852,6 +3852,12 @@ async function loadLetterboxd(){
 function normalizeTitle(s){
   return s.toLowerCase().trim().replace(/[^a-z0-9]/g,'');
 }
+function lbSlug(title){
+  return title.toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-');
+}
+function lbUrl(title){
+  return'https://letterboxd.com/jake_comito/film/'+lbSlug(title)+'/';
+}
 function findLbReview(title,year){
   if(!_lbReviews.length)return null;
   const t=title.toLowerCase().trim();
@@ -3912,7 +3918,8 @@ function _lbClick(e){
   const fid=parseInt(e.currentTarget.dataset.fid);
   const f=film(fid);if(!f)return;
   const rev=findLbReview(f.t,f.y);
-  if(rev&&rev.link)window.open(rev.link,'_blank');
+  const url=rev&&rev.link?rev.link:lbUrl(f.t);
+  window.open(url,'_blank');
 }
 
 
