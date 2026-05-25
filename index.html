@@ -3849,10 +3849,26 @@ async function loadLetterboxd(){
   }catch(e){}
 }
 
+function normalizeTitle(s){
+  return s.toLowerCase().trim().replace(/[^a-z0-9]/g,'');
+}
 function findLbReview(title,year){
   if(!_lbReviews.length)return null;
   const t=title.toLowerCase().trim();
-  return _lbReviews.find(r=>r.title.toLowerCase().trim()===t&&String(r.year)===String(year))||null;
+  const tn=normalizeTitle(title);
+  const y=parseInt(year)||0;
+  // 1) Exact title + exact year
+  let r=_lbReviews.find(rv=>rv.title.toLowerCase().trim()===t&&String(rv.year)===String(y));
+  if(r)return r;
+  // 2) Normalized title + exact year (strips punctuation/special chars)
+  r=_lbReviews.find(rv=>normalizeTitle(rv.title)===tn&&String(rv.year)===String(y));
+  if(r)return r;
+  // 3) Normalized title + year ±1 (handles year mismatches between TMDB and Letterboxd)
+  if(y>0)r=_lbReviews.find(rv=>normalizeTitle(rv.title)===tn&&Math.abs((parseInt(rv.year)||0)-y)<=1);
+  if(r)return r;
+  // 4) Normalized title only (last resort for entries with year=0)
+  if(tn.length>0)r=_lbReviews.find(rv=>normalizeTitle(rv.title)===tn&&(rv.year===0||y===0));
+  return r||null;
 }
 
 function lbStars(rating){
