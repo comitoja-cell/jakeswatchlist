@@ -1,28 +1,19 @@
 const CORS = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS' };
 const UA = { 'User-Agent': 'Mozilla/5.0 (compatible; JakesWatchList/1.0)' };
 
-async function getRating(slug) {
-  const urls = [
-    'https://letterboxd.com/jake_comito/film/' + slug + '/',
-  ];
-  for (const url of urls) {
-    try {
-      const r = await fetch(url, { headers: UA });
-      if (!r.ok) continue;
-      const html = await r.text();
-      const rm = html.match(/rated-(\d+)/);
-      const reviewM = html.match(/class="body-text[^"]*">([\s\S]{0,400})/);
-      const review = reviewM ? reviewM[1].replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,200) : '';
-      if (rm) return { slug, rating: parseInt(rm[1])/2, review, url };
-    } catch(_) {}
-  }
-  return { slug, rating: 0, review: '', url: '' };
-}
-
 exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
-  // Check these slugs — corrected from Letterboxd canonical URLs
-  const slugs = ['anora', 'x-2022', 'marty-supreme', 'the-lord-of-the-rings-the-fellowship-of-the-ring', 'spy'];
-  const results = await Promise.all(slugs.map(getRating));
-  return { statusCode: 200, headers: CORS, body: JSON.stringify(results) };
+  const qs = event.queryStringParameters || {};
+  const url = 'https://letterboxd.com/jake_comito/films/rated/' + (qs.p ? 'page/' + qs.p + '/' : '');
+  const r = await fetch(url, { headers: UA });
+  const html = await r.text();
+  const start = parseInt(qs.s || '0');
+  // Find markers
+  const markers = ['rated-', 'data-film-slug', 'film-poster', 'poster-container', 'viewing-poster', 'poster-list', 'film-rating'];
+  const found = markers.filter(m => html.includes(m));
+  // Find first rated- occurrence
+  const rIdx = html.indexOf('rated-');
+  const rCtx = rIdx > 0 ? html.slice(Math.max(0,rIdx-100), rIdx+200) : 'not found';
+  return { statusCode: 200, headers: { ...CORS, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, len: html.length, found, rCtx, slice: html.slice(start, start+2000) }) };
 };
