@@ -14,6 +14,7 @@ const LB_BASE = 'https://letterboxd.com/jake_comito/film/';
 
 // Films that have aged off the 50-entry RSS window.
 // Ratings verified directly from Letterboxd by Jake 2026-05-25.
+// *** Films marked rating:0 need Jake to confirm his LB star rating ***
 const SUPPLEMENT = [
   { title: 'Anora',                                              year: 2024, rating: 5, link: LB_BASE + 'anora/',
     review: 'One of my favorites of all time. I think about the scene where she rips into the mother on the plane a whole lot, and that\'s not only because I get served it on IG at least twice a week.' },
@@ -21,6 +22,13 @@ const SUPPLEMENT = [
   { title: 'Marty Supreme',                                     year: 2025, rating: 4, link: LB_BASE + 'marty-supreme/',      review: '' },
   { title: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, rating: 2, link: LB_BASE + 'the-lord-of-the-rings-the-fellowship-of-the-ring/', review: '' },
   { title: 'Spy',                                               year: 2015, rating: 4, link: LB_BASE + 'spy/',                review: '' },
+  // Aged off RSS — confirm ratings on Letterboxd and update the rating field
+  { title: 'Notting Hill',           year: 1999, rating: 0, link: LB_BASE + 'notting-hill/',             review: '' },
+  { title: 'Stranger Than Fiction',  year: 2006, rating: 0, link: LB_BASE + 'stranger-than-fiction/',    review: '' },
+  { title: 'The Others',             year: 2001, rating: 0, link: LB_BASE + 'the-others/',               review: '' },
+  { title: 'Leaving Las Vegas',      year: 1995, rating: 0, link: LB_BASE + 'leaving-las-vegas/',        review: '' },
+  { title: 'Now You See Me',         year: 2013, rating: 0, link: LB_BASE + 'now-you-see-me/',           review: '' },
+  { title: 'Blue Jasmine',           year: 2013, rating: 0, link: LB_BASE + 'blue-jasmine/',             review: '' },
 ];
 
 function extractTag(xml, tag) {
@@ -34,7 +42,7 @@ function extractCdata(xml, tag) {
   return xml.slice(s + 9, e);
 }
 function decode(s) {
-  return s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#0*39;/g,"'").replace(/&nbsp;/g,' ');
+  return s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&apos;/g,"'");
 }
 function stripHtml(h) { return decode(h.replace(/<[^>]+>/g,' ')).replace(/ +/g,' ').trim(); }
 
