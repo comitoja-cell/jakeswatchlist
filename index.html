@@ -2274,10 +2274,7 @@ function isOwner() {
     _setCookie('jwl3_uid', JAKE_UID, 3650);
     return;
   }
-  // Last-resort: this is Jake's own site on his own domain — always stamp the UID
-  // jakeswatchlist.netlify.app is not public-editable so this is safe
-  try { localStorage.setItem('jwl3_uid', JAKE_UID); } catch(e) {}
-  _setCookie('jwl3_uid', JAKE_UID, 3650);
+  // No UID in either store: visitor or fresh browser — cloudLoad() serves Jake's public data read-only
 })();
 
 function getOrCreateUserId() {
@@ -3013,7 +3010,7 @@ function renderTable(){
       rank:`<td><div class="mt-rank${isElite?' elite-rank':''}">${rank}</div></td>`,
       poster:`<td>${posterEl(f.t,'mt-poster')}</td>`,
       title:`<td><div class="mt-title">${f.t}</div></td>`,
-      review:`<td class="lb-cell"><span class="lb-icon" data-fid="${f.id}" ${rev?`onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)"`:''}  onclick="_lbClick(event)">${rev?lbStars(rev.rating)||'LB':'LB'}</span></td>`,
+      review:`<td class="lb-cell"><span class="lb-icon" data-fid="${f.id}" ${rev?`onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)"`:''}  onclick="_lbClick(event)">${rev&&rev.rating?lbStars(rev.rating):'·'}</span></td>`,
       genre:(()=>{
         const gVal = getFilmGenre(f.id);
         const opts = GENRE_OPTIONS.map(o=>`<option value="${o}"${o===gVal?' selected':''}>${o}</option>`).join('');
@@ -3839,13 +3836,15 @@ function _pieMove(e){
 
 // ══════════ LETTERBOXD INTEGRATION ══════════
 let _lbReviews=[];
+// Restore cached LB reviews so stars show immediately on every revisit (no "LB" flash)
+try{const _lbc=JSON.parse(localStorage.getItem('jwl3_lb_cache')||'null');if(_lbc&&_lbc.ts&&(Date.now()-_lbc.ts)<21600000&&Array.isArray(_lbc.d)){_lbReviews=_lbc.d;}}catch(e){}
 
 async function loadLetterboxd(){
   try{
     const res=await fetch('/.netlify/functions/letterboxd');
     if(!res.ok)return;
     const data=await res.json();
-    if(Array.isArray(data)){_lbReviews=data;renderTable();}
+    if(Array.isArray(data)){_lbReviews=data;try{localStorage.setItem('jwl3_lb_cache',JSON.stringify({ts:Date.now(),d:data}));}catch(e){}renderTable();}
   }catch(e){}
 }
 
