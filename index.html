@@ -2371,6 +2371,17 @@ async function cloudLoad() {
   } catch(e) { /* cloud unavailable — local data still intact */ }
 }
 
+// Visitor-facing states for the home "Recently Watched" strip while the cloud
+// loads (or if it can't be reached). A successful render replaces these.
+function showVisitorLoading() {
+  const c = document.getElementById('rw-tiles');
+  if (c) c.innerHTML = '<div style="width:100%;padding:2rem 0;color:rgba(255,255,255,0.4);font-size:0.8rem;letter-spacing:0.06em;">Loading Jake’s picks…</div>';
+}
+function showVisitorEmpty() {
+  const c = document.getElementById('rw-tiles');
+  if (c) c.innerHTML = '<div style="width:100%;padding:2rem 0;color:rgba(255,255,255,0.4);font-size:0.8rem;letter-spacing:0.06em;">The list is taking a moment to load — please refresh in a few seconds.</div>';
+}
+
 function openSyncModal() {
   document.getElementById('syncCodeDisplay').textContent = getOrCreateUserId();
   const ts = localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts');
@@ -4076,9 +4087,12 @@ if (isOwner()) {
   })();
 } else {
   // Visitors: W is always empty on load (no localStorage) so skip the blank render.
-  // Apply visitor-mode CSS then let cloudLoad fetch Jake's data and do the first render.
+  // Show a loading state, then let cloudLoad fetch Jake's data and do the first
+  // render. If the cloud can't be reached, show a friendly message instead of a
+  // permanently blank page.
   document.body.classList.add('visitor-mode');
-  cloudLoad();
+  showVisitorLoading();
+  cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); });
 }
 
 // Fetch Letterboxd reviews on every page load (for all users)
