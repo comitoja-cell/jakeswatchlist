@@ -22,9 +22,10 @@ const CORS = {
 const STORE = 'watchlist';
 const EMPTY = JSON.stringify({ w: [], wl: [], custom: [], _ts: 0 });
 
-// Strong consistency makes a write on one device immediately visible to reads
-// on another device — essential for cross-device sync (phone ⇄ desktop).
-const READ_OPTS = { type: 'text', consistency: 'strong' };
+// Reads use Netlify Blobs' default (eventual) consistency, which propagates a
+// write across devices within seconds — proven reliable for this store. (Strong
+// consistency as a per-read option is rejected by the installed SDK version.)
+const READ_OPTS = { type: 'text' };
 
 // Automatic store: uses the signed context Netlify injects into the event.
 function openAuto(event) {
