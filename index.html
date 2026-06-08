@@ -1212,29 +1212,9 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <button class="nav-tab" onclick="showPage(&#39;rankings&#39;)">Rank</button>
       <button class="nav-tab" onclick="showPage(&#39;stats&#39;)">Insights</button>
     </div>
-    <button id="syncBtn" onclick="openSyncModal()" title="Cloud Sync — click to manage">☁ <span class="sdot"></span></button>
   </div>
 </header>
 
-<div id="syncModal" onclick="if(event.target===this)closeSyncModal()">
-  <div class="sbox">
-    <button class="sclose" onclick="closeSyncModal()">✕</button>
-    <h3>Cloud Sync</h3>
-    <div class="slabel">Your Sync Code — save this to restore your data on any browser</div>
-    <div class="scode" id="syncCodeDisplay"></div>
-    <div class="srow">
-      <button class="sbtn" onclick="copySyncCode()">Copy Code</button>
-      <button class="sbtn" onclick="forceSyncNow()">Sync Now</button>
-    </div>
-    <hr class="sdivider">
-    <div class="slabel">Restore on a New Browser — paste your sync code below</div>
-    <div class="srow">
-      <input class="sinput" id="syncCodeInput" placeholder="Paste your sync code…">
-      <button class="sbtn" onclick="restoreFromCode()">Restore</button>
-    </div>
-    <div class="smsg" id="syncMsg"></div>
-  </div>
-</div>
 
 <!-- HOME -->
 <div id="page-home" class="page active">
@@ -2258,10 +2238,10 @@ function _setCookie(name, val, days) {
   document.cookie = name + '=' + val + ';expires=' + d.toUTCString() + ';path=/;SameSite=Strict';
 }
 
-// True only on Jake's own browser — controls write access and visitor-mode UI
-// isOwner() is a live function — always re-checks so UID restoration works
+// Single shared watchlist: every visitor can read AND edit from any device.
+// There is no owner/visitor distinction and no read-only mode.
 function isOwner() {
-  return (localStorage.getItem('jwl3_uid') || _getCookie('jwl3_uid')) === JAKE_UID;
+  return true;
 }
 // Self-heal: on every page load, if either storage has Jake's UID, restore the other.
 // This fixes browsers where localStorage or cookie was cleared independently.
@@ -2303,8 +2283,7 @@ function cloudSave() {
 }
 
 async function _doCloudSave() {
-  const uid = getOrCreateUserId();
-  if (uid !== JAKE_UID) return; // safety gate — only Jake can write to the cloud
+  // Single shared list — every device saves to the same global key.
   setSyncStatus('syncing');
   try {
     const payload = JSON.stringify({
@@ -2312,7 +2291,7 @@ async function _doCloudSave() {
       custom: FILMS.filter(f => f.id > 47),
       _ts: Date.now()
     });
-    const res = await fetch(SYNC_ENDPOINT + '?userId=' + uid, {
+    const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: payload
@@ -2367,7 +2346,6 @@ async function cloudLoad() {
     // Re-render everything with restored data
     try { renderTable(); renderRankings(); renderRecentlyWatched(); renderWL(); renderStats(); renderFacts(); } catch(e) {}
     setSyncStatus('synced');
-    if (isOwner()) showToast('✓ Data restored from cloud (' + cloud.w.length + ' films)');
   } catch(e) { /* cloud unavailable — local data still intact */ }
 }
 
@@ -4067,33 +4045,25 @@ async function renderRecentlyWatched() {
        .forEach(f => enrichFilmFromTMDB(f));
 })();
 
-if (isOwner()) {
-  // Jake: render immediately from localStorage, then sync with cloud
-  renderRecentlyWatched();
-  renderTable();
-  renderWL();
-  renderRankings();
-  renderStats();
-  cloudLoad(); // fetches cloud; if local is newer, cloudSave() fires via save()
-  // Bootstrap: if cloud is empty but Jake has local data, push immediately
-  (async () => {
-    try {
-      const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID);
-      const cloud = await res.json();
-      if ((!cloud.w || cloud.w.length === 0) && W.length > 0) {
-        cloudSave();
-      }
-    } catch(e) {}
-  })();
-} else {
-  // Visitors: W is always empty on load (no localStorage) so skip the blank render.
-  // Show a loading state, then let cloudLoad fetch Jake's data and do the first
-  // render. If the cloud can't be reached, show a friendly message instead of a
-  // permanently blank page.
-  document.body.classList.add('visitor-mode');
-  showVisitorLoading();
-  cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); });
-}
+// Single shared list — identical path for every device. Render instantly from
+// local data, then reconcile with the cloud. A fresh device (nothing stored
+// locally yet) shows a brief loading hint instead of a blank strip.
+if (W.length === 0) showVisitorLoading();
+renderRecentlyWatched();
+renderTable();
+renderWL();
+renderRankings();
+renderStats();
+cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); });
+// If the cloud is empty but this device has data, seed it immediately so the
+// list is never lost and propagates to other devices.
+(async () => {
+  try {
+    const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID);
+    const cloud = await res.json();
+    if ((!cloud.w || cloud.w.length === 0) && W.length > 0) cloudSave();
+  } catch(e) {}
+})();
 
 // Fetch Letterboxd reviews on every page load (for all users)
 loadLetterboxd();
