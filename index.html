@@ -1200,6 +1200,26 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .fact-icon{font-size:1.4rem;display:block;margin-bottom:.5rem;}
 .fact-stat{font-family:"Times New Roman",Times,serif;font-size:1.8rem;color:var(--gold);margin-bottom:.25rem;}
 .fact-text{font-size:.72rem;letter-spacing:.06em;color:var(--white-50);text-transform:uppercase;}
+/* ── BY THE NUMBERS (insights summary band) ── */
+.bynum-caption{font-family:"Times New Roman",Times,serif;font-style:italic;font-size:.8rem;color:var(--white-50);margin:.1rem 0 .9rem}
+.bynum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.bynum-cell{padding:1.3rem 1rem;background:var(--surface);text-align:center}
+.bynum-stat{font-family:"Times New Roman",Times,serif;font-size:1.9rem;line-height:1.1;color:var(--gold);margin-bottom:.3rem}
+.bynum-sub{font-size:.66rem;letter-spacing:.05em;color:var(--gold-dim);margin-bottom:.15rem;min-height:.7rem}
+.bynum-label{font-size:.66rem;letter-spacing:.12em;color:var(--white-50);text-transform:uppercase}
+@media(max-width:680px){.bynum-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:380px){.bynum-grid{grid-template-columns:1fr}}
+/* ── BEST OF EACH MONTH ── */
+.bom-strip{display:flex;gap:1.1rem;overflow-x:auto;padding:.2rem 0 .6rem}
+.bom-strip::-webkit-scrollbar{height:6px}.bom-strip::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px}
+.bom-card{flex:0 0 auto;width:108px;text-align:left}
+.bom-month{font-family:"Times New Roman",Times,serif;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.45rem}
+.bom-poster{width:108px;height:162px;background:#111;border:1px solid var(--border);overflow:hidden;position:relative;margin-bottom:.5rem}
+.bom-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.bom-fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;background:#0a0a0a}
+.bom-title{font-size:.74rem;line-height:1.25;color:var(--white-90,rgba(255,255,255,.9));margin-bottom:.2rem}
+.bom-meta{font-size:.62rem;letter-spacing:.04em;color:var(--white-50);display:flex;justify-content:space-between;align-items:center}
+.bom-rank{color:var(--gold)}
 </style></head>
 <body>
 
@@ -1865,6 +1885,18 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 <!-- INSIGHTS -->
 <div id="page-stats" class="page">
   <div class="stats-page">
+    <div class="sec-head" style="margin-bottom:.2rem">
+      <div class="sec-label">At a Glance</div>
+      <div class="sec-title">By the Numbers</div>
+    </div>
+    <div class="bynum-caption" id="byNumCaption"></div>
+    <div class="bynum-grid" id="byNumGrid"></div>
+    <hr class="insight-divider">
+    <div class="bom-section" id="bomSection" style="margin-bottom:1.5rem">
+      <div class="sec-label" style="margin-bottom:.2rem">Best of Each Month</div>
+      <div class="bom-strip" id="bomStrip"></div>
+    </div>
+    <hr class="insight-divider">
     <div class="sec-head" style="margin-bottom:1.5rem">
       <div class="sec-label">Your Cinema Story</div>
       <div class="sec-title">Viewing Activity</div>
@@ -3582,9 +3614,87 @@ function _hmPos(cx,cy){
   tip.style.left=x+'px';tip.style.top=y+'px';
 }
 
+// ══════════ BY THE NUMBERS (insights summary) ══════════
+// Stars rounded to the nearest half so they stay consistent with the number shown.
+function _starStr(r){const h=Math.round(r*2)/2,f=Math.floor(h);return ('★'.repeat(f)+(h-f>=0.5?'½':''))||'—';}
+// Authoritative rating for a logged film: prefer the Letterboxd star rating
+// (complete for all films) and fall back to the app's stored rating.
+function _filmRating(w){
+  const f=film(w.id);
+  if(f&&typeof findLbReview==='function'){const rev=findLbReview(f.t,f.y);if(rev&&rev.rating>0)return rev.rating;}
+  return (typeof w.r==='number'&&w.r>0)?w.r:0;
+}
+async function renderByNumbers(){
+  const grid=document.getElementById('byNumGrid');
+  const cap=document.getElementById('byNumCaption');
+  const bomSec=document.getElementById('bomSection');
+  const strip=document.getElementById('bomStrip');
+  if(!grid)return;
+  const total=W.length;
+  if(!total){
+    grid.innerHTML='<div class="bynum-cell" style="grid-column:1/-1;color:var(--white-50);font-style:italic">Log some films to see your stats.</div>';
+    if(cap)cap.textContent='';
+    if(bomSec)bomSec.style.display='none';
+    return;
+  }
+  // Diary span → averages
+  const dates=W.map(w=>w.d).filter(Boolean).sort();
+  const d0=new Date(dates[0]+'T12:00:00'), d1=new Date(dates[dates.length-1]+'T12:00:00');
+  const spanDays=Math.max(1,Math.round((d1-d0)/86400000)+1);
+  const avgMonth=(total/Math.max(1,spanDays/30.4375)).toFixed(1);
+  const avgWeek=(total/Math.max(1,spanDays/7)).toFixed(1);
+  // Ratings (Letterboxd, complete for all films; app rating as fallback)
+  const ratings=W.map(_filmRating).filter(r=>r>0);
+  const avgR=ratings.length?(ratings.reduce((s,r)=>s+r,0)/ratings.length):0;
+  const perfect=W.filter(w=>_filmRating(w)===5).length;
+  // Caption
+  if(cap)cap.textContent='Keeping this diary since '+d0.toLocaleString('en-US',{month:'long',year:'numeric'})+'.';
+  // Stat cells
+  const cells=[
+    {stat:total, sub:'', label:'Films Watched'},
+    {stat:avgMonth, sub:'', label:'Per Month'},
+    {stat:avgWeek, sub:'', label:'Per Week'},
+    {stat:avgR?avgR.toFixed(1):'—', sub:avgR?_starStr(avgR):'', label:'Avg Rating'},
+    {stat:perfect, sub:perfect?'★★★★★':'', label:perfect===1?'Perfect Score':'Perfect Scores'},
+    {stat:WL.length, sub:'', label:'On the Watchlist'},
+  ];
+  grid.innerHTML=cells.map(c=>'<div class="bynum-cell"><div class="bynum-stat">'+c.stat+'</div><div class="bynum-sub">'+c.sub+'</div><div class="bynum-label">'+c.label+'</div></div>').join('');
+  // Best of each month — the highest-ranked film logged each month, newest first
+  const best={};
+  W.forEach(w=>{const m=(w.d||'').slice(0,7);if(!m||!film(w.id))return;const wr=w.rank>0?w.rank:Infinity;if(!best[m]||wr<best[m]._r)best[m]={...w,_r:wr};});
+  const months=Object.keys(best).sort().reverse();
+  if(strip&&bomSec){
+    if(!months.length){bomSec.style.display='none';return;}
+    bomSec.style.display='';
+    strip.innerHTML=months.map((m,i)=>{
+      const w=best[m],f=film(w.id);if(!f)return '';
+      const[yy,mm]=m.split('-');const lbl=new Date(+yy,+mm-1,1).toLocaleString('en-US',{month:'short',year:'numeric'});
+      const rankBadge=w.rank>0?'#'+w.rank:'';
+      return '<div class="bom-card"><div class="bom-month">'+lbl+'</div>'
+        +'<div class="bom-poster"><img id="bom-poster-'+i+'" alt="'+f.t.replace(/"/g,'&quot;')+'" style="display:none" onerror="this.style.display=\'none\';var fb=document.getElementById(\'bom-fb-'+i+'\');if(fb)fb.style.display=\'flex\'"><div class="bom-fb" id="bom-fb-'+i+'">🎬</div></div>'
+        +'<div class="bom-title">'+f.t+'</div>'
+        +'<div class="bom-meta"><span>'+(f.y||'')+'</span><span class="bom-rank">'+rankBadge+'</span></div></div>';
+    }).join('');
+    for(let i=0;i<months.length;i++){
+      const f=film(best[months[i]].id);if(!f)continue;
+      try{
+        const url=await fetchPoster(f.t);
+        const img=document.getElementById('bom-poster-'+i);if(!img)continue;
+        if(url){const fb=document.getElementById('bom-fb-'+i);
+          img.onload=()=>{img.style.display='block';if(fb)fb.style.display='none';};
+          img.onerror=()=>{img.style.display='none';};
+          img.src=url;
+          if(img.complete&&img.naturalWidth>0){img.style.display='block';if(fb)fb.style.display='none';}
+        }
+      }catch(e){}
+    }
+  }
+}
+
 // ══════════ RENDER STATS ══════════
 function renderStats(){
   buildHeatmap();
+  renderByNumbers();
   const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
 
 
@@ -3833,7 +3943,7 @@ async function loadLetterboxd(){
     const res=await fetch('/.netlify/functions/letterboxd');
     if(!res.ok)return;
     const data=await res.json();
-    if(Array.isArray(data)){_lbReviews=data;try{localStorage.setItem('jwl3_lb_cache',JSON.stringify({ts:Date.now(),d:data}));}catch(e){}renderTable();}
+    if(Array.isArray(data)){_lbReviews=data;try{localStorage.setItem('jwl3_lb_cache',JSON.stringify({ts:Date.now(),d:data}));}catch(e){}renderTable();try{renderByNumbers();}catch(e){}}
   }catch(e){}
 }
 
