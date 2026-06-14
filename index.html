@@ -1146,6 +1146,10 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .decade-tip-film{font-family:"Times New Roman",Times,serif;font-size:.72rem;color:var(--white-80);padding:.18rem 0;border-bottom:1px solid var(--white-08)}
 .decade-tip-film:last-child{border-bottom:none}
 .decade-tip-year{font-size:.65rem;color:var(--white-50);margin-left:.4rem}
+/* Genre tooltip: lists ALL films in two compact columns so totals are verifiable */
+.genre-tip{max-width:440px}
+.genre-tip .gtip-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.2rem;max-height:64vh}
+.genre-tip .decade-tip-film{display:flex;justify-content:space-between;align-items:baseline;gap:.4rem}
 /* ── RECENTLY WATCHED — mobile horizontal scroll ── */
 @media(max-width:768px){
   #recently-watched-section{
@@ -3637,12 +3641,24 @@ async function renderByNumbers(){
     if(bomSec)bomSec.style.display='none';
     return;
   }
-  // Diary span → averages
+  // Averages over COMPLETED calendar periods only, so the numbers stay settled
+  // all week/month and update once at each boundary (the in-progress week/month
+  // is excluded until it finishes — keeps the figure always "correct").
   const dates=W.map(w=>w.d).filter(Boolean).sort();
-  const d0=new Date(dates[0]+'T12:00:00'), d1=new Date(dates[dates.length-1]+'T12:00:00');
-  const spanDays=Math.max(1,Math.round((d1-d0)/86400000)+1);
-  const avgMonth=(total/Math.max(1,spanDays/30.4375)).toFixed(1);
-  const avgWeek=(total/Math.max(1,spanDays/7)).toFixed(1);
+  const d0=new Date(dates[0]+'T12:00:00');
+  const now=new Date();
+  const _dt=s=>new Date(s+'T12:00:00');
+  // Completed months: from the first entry's month up to (but not including) this month
+  const curMonthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  const completedMonths=(curMonthStart.getFullYear()-d0.getFullYear())*12+(curMonthStart.getMonth()-d0.getMonth());
+  const filmsCompletedMonths=W.filter(w=>w.d&&_dt(w.d)<curMonthStart).length;
+  const avgMonth=(completedMonths>=1?filmsCompletedMonths/completedMonths:total).toFixed(1);
+  // Completed weeks: Sunday-start (matches the heatmap), excluding the current week
+  const curWeekStart=new Date(now); curWeekStart.setHours(0,0,0,0); curWeekStart.setDate(curWeekStart.getDate()-curWeekStart.getDay());
+  const fws=new Date(d0); fws.setHours(0,0,0,0); fws.setDate(fws.getDate()-fws.getDay());
+  const completedWeeks=Math.round((curWeekStart-fws)/(7*86400000));
+  const filmsCompletedWeeks=W.filter(w=>w.d&&_dt(w.d)<curWeekStart).length;
+  const avgWeek=(completedWeeks>=1?filmsCompletedWeeks/completedWeeks:total).toFixed(1);
   // Ratings (Letterboxd, complete for all films; app rating as fallback)
   const ratings=W.map(_filmRating).filter(r=>r>0);
   const avgR=ratings.length?(ratings.reduce((s,r)=>s+r,0)/ratings.length):0;
@@ -3731,7 +3747,7 @@ function renderStats(){
   gb.querySelectorAll('.hbar-row').forEach(row=>{
     const gn=row.getAttribute('data-genre')||'',avg=gAR[gn],fl=(gf[gn]||[]).slice().sort((a,b)=>a.y-b.y);
     const pct=Math.round((gf[gn]||[]).length/gTotal*100);
-    row.addEventListener('mouseenter',()=>{const cnt=(gf[gn]||[]).length;gTip.innerHTML='<div class="decade-tip-label">'+gn+'</div><div style="font-size:.7rem;color:var(--gold);margin-bottom:.5rem">'+cnt+' film'+(cnt===1?'':'s')+' · '+pct+'% of watches</div>'+fl.slice(0,8).map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');gTip.classList.add('show');});
+    row.addEventListener('mouseenter',()=>{const cnt=(gf[gn]||[]).length;gTip.className='decade-tooltip genre-tip';gTip.innerHTML='<div class="decade-tip-label">'+gn+'</div><div style="font-size:.7rem;color:var(--gold);margin-bottom:.5rem">'+cnt+' film'+(cnt===1?'':'s')+' · '+pct+'% of watches</div><div class="gtip-grid">'+fl.map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('')+'</div>';gTip.classList.add('show');});
     row.addEventListener('mousemove',e=>{const tw=gTip.offsetWidth||180,th=gTip.offsetHeight||120;gTip.style.left=(e.clientX+tw+12>window.innerWidth?e.clientX-tw-8:e.clientX+12)+'px';gTip.style.top=(e.clientY+th+8>window.innerHeight?e.clientY-th-8:e.clientY+8)+'px';});
     row.addEventListener('mouseleave',()=>gTip.classList.remove('show'));
   });
