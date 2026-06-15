@@ -1074,8 +1074,8 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .hbar-count{font-family:"Times New Roman",Times,serif;font-size:.7rem;color:rgba(0,0,0,0.75);padding-left:8px;white-space:nowrap}
 
 /* Genre ranked rows */
-/* Genre to bottom */
-.genre-chart{order:99}
+/* genre-chart now follows its DOM position (ordered explicitly in markup) */
+.genre-chart{order:0}
 /* Inline genre select in watched table */
 .mt-genre-select{
   font-family:"Times New Roman",Times,serif;
@@ -1224,6 +1224,9 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 .bom-title{font-size:.74rem;line-height:1.25;color:var(--white-90,rgba(255,255,255,.9));margin-bottom:.2rem}
 .bom-meta{font-size:.62rem;letter-spacing:.04em;color:var(--white-50);display:flex;justify-content:space-between;align-items:center}
 .bom-rank{color:var(--gold)}
+/* Genre best-of strip: genre names can wrap to 2 lines — reserve space and
+   bottom-align so every poster starts at the same height. */
+.bog-strip .bom-month{min-height:1.5rem;display:flex;align-items:flex-end;line-height:1.25}
 </style></head>
 <body>
 
@@ -1896,16 +1899,12 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
     <div class="bynum-caption" id="byNumCaption"></div>
     <div class="bynum-grid" id="byNumGrid"></div>
     <hr class="insight-divider">
-    <div class="bom-section" id="bomSection" style="margin-bottom:1.5rem">
-      <div class="sec-label" style="margin-bottom:.9rem">Best of Each Month</div>
-      <div class="bom-strip" id="bomStrip"></div>
-    </div>
-    <hr class="insight-divider">
+    <!-- Viewing Activity -->
     <div class="sec-head" style="margin-bottom:1.5rem">
       <div class="sec-label">Your Cinema Story</div>
       <div class="sec-title">Viewing Activity</div>
     </div>
-        <div class="hm-section" id="hmSection">
+    <div class="hm-section" id="hmSection">
       <div class="hm-months-row" id="hmCalGrid"></div>
       <div class="hm-legend">
         <div class="hm-legend-swatch hm-inactive"></div>
@@ -1919,26 +1918,49 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       </div>
     </div>
     <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
-    <div class="genre-chart" style="margin-top:2.2rem;margin-bottom:0">
-      <div class="sec-label" style="margin-bottom:.9rem">Genre Breakdown</div>
-      <div id="genreMissingPill" class="genre-missing-pill" style="display:none"><span class="pill-dot"></span><span class="pill-text"></span></div>
-      <div id="genreBars"></div>
+    <hr class="insight-divider">
+    <!-- Best of Each Month -->
+    <div class="bom-section" id="bomSection">
+      <div class="sec-label" style="margin-bottom:.9rem">Best of Each Month</div>
+      <div class="bom-strip" id="bomStrip"></div>
     </div>
     <hr class="insight-divider">
+    <!-- Best of Each Decade -->
+    <div class="bom-section" id="bodSection">
+      <div class="sec-label" style="margin-bottom:.9rem">Best of Each Decade</div>
+      <div class="bom-strip" id="bodStrip"></div>
+    </div>
+    <hr class="insight-divider">
+    <!-- Best of Each Genre -->
+    <div class="bom-section" id="bogSection">
+      <div class="sec-label" style="margin-bottom:.9rem">Best of Each Genre</div>
+      <div class="bom-strip bog-strip" id="bogStrip"></div>
+    </div>
+    <hr class="insight-divider">
+    <!-- Films by Day -->
+    <div class="decade-section">
+      <div class="sec-label" style="margin-bottom:.9rem">Films by Day</div>
+      <div class="decade-bars" id="dayBars"></div>
+    </div>
+    <hr class="insight-divider">
+    <!-- Films by Decade -->
     <div class="decade-section">
       <div class="sec-label" style="margin-bottom:.9rem">Films by Decade</div>
       <div class="decade-bars" id="decadeBars"></div>
     </div>
     <hr class="insight-divider">
-    <div class="decade-section" style="margin-top:0">
-      <div class="sec-label" style="margin-bottom:.9rem">Films by Day</div>
-      <div class="decade-bars" id="dayBars"></div>
+    <!-- Films by Genre (was Genre Breakdown) -->
+    <div class="genre-chart" style="margin:0">
+      <div class="sec-label" style="margin-bottom:.9rem">Films by Genre</div>
+      <div id="genreMissingPill" class="genre-missing-pill" style="display:none"><span class="pill-dot"></span><span class="pill-text"></span></div>
+      <div id="genreBars"></div>
     </div>
     <hr class="insight-divider">
-    <div style="margin-top:1.5rem">
+    <!-- Actor Appearances -->
+    <div>
       <div class="sec-label" style="margin-bottom:.9rem">Actor Appearances</div>
       <div id="actorSortControls" class="actor-sort-controls"></div>
-    <div id="actorList"></div>
+      <div id="actorList"></div>
     </div>
   </div>
 </div>
@@ -3628,17 +3650,44 @@ function _filmRating(w){
   if(f&&typeof findLbReview==='function'){const rev=findLbReview(f.t,f.y);if(rev&&rev.rating>0)return rev.rating;}
   return (typeof w.r==='number'&&w.r>0)?w.r:0;
 }
+// Render a "best of …" poster strip (shared by Month / Decade / Genre).
+// items: [{id, rank, label}]. prefix keeps element ids unique per strip.
+async function _bestStrip(stripEl, sectionEl, items, prefix){
+  if(!stripEl)return;
+  if(!items.length){ if(sectionEl)sectionEl.style.display='none'; return; }
+  if(sectionEl)sectionEl.style.display='';
+  stripEl.innerHTML=items.map((it,i)=>{
+    const f=film(it.id); if(!f)return '';
+    const rankBadge=it.rank>0?'#'+it.rank:'';
+    return '<div class="bom-card"><div class="bom-month">'+it.label+'</div>'
+      +'<div class="bom-poster"><img id="'+prefix+'-poster-'+i+'" alt="'+f.t.replace(/"/g,'&quot;')+'" style="display:none" onerror="this.style.display=\'none\';var fb=document.getElementById(\''+prefix+'-fb-'+i+'\');if(fb)fb.style.display=\'flex\'"><div class="bom-fb" id="'+prefix+'-fb-'+i+'">🎬</div></div>'
+      +'<div class="bom-title">'+f.t+'</div>'
+      +'<div class="bom-meta"><span>'+(f.y||'')+'</span><span class="bom-rank">'+rankBadge+'</span></div></div>';
+  }).join('');
+  for(let i=0;i<items.length;i++){
+    const f=film(items[i].id); if(!f)continue;
+    try{
+      const url=await fetchPoster(f.t);
+      const img=document.getElementById(prefix+'-poster-'+i); if(!img)continue;
+      if(url){ const fb=document.getElementById(prefix+'-fb-'+i);
+        img.onload=()=>{img.style.display='block';if(fb)fb.style.display='none';};
+        img.onerror=()=>{img.style.display='none';};
+        img.src=url;
+        if(img.complete&&img.naturalWidth>0){img.style.display='block';if(fb)fb.style.display='none';}
+      }
+    }catch(e){}
+  }
+}
+
 async function renderByNumbers(){
   const grid=document.getElementById('byNumGrid');
   const cap=document.getElementById('byNumCaption');
-  const bomSec=document.getElementById('bomSection');
-  const strip=document.getElementById('bomStrip');
   if(!grid)return;
   const total=W.length;
   if(!total){
     grid.innerHTML='<div class="bynum-cell" style="grid-column:1/-1;color:var(--white-50);font-style:italic">Log some films to see your stats.</div>';
     if(cap)cap.textContent='';
-    if(bomSec)bomSec.style.display='none';
+    ['bomSection','bodSection','bogSection'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     return;
   }
   // Averages over COMPLETED calendar periods only, so the numbers stay settled
@@ -3675,36 +3724,21 @@ async function renderByNumbers(){
     {stat:WL.length, sub:'', label:'On the Watchlist'},
   ];
   grid.innerHTML=cells.map(c=>'<div class="bynum-cell"><div class="bynum-stat">'+c.stat+'</div><div class="bynum-sub">'+c.sub+'</div><div class="bynum-label">'+c.label+'</div></div>').join('');
-  // Best of each month — the highest-ranked film logged each month, newest first
-  const best={};
-  W.forEach(w=>{const m=(w.d||'').slice(0,7);if(!m||!film(w.id))return;const wr=w.rank>0?w.rank:Infinity;if(!best[m]||wr<best[m]._r)best[m]={...w,_r:wr};});
-  const months=Object.keys(best).sort().reverse();
-  if(strip&&bomSec){
-    if(!months.length){bomSec.style.display='none';return;}
-    bomSec.style.display='';
-    strip.innerHTML=months.map((m,i)=>{
-      const w=best[m],f=film(w.id);if(!f)return '';
-      const[yy,mm]=m.split('-');const lbl=new Date(+yy,+mm-1,1).toLocaleString('en-US',{month:'short',year:'numeric'});
-      const rankBadge=w.rank>0?'#'+w.rank:'';
-      return '<div class="bom-card"><div class="bom-month">'+lbl+'</div>'
-        +'<div class="bom-poster"><img id="bom-poster-'+i+'" alt="'+f.t.replace(/"/g,'&quot;')+'" style="display:none" onerror="this.style.display=\'none\';var fb=document.getElementById(\'bom-fb-'+i+'\');if(fb)fb.style.display=\'flex\'"><div class="bom-fb" id="bom-fb-'+i+'">🎬</div></div>'
-        +'<div class="bom-title">'+f.t+'</div>'
-        +'<div class="bom-meta"><span>'+(f.y||'')+'</span><span class="bom-rank">'+rankBadge+'</span></div></div>';
-    }).join('');
-    for(let i=0;i<months.length;i++){
-      const f=film(best[months[i]].id);if(!f)continue;
-      try{
-        const url=await fetchPoster(f.t);
-        const img=document.getElementById('bom-poster-'+i);if(!img)continue;
-        if(url){const fb=document.getElementById('bom-fb-'+i);
-          img.onload=()=>{img.style.display='block';if(fb)fb.style.display='none';};
-          img.onerror=()=>{img.style.display='none';};
-          img.src=url;
-          if(img.complete&&img.naturalWidth>0){img.style.display='block';if(fb)fb.style.display='none';}
-        }
-      }catch(e){}
-    }
-  }
+  // Best-of strips — highest-ranked (lowest rank #) film per period/group.
+  const bestBy=keyFn=>{const b={};W.forEach(w=>{const k=keyFn(w);if(k==null||k===''||!film(w.id))return;const wr=w.rank>0?w.rank:Infinity;if(!b[k]||wr<b[k]._r)b[k]={id:w.id,rank:w.rank,_r:wr};});return b;};
+  // Best of Each Month — newest month first
+  const byMonth=bestBy(w=>(w.d||'').slice(0,7)||null);
+  const monthItems=Object.keys(byMonth).sort().reverse().map(m=>{const p=m.split('-');return {id:byMonth[m].id,rank:byMonth[m].rank,label:new Date(+p[0],+p[1]-1,1).toLocaleString('en-US',{month:'short',year:'numeric'})};});
+  _bestStrip(document.getElementById('bomStrip'),document.getElementById('bomSection'),monthItems,'bom');
+  // Best of Each Decade — newest decade first
+  const byDecade=bestBy(w=>{const f=film(w.id);return f&&f.y?Math.floor(f.y/10)*10:null;});
+  const decItems=Object.keys(byDecade).map(Number).sort((a,b)=>b-a).map(dec=>({id:byDecade[dec].id,rank:byDecade[dec].rank,label:dec+'s'}));
+  _bestStrip(document.getElementById('bodStrip'),document.getElementById('bodSection'),decItems,'bod');
+  // Best of Each Genre — most-watched genre first
+  const byGenre=bestBy(w=>getFilmGenre(w.id)||null);
+  const gCounts={};W.forEach(w=>{const g=getFilmGenre(w.id);if(g)gCounts[g]=(gCounts[g]||0)+1;});
+  const genItems=Object.keys(byGenre).sort((a,b)=>(gCounts[b]||0)-(gCounts[a]||0)).map(g=>({id:byGenre[g].id,rank:byGenre[g].rank,label:g}));
+  _bestStrip(document.getElementById('bogStrip'),document.getElementById('bogSection'),genItems,'bog');
 }
 
 // ══════════ RENDER STATS ══════════
