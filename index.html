@@ -1315,9 +1315,7 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
         </button>
       </div>
 
-      <div id="agent-cards"><div class="agent-error" style="grid-column:1/-1;">
-         Could not load recommendations. <a href="javascript:loadAgentRecs()" style="color:var(--gold);text-decoration:underline;">Try again</a>
-       </div></div>
+      <div id="agent-cards"></div>
     </section>
 
   </div>
@@ -4298,7 +4296,7 @@ async function loadAgentRecs() {
   const dismissed     = _dismissedRecs.map(r => typeof r === 'string' ? r : r.title);
   const excluded      = [...watchedTitles, ...wlTitles, ...dismissed].join('", "');
 
-  const systemPrompt = `You are a sophisticated film curator for a personal movie diary. Recommend exactly 8 films tailored to the viewer's demonstrated taste.
+  const systemPrompt = `You are a sophisticated film curator for a personal movie diary. Recommend exactly 10 films tailored to the viewer's demonstrated taste.
 
 Respond ONLY with a valid JSON array of exactly 8 objects. No markdown, no explanation — pure JSON only.
 
@@ -4316,15 +4314,15 @@ Do NOT recommend any of these titles: "${excluded}"
 Vary eras and countries. Prioritize critically acclaimed films.`;
 
   const userPrompt = profile
-    ? `My viewing history ranked best to worst:\n${profile.topFilms}\n\nLeast favorites: ${profile.leastFav}\nTop genres: ${profile.topGenres}${profile.favDirs ? `\nFavorite directors: ${profile.favDirs}` : ''}${profile.favActors ? `\nFrequent actors: ${profile.favActors}` : ''}\n\nRecommend 9 films I would love. Return JSON only.`
-    : `Recommend 9 critically acclaimed films across different genres and eras. Return JSON only.`;
+    ? `My viewing history ranked best to worst:\n${profile.topFilms}\n\nLeast favorites: ${profile.leastFav}\nTop genres: ${profile.topGenres}${profile.favDirs ? `\nFavorite directors: ${profile.favDirs}` : ''}${profile.favActors ? `\nFrequent actors: ${profile.favActors}` : ''}\n\nRecommend 10 films I would love. Return JSON only.`
+    : `Recommend 10 critically acclaimed films across different genres and eras. Return JSON only.`;
 
   try {
     const response = await fetch(AGENT_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-opus-4-8',
         max_tokens: 3000,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }]
@@ -4337,22 +4335,26 @@ Vary eras and countries. Prioritize critically acclaimed films.`;
     }
 
     const data    = await response.json();
+    if (data && data.type === 'error') throw new Error(data.error && data.error.message || 'API error');
     const rawText = (data.content || []).map(b => b.text || '').join('').trim();
     const jsonStr = rawText.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim();
     const recs    = JSON.parse(jsonStr);
 
     if (!Array.isArray(recs) || !recs.length) throw new Error('Unexpected response shape');
 
-    _currentRecs = recs.slice(0, 5);
-    _recBuffer   = recs.slice(5);   // keep extras as reserve
+    // Hard guarantee (the prompt exclusion list is advisory only): drop anything
+    // already watched, on the watchlist, or previously dismissed.
+    const fresh = recs.filter(r => r && r.title && !_recExcluded(r));
+    if (!fresh.length) throw new Error('No new recommendations returned');
+
+    _currentRecs = fresh.slice(0, 5);
+    _recBuffer   = fresh.slice(5);   // keep extras as reserve
     renderAgentCards(_currentRecs);
+    _saveRecCache();
 
   } catch (err) {
     console.error('Agent error:', err);
-    document.getElementById('agent-cards').innerHTML =
-      `<div class="agent-error" style="grid-column:1/-1;">
-         Could not load recommendations. <a href="javascript:loadAgentRecs()" style="color:var(--gold);text-decoration:underline;">Try again</a>
-       </div>`;
+    renderAgentIdle('Could not load recommendations — try again.');
   } finally {
     _agentLoading = false;
     if (btn) btn.disabled = false;
@@ -4446,6 +4448,7 @@ function replaceRecCard(idx) {
     setTimeout(() => {
       // Update data
       _currentRecs[idx] = replacement;
+      _saveRecCache();
       // Build new card HTML
       const newCard = buildRecCardEl(replacement, idx);
       card.replaceWith(newCard);
@@ -4464,6 +4467,7 @@ function replaceRecCard(idx) {
     card.style.transform = 'scale(.95)';
     setTimeout(() => {
       _currentRecs[idx] = null;
+      _saveRecCache();
       card.remove();
       // If fewer than 3 visible, offer a refresh
       const remaining = document.querySelectorAll('.rec-card').length;
@@ -4511,16 +4515,40 @@ function buildRecCardEl(rec, i) {
   return card;
 }
 
-// Auto-load on page init
-setTimeout(() => {
-  if (document.getElementById('page-home')?.classList.contains('active')) loadAgentRecs();
-}, 500);
-
-const _origShowPage = showPage;
-window.showPage = function(p) {
-  _origShowPage(p);
-  if (p === 'home' && !_agentLoading && !document.querySelector('.rec-card')) loadAgentRecs();
-};
+// Recommendations are BUTTON-ONLY: no automatic API calls (each request costs money).
+// The last batch is cached in localStorage and re-rendered for free on every visit.
+function _normRecTitle(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function _recExcluded(rec){
+  const tn=_normRecTitle(rec.title), y=parseInt(rec.year)||0;
+  const match=f=>f&&_normRecTitle(f.t)===tn&&(!y||!f.y||Math.abs(f.y-y)<=1);
+  if (W.some(w=>match(film(w.id)))) return true;
+  if (WL.some(id=>match(film(id)))) return true;
+  return _dismissedRecs.some(r=>_normRecTitle(typeof r==='string'?r:r.title)===tn);
+}
+function _saveRecCache(){
+  try{localStorage.setItem('jwl3_recs',JSON.stringify({ts:Date.now(),current:_currentRecs,buffer:_recBuffer}));}catch(e){}
+}
+function renderAgentIdle(msg){
+  const c=document.getElementById('agent-cards');if(!c)return;
+  c.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:1.6rem 0;">'
+    +(msg?'<div style="font-family:\'Times New Roman\',Times,serif;font-style:italic;color:var(--white-50);margin-bottom:.9rem;font-size:.9rem">'+msg+'</div>':'')
+    +'<button class="agent-refresh-btn" onclick="loadAgentRecs()">✦ &nbsp;Get Recommendations</button></div>';
+}
+(function initAgentSection(){
+  try{
+    const c=JSON.parse(localStorage.getItem('jwl3_recs')||'null');
+    if(c&&Array.isArray(c.current)){
+      const kept=c.current.filter(Boolean).filter(r=>r.title&&!_recExcluded(r));
+      if(kept.length){
+        _currentRecs=kept;
+        _recBuffer=Array.isArray(c.buffer)?c.buffer:[];
+        renderAgentCards(_currentRecs);
+        return;
+      }
+    }
+  }catch(e){}
+  renderAgentIdle('Claude picks films for your taste \u2014 only when you ask.');
+})();
 </script>
 
 <div class="lb-tip" id="lbTip"><div class="lb-tip-title" id="lbTipTitle"></div><div class="lb-tip-stars" id="lbTipStars"></div><div class="lb-tip-text" id="lbTipText"></div></div>

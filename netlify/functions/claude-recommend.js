@@ -27,11 +27,12 @@ exports.handler = async (event) => {
 
   try {
     const body = event.body;
-    const data = await makeRequest(apiKey, body);
+    const result = await makeRequest(apiKey, body);
+    // Pass the upstream status through so the frontend can tell errors from data
     return {
-      statusCode: 200,
+      statusCode: result.status,
       headers: corsHeaders(),
-      body: JSON.stringify(data)
+      body: JSON.stringify(result.data)
     };
   } catch (err) {
     return {
@@ -61,7 +62,7 @@ function makeRequest(apiKey, body) {
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
-          resolve(JSON.parse(data));
+          resolve({ status: res.statusCode || 200, data: JSON.parse(data) });
         } catch (e) {
           reject(new Error('Invalid JSON from Anthropic: ' + data));
         }
