@@ -1,8 +1,15 @@
-// Netlify Function — Letterboxd RSS proxy + supplement for older entries
-// RSS covers the 50 most recent diary entries; older films are supplemented below
-// with the rating + review text confirmed from Jake's Letterboxd film pages.
-// When a film ages off the RSS window and its review goes blank on the site,
-// add it here (rating + review) so it keeps showing.
+// Netlify Function — Letterboxd RSS proxy + persistent archive + supplement
+// RSS covers only the 50 most recent diary entries. To keep ratings/reviews
+// from vanishing when films age off that window, every entry that ever appears
+// in the feed is archived into Netlify Blobs (store "letterboxd", key
+// "archive") and merged back into every response. The hardcoded SUPPLEMENT
+// below remains as a curated baseline for films that predate the archive;
+// nothing new should ever need to be added to it by hand.
+// Precedence when the same film appears in several sources: RSS (freshest)
+// beats SUPPLEMENT (hand-verified) beats archive (historical).
+// Inspect the archive at ?src=archive.
+
+const { getStore, connectLambda } = require('@netlify/blobs');
 
 const CORS = {
   'Content-Type': 'application/json',
@@ -107,46 +114,80 @@ async function tryFetchReview(filmUrl) {
   } catch(e) { return ''; }
 }
 
+const entryKey = e => e.title.toLowerCase().trim() + '|' + e.year;
+
 exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
+
+  // Open the persistent archive (best-effort: the site still works without it,
+  // it just loses long-term memory for aged-off films).
+  let store = null, archive = {};
+  try {
+    if (typeof connectLambda === 'function') connectLambda(event);
+    store = getStore('letterboxd');
+    archive = (await store.get('archive', { type: 'json' })) || {};
+    if (typeof archive !== 'object' || Array.isArray(archive)) archive = {};
+  } catch (e) { store = null; archive = {}; }
+
+  // Maintenance/inspection route
+  if (event.queryStringParameters && event.queryStringParameters.src === 'archive') {
+    return { statusCode: 200, headers: CORS, body: JSON.stringify(Object.values(archive)) };
+  }
+
+  // Baseline = archive, overlaid with the hand-verified supplement.
+  const merged = {};
+  for (const a of Object.values(archive)) if (a && a.title) merged[entryKey(a)] = a;
+  for (const s of SUPPLEMENT) merged[entryKey(s)] = { title: s.title, year: s.year, rating: s.rating, link: s.link, review: s.review };
+
+  let rssOk = false;
+  const rssResults = [];
   try {
     const r = await fetch(LB_RSS, { headers: { 'User-Agent': LB_UA } });
-    if (!r.ok) return { statusCode: 200, headers: CORS, body: JSON.stringify(SUPPLEMENT) };
-    const xml = await r.text();
-    const parts = xml.split('<item'); parts.shift();
-    const seen = new Set();
-    const results = [];
-    for (const item of parts) {
-      const title  = decode(extractTag(item, 'letterboxd:filmTitle'));
-      const year   = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
-      const rating = parseFloat(extractTag(item, 'letterboxd:memberRating')) || 0;
-      const lm     = item.match(/<link>([^<]+)<\/link>/);
-      const link   = lm ? lm[1].trim() : '';
-      const review = stripHtml(extractCdata(item, 'description'));
-      if (title && (rating > 0 || review.length > 5)) {
-        const key = title.toLowerCase().trim() + '|' + year;
-        if (!seen.has(key)) { seen.add(key); results.push({ title, year, rating, link, review }); }
+    if (r.ok) {
+      const xml = await r.text();
+      const parts = xml.split('<item'); parts.shift();
+      const seen = new Set();
+      for (const item of parts) {
+        const title  = decode(extractTag(item, 'letterboxd:filmTitle'));
+        const year   = parseInt(extractTag(item, 'letterboxd:filmYear')) || 0;
+        const rating = parseFloat(extractTag(item, 'letterboxd:memberRating')) || 0;
+        const lm     = item.match(/<link>([^<]+)<\/link>/);
+        const link   = lm ? lm[1].trim() : '';
+        const review = stripHtml(extractCdata(item, 'description'));
+        if (title && (rating > 0 || review.length > 5)) {
+          const key = title.toLowerCase().trim() + '|' + year;
+          if (!seen.has(key)) { seen.add(key); rssResults.push({ title, year, rating, link, review }); }
+        }
       }
+      // A feed with zero parseable entries is a failure, not an empty diary.
+      rssOk = rssResults.length > 0;
+      for (const e of rssResults) merged[entryKey(e)] = e;
     }
-    // Merge supplement (skip any already covered by RSS)
-    const suppToFetch = [];
-    for (const s of SUPPLEMENT) {
-      const key = s.title.toLowerCase().trim() + '|' + s.year;
-      if (!seen.has(key)) {
-        const entry = { title: s.title, year: s.year, rating: s.rating, link: s.link, review: s.review };
-        results.push(entry);
-        if (!entry.review && entry.link) suppToFetch.push(entry);
-      }
-    }
-    if (suppToFetch.length) {
-      await Promise.all(suppToFetch.map(async entry => {
-        const rev = await tryFetchReview(entry.link);
-        if (rev) entry.review = rev;
-      }));
-    }
-    return { statusCode: 200, headers: CORS, body: JSON.stringify(results) };
-  } catch(e) {
-    // On any failure, still return the supplement so older films keep their reviews.
-    return { statusCode: 200, headers: CORS, body: JSON.stringify(SUPPLEMENT) };
+  } catch (e) { /* fall through to archive + supplement */ }
+
+  // Backfill archived/supplement entries missing review text from the film
+  // page. Never fresh RSS entries: a rating-only diary log has no reviewBody,
+  // and the page's meta-description fallback would inject the film synopsis.
+  const rssKeys = new Set(rssResults.map(entryKey));
+  const toFetch = Object.values(merged).filter(e => !e.review && e.link && !rssKeys.has(entryKey(e))).slice(0, 5);
+  if (toFetch.length) {
+    await Promise.all(toFetch.map(async entry => {
+      const rev = await tryFetchReview(entry.link);
+      if (rev) entry.review = rev;
+    }));
   }
+
+  // Persist: once a film has been seen, its rating/review survives aging off
+  // the 50-entry RSS window. Only write when the RSS fetch succeeded (so a bad
+  // feed can never shrink the archive) and something actually changed.
+  if (store && rssOk) {
+    try {
+      const next = JSON.stringify(merged);
+      if (next !== JSON.stringify(archive)) await store.setJSON('archive', merged);
+    } catch (e) { /* archive write is best-effort */ }
+  }
+
+  // RSS entries first (diary order), then everything remembered/curated.
+  const results = rssResults.concat(Object.values(merged).filter(e => !rssKeys.has(entryKey(e))));
+  return { statusCode: 200, headers: CORS, body: JSON.stringify(results) };
 };
