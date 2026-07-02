@@ -1960,6 +1960,13 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
       <div id="actorSortControls" class="actor-sort-controls"></div>
       <div id="actorList"></div>
     </div>
+    <hr class="insight-divider">
+    <!-- Directors -->
+    <div>
+      <div class="sec-label" style="margin-bottom:.9rem">Directors</div>
+      <div id="directorSortControls" class="actor-sort-controls"></div>
+      <div id="directorList"></div>
+    </div>
   </div>
 </div>
 
@@ -3788,6 +3795,7 @@ function renderStats(){
   renderDecades(films);
     renderDays(films);
     renderActors(films);
+    renderDirectors(films);
 }
 
 function renderDecades(films){
@@ -4111,6 +4119,65 @@ function renderActors(films,_sort){if(_sort)window._actorSort=_sort;const sortBy
     return `<div class="actor-row">
       <div class="actor-header" onclick="toggleActor(this)">
         <div class="actor-name">${actor}</div>
+        <div class="actor-meta">
+          <span class="actor-count-label">${label}</span>
+          ${avgRank!=null?'<span class="actor-avg-rank">Avg. Rank: #'+avgRank+'</span>':''}
+        </div>
+        <span class="actor-chevron">▼</span>
+      </div>
+      <div class="actor-films">${pills}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDirectors(films,_sort){if(_sort)window._directorSort=_sort;const sortBy=window._directorSort||'count';
+  const el=document.getElementById('directorList');
+  if(!el)return;
+  el.innerHTML='';
+  const _sc=document.getElementById('directorSortControls');
+  if(!films.length){
+    if(_sc)_sc.innerHTML='';
+    el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Watch some films to see your directors.</div>';
+    return;
+  }
+  // Build map: director → [{title, year, rank}]
+  const dc={};
+  films.forEach(w=>{
+    const dir=(w.f.d||'').trim();
+    if(!dir)return;
+    if(!dc[dir])dc[dir]=[];
+    dc[dir].push({t:w.f.t,y:w.f.y,rank:w.rank});
+  });
+  // Sort by count desc, then alpha; only show directors with 2+ films
+  const sorted=Object.entries(dc)
+    .filter(([,movies])=>movies.length>=2)
+    .map(([director,movies])=>{
+      const ranked=movies.filter(m=>m.rank!=null&&m.rank>0);
+      const avgRank=ranked.length?Math.round(ranked.reduce((sum,m)=>sum+m.rank,0)/ranked.length*10)/10:null;
+      return [director,movies,avgRank];
+    })
+    .sort((a,b)=>{
+      if(sortBy==='count')return b[1].length-a[1].length||a[0].localeCompare(b[0]);
+      if(a[2]==null&&b[2]==null)return a[0].localeCompare(b[0]);
+      if(a[2]==null)return 1;if(b[2]==null)return -1;
+      return a[2]-b[2];
+    });
+
+  if(!sorted.length){
+    if(_sc)_sc.innerHTML='';
+    el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Directors show up here once you\'ve watched 2+ of their films.</div>';
+    return;
+  }
+
+  if(_sc)_sc.innerHTML='<span style="font-family:\'Times New Roman\',Times,serif;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--white-50);margin-right:.25rem">Sort by</span><button class="db-sort'+(sortBy==='count'?' active':'')+'" onclick="window._directorSort=\'count\';renderStats()">Movie Count</button>'+'<button class="db-sort'+(sortBy==='avg'?' active':'')+'" onclick="window._directorSort=\'avg\';renderStats()">Avg. Rank</button>';
+
+  el.innerHTML=sorted.map(([director,movies,avgRank],i)=>{
+    const count=movies.length;
+    const pills=movies.sort((a,b)=>a.y-b.y).map(m=>`<span class="actor-film-pill">${m.t} <span style="opacity:.5">${m.y}</span></span>`).join('');
+    const label=count===1?'1 film':`${count} films`;
+    return `<div class="actor-row">
+      <div class="actor-header" onclick="toggleActor(this)">
+        <div class="actor-name">${director}</div>
         <div class="actor-meta">
           <span class="actor-count-label">${label}</span>
           ${avgRank!=null?'<span class="actor-avg-rank">Avg. Rank: #'+avgRank+'</span>':''}
