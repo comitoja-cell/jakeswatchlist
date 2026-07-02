@@ -41,6 +41,28 @@ const SUPPLEMENT = [
     review: "This movie proved that spectacular acting is not enough for me to thoroughly enjoy a movie." },
   { title: "Before Sunrise", year: 1995, rating: 5, link: "https://letterboxd.com/jake_comito/film/before-sunrise/",
     review: "One of the best movies of all time. While watching I was transported back into my early 20s and loved every single second. There's truly no better screenplay." },
+  // Aged off the RSS window by 2026-07-01. Ratings + reviews verified from
+  // Jake's Letterboxd film pages (JSON-LD ratingValue + reviewBody).
+  { title: "Amélie", year: 2001, rating: 5, link: "https://letterboxd.com/jake_comito/film/amelie/",
+    review: "Jake likes: this movie. Jake dislikes: when this movie was over. Some of the best writing in a film. The set-up is captivating, and the reward is sweet." },
+  { title: "Bugonia", year: 2025, rating: 5, link: "https://letterboxd.com/jake_comito/film/bugonia/",
+    review: "In the beginning, I found myself trying to rationalize what Jesse Plemons was saying. Half-way, I found myself trying to rationalize why I was trying to rationalize what Jesse Plemons was saying. Rating bias-alert: I will never not love every Emma Stone movie." },
+  { title: "One Battle After Another", year: 2025, rating: 4.5, link: "https://letterboxd.com/jake_comito/film/one-battle-after-another/",
+    review: "Only criticism is that it needed more Teyana Taylor. The Christmas dude-club bit really got me." },
+  { title: "Inglourious Basterds", year: 2009, rating: 4, link: "https://letterboxd.com/jake_comito/film/inglourious-basterds/",
+    review: "Obviously a classic, but I'm forever somewhat disappointed in how randomly the two main stories seemed to come together at the end." },
+  { title: "Love Actually", year: 2003, rating: 4, link: "https://letterboxd.com/jake_comito/film/love-actually/",
+    review: "This movie is like a warm hug that halfway through you start wondering, “Why am I being hugged?” But I still love being hugged." },
+  { title: "Shutter Island", year: 2010, rating: 3.5, link: "https://letterboxd.com/jake_comito/film/shutter-island/",
+    review: "I think the hype got to me before the movie did. Everyone raves about the ending, but I thought it was… fine? Still gripping, still fun. Still a huge Leo and Mark R. fan." },
+  { title: "The Roses", year: 2025, rating: 3.5, link: "https://letterboxd.com/jake_comito/film/the-roses-2025/",
+    review: "A+ acting but this is not a movie that makes you feel nice." },
+  { title: "Steel Magnolias", year: 1989, rating: 3.5, link: "https://letterboxd.com/jake_comito/film/steel-magnolias/",
+    review: "Zinger after zinger after zinger. I felt like I was living in this movie rather than watching it. The end is a gut-punch; Sally Field really delivers." },
+  { title: "A Fish Called Wanda", year: 1988, rating: 3, link: "https://letterboxd.com/jake_comito/film/a-fish-called-wanda/",
+    review: "It's hard for me to love a movie where everyone sucks but at least it's fun and Kevin Kline gets what he deserves." },
+  { title: "Frankenstein", year: 2025, rating: 3, link: "https://letterboxd.com/jake_comito/film/frankenstein-2025/",
+    review: "So much of the cinematography felt fake which is a damn shame for a story all about life. Also: didn't like how unlikable Victor was, but loved Jacob Elordi's \"creature.\"" },
 ];
 
 function extractTag(xml, tag) {

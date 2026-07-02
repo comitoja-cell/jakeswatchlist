@@ -3530,7 +3530,8 @@ function _hmRender(){
   months.forEach(({y,m})=>{
     const mk=y+'-'+String(m+1).padStart(2,'0');
     const ranks=rankMap[mk]||[];
-    const count=ranks.length;
+    // Count watches by date (not by rank) so unranked logs still show up
+    const count=W.filter(w=>w.d&&w.d.slice(0,7)===mk).length;
     const pct=totalWatches>0?Math.round(count/totalWatches*100):0;
     const avgRank=ranks.length>0?Math.round(ranks.reduce((s,r)=>s+r,0)/ranks.length*10)/10:null;
     monthStats[mk]={count,pct,avgRank};
@@ -3571,7 +3572,7 @@ function _hmMonthHtml(year,month,dayMap,todayKey,stats,isBest,maxCount){
       const isToday=k===todayKey;
       const isActive=fs.length>0;
       let cls='hm-day'+(fs.length>1?' hm-multi':isActive?' hm-active':' hm-inactive')+(isToday?' hm-today':'');
-      const sf=fs.map(t=>t.replace(/|/g,'')).join('|').replace(/"/g,'&quot;');
+      const sf=fs.map(t=>t.replace(/\|/g,'')).join('|').replace(/"/g,'&quot;');
       return'<div class="'+cls+'" data-date="'+k+'" data-films="'+sf+'" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>';
     }).join('');
     rows.push('<div class="hm-week-row">'+week+'</div>');
@@ -3593,7 +3594,7 @@ function _hmMonthHtml(year,month,dayMap,todayKey,stats,isBest,maxCount){
     '<div class="hm-stat-box">'+
       '<div class="hm-stat-val">'+stats.pct+'%</div>'+
       '<div class="hm-stat-lbl">Of total</div>'+
-      '<div class="hm-stat-bar"><div class="hm-stat-bar-fill" style="width:'+stats.pct*3+'%"></div></div>'+
+      '<div class="hm-stat-bar"><div class="hm-stat-bar-fill" style="width:'+Math.min(100,stats.pct*3)+'%"></div></div>'+
     '</div>'+
     '<div class="hm-stat-box">'+
       '<div class="hm-stat-val">'+avgDisplay+'</div>'+
