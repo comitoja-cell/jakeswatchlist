@@ -2044,7 +2044,7 @@ const FILMS=[
   {id:34,t:"Anora",y:2024,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"],tmdbId:1218846},
   {id:35,t:"Now You See Me",y:2013,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"],tmdbId:75656},
   {id:36,t:"Love Actually",y:2003,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Alan Rickman","Emma Thompson","Liam Neeson","Martine McCutcheon","Colin Firth","Bill Nighy","Laura Linney","L\u00facia Moniz","Andrew Lincoln","Keira Knightley","Chiwetel Ejiofor"],tmdbId:508},
-  {id:37,t:"Mr. & Mrs. Smith",y:2005,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"],tmdbId:14979},
+  {id:37,t:"Mr. & Mrs. Smith",y:2005,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"],tmdbId:787,poster:"/kjD700RtyhveN3ZbOnSvUSne0Qj.jpg"},
   {id:38,t:"Bugonia",y:2025,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"],tmdbId:701387},
   {id:39,t:"Notting Hill",y:1999,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"],tmdbId:1094},
   {id:40,t:"If I Had Legs I'd Kick You",y:2025,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"],tmdbId:1160360},
@@ -3739,6 +3739,10 @@ async function renderByNumbers(){
   // Best of Each Decade — newest decade first
   const byDecade=bestBy(w=>{const f=film(w.id);return f&&f.y?Math.floor(f.y/10)*10:null;});
   const decItems=Object.keys(byDecade).map(Number).sort((a,b)=>b-a).map(dec=>({id:byDecade[dec].id,rank:byDecade[dec].rank,label:dec+'s'}));
+  // Current year leads the strip — favorite film released this calendar year
+  const curYear=new Date().getFullYear();
+  const byCurYear=bestBy(w=>{const f=film(w.id);return f&&f.y===curYear?curYear:null;});
+  if(byCurYear[curYear])decItems.unshift({id:byCurYear[curYear].id,rank:byCurYear[curYear].rank,label:String(curYear)});
   _bestStrip(document.getElementById('bodStrip'),document.getElementById('bodSection'),decItems,'bod');
   // Best of Each Genre — most-watched genre first
   const byGenre=bestBy(w=>getFilmGenre(w.id)||null);
