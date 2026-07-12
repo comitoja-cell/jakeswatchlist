@@ -1917,6 +1917,12 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
     </div>
     <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
     <hr class="insight-divider">
+    <!-- Rating Distribution -->
+    <div class="decade-section">
+      <div class="sec-label" style="margin-bottom:.9rem">Rating Distribution</div>
+      <div id="ratingHisto"></div>
+    </div>
+    <hr class="insight-divider">
     <!-- Best of Each Month -->
     <div class="bom-section" id="bomSection">
       <div class="sec-label" style="margin-bottom:.9rem">Best of Each Month</div>
@@ -2007,54 +2013,54 @@ body.visitor-mode .rec-dismiss  { display: none !important; }
 // ══════════ FILM DATABASE ══════════
 const FILMS=[
   // ── Classic Archive ──
-  {id:1,t:"Sunset Boulevard",y:1950,g:"Drama",e:"🎬",d:"Billy Wilder",a:["Gloria Swanson","William Holden","Erich von Stroheim"]},
-  {id:2,t:"Casablanca",y:1942,g:"Romance",e:"🌹",d:"Michael Curtiz",a:["Humphrey Bogart","Ingrid Bergman","Paul Henreid"]},
-  {id:3,t:"Rear Window",y:1954,g:"Thriller",e:"🔦",d:"Alfred Hitchcock",a:["James Stewart","Grace Kelly","Raymond Burr"]},
-  {id:4,t:"All About Eve",y:1950,g:"Drama",e:"🎭",d:"Joseph L. Mankiewicz",a:["Bette Davis","Anne Baxter","George Sanders"]},
-  {id:5,t:"Double Indemnity",y:1944,g:"Film Noir",e:"🌃",d:"Billy Wilder",a:["Fred MacMurray","Barbara Stanwyck","Edward G. Robinson"]},
-  {id:6,t:"Singin' in the Rain",y:1952,g:"Musical",e:"🎷",d:"Stanley Donen",a:["Gene Kelly","Debbie Reynolds","Donald O'Connor"]},
-  {id:7,t:"Ben-Hur",y:1959,g:"Epic",e:"🏛️",d:"William Wyler",a:["Charlton Heston","Jack Hawkins","Stephen Boyd"]},
-  {id:8,t:"Vertigo",y:1958,g:"Thriller",e:"🌀",d:"Alfred Hitchcock",a:["James Stewart","Kim Novak","Barbara Bel Geddes"]},
-  {id:9,t:"Some Like It Hot",y:1959,g:"Comedy",e:"💃",d:"Billy Wilder",a:["Marilyn Monroe","Tony Curtis","Jack Lemmon"]},
-  {id:10,t:"Roman Holiday",y:1953,g:"Romance",e:"🛵",d:"William Wyler",a:["Audrey Hepburn","Gregory Peck","Eddie Albert"]},
-  {id:11,t:"To Have and Have Not",y:1944,g:"Romance",e:"⚓",d:"Howard Hawks",a:["Humphrey Bogart","Lauren Bacall","Walter Brennan"]},
-  {id:12,t:"Breakfast at Tiffany's",y:1961,g:"Romance",e:"💎",d:"Blake Edwards",a:["Audrey Hepburn","George Peppard","Patricia Neal"]},
-  {id:13,t:"Notorious",y:1946,g:"Thriller",e:"🍾",d:"Alfred Hitchcock",a:["Cary Grant","Ingrid Bergman","Claude Rains"]},
-  {id:14,t:"The Philadelphia Story",y:1940,g:"Comedy",e:"🥂",d:"George Cukor",a:["Cary Grant","Katharine Hepburn","James Stewart"]},
-  {id:15,t:"Laura",y:1944,g:"Film Noir",e:"🖼️",d:"Otto Preminger",a:["Gene Tierney","Dana Andrews","Clifton Webb"]},
-  {id:16,t:"An Affair to Remember",y:1957,g:"Romance",e:"🗼",d:"Leo McCarey",a:["Cary Grant","Deborah Kerr","Richard Denning"]},
-  {id:17,t:"The Big Sleep",y:1946,g:"Film Noir",e:"🔍",d:"Howard Hawks",a:["Humphrey Bogart","Lauren Bacall","Martha Vickers"]},
-  {id:18,t:"Sabrina",y:1954,g:"Romance",e:"🌷",d:"Billy Wilder",a:["Audrey Hepburn","Humphrey Bogart","William Holden"]},
-  {id:19,t:"The Maltese Falcon",y:1941,g:"Film Noir",e:"🦅",d:"John Huston",a:["Humphrey Bogart","Mary Astor","Peter Lorre"]},
-  {id:20,t:"A Streetcar Named Desire",y:1951,g:"Drama",e:"🚃",d:"Elia Kazan",a:["Marlon Brando","Vivien Leigh","Kim Hunter"]},
-  {id:21,t:"Gone with the Wind",y:1939,g:"Epic",e:"🌅",d:"Victor Fleming",a:["Vivien Leigh","Clark Gable","Olivia de Havilland"]},
-  {id:22,t:"Rebecca",y:1940,g:"Thriller",e:"🕯️",d:"Alfred Hitchcock",a:["Laurence Olivier","Joan Fontaine","George Sanders"]},
-  {id:23,t:"Gentlemen Prefer Blondes",y:1953,g:"Musical",e:"✨",d:"Howard Hawks",a:["Marilyn Monroe","Jane Russell","Charles Coburn"]},
-  {id:24,t:"The Women",y:1939,g:"Comedy",e:"💄",d:"George Cukor",a:["Norma Shearer","Joan Crawford","Rosalind Russell"]},
+  {id:1,t:"Sunset Boulevard",y:1950,rt:110,g:"Drama",e:"🎬",d:"Billy Wilder",a:["Gloria Swanson","William Holden","Erich von Stroheim"]},
+  {id:2,t:"Casablanca",y:1942,rt:102,g:"Romance",e:"🌹",d:"Michael Curtiz",a:["Humphrey Bogart","Ingrid Bergman","Paul Henreid"]},
+  {id:3,t:"Rear Window",y:1954,rt:113,g:"Thriller",e:"🔦",d:"Alfred Hitchcock",a:["James Stewart","Grace Kelly","Raymond Burr"]},
+  {id:4,t:"All About Eve",y:1950,rt:139,g:"Drama",e:"🎭",d:"Joseph L. Mankiewicz",a:["Bette Davis","Anne Baxter","George Sanders"]},
+  {id:5,t:"Double Indemnity",y:1944,rt:107,g:"Film Noir",e:"🌃",d:"Billy Wilder",a:["Fred MacMurray","Barbara Stanwyck","Edward G. Robinson"]},
+  {id:6,t:"Singin' in the Rain",y:1952,rt:103,g:"Musical",e:"🎷",d:"Stanley Donen",a:["Gene Kelly","Debbie Reynolds","Donald O'Connor"]},
+  {id:7,t:"Ben-Hur",y:1959,rt:212,g:"Epic",e:"🏛️",d:"William Wyler",a:["Charlton Heston","Jack Hawkins","Stephen Boyd"]},
+  {id:8,t:"Vertigo",y:1958,rt:128,g:"Thriller",e:"🌀",d:"Alfred Hitchcock",a:["James Stewart","Kim Novak","Barbara Bel Geddes"]},
+  {id:9,t:"Some Like It Hot",y:1959,rt:123,g:"Comedy",e:"💃",d:"Billy Wilder",a:["Marilyn Monroe","Tony Curtis","Jack Lemmon"]},
+  {id:10,t:"Roman Holiday",y:1953,rt:119,g:"Romance",e:"🛵",d:"William Wyler",a:["Audrey Hepburn","Gregory Peck","Eddie Albert"]},
+  {id:11,t:"To Have and Have Not",y:1944,rt:100,g:"Romance",e:"⚓",d:"Howard Hawks",a:["Humphrey Bogart","Lauren Bacall","Walter Brennan"]},
+  {id:12,t:"Breakfast at Tiffany's",y:1961,rt:115,g:"Romance",e:"💎",d:"Blake Edwards",a:["Audrey Hepburn","George Peppard","Patricia Neal"]},
+  {id:13,t:"Notorious",y:1946,rt:103,g:"Thriller",e:"🍾",d:"Alfred Hitchcock",a:["Cary Grant","Ingrid Bergman","Claude Rains"]},
+  {id:14,t:"The Philadelphia Story",y:1940,rt:113,g:"Comedy",e:"🥂",d:"George Cukor",a:["Cary Grant","Katharine Hepburn","James Stewart"]},
+  {id:15,t:"Laura",y:1944,rt:88,g:"Film Noir",e:"🖼️",d:"Otto Preminger",a:["Gene Tierney","Dana Andrews","Clifton Webb"]},
+  {id:16,t:"An Affair to Remember",y:1957,rt:111,g:"Romance",e:"🗼",d:"Leo McCarey",a:["Cary Grant","Deborah Kerr","Richard Denning"]},
+  {id:17,t:"The Big Sleep",y:1946,rt:114,g:"Film Noir",e:"🔍",d:"Howard Hawks",a:["Humphrey Bogart","Lauren Bacall","Martha Vickers"]},
+  {id:18,t:"Sabrina",y:1954,rt:114,g:"Romance",e:"🌷",d:"Billy Wilder",a:["Audrey Hepburn","Humphrey Bogart","William Holden"]},
+  {id:19,t:"The Maltese Falcon",y:1941,rt:100,g:"Film Noir",e:"🦅",d:"John Huston",a:["Humphrey Bogart","Mary Astor","Peter Lorre"]},
+  {id:20,t:"A Streetcar Named Desire",y:1951,rt:125,g:"Drama",e:"🚃",d:"Elia Kazan",a:["Marlon Brando","Vivien Leigh","Kim Hunter"]},
+  {id:21,t:"Gone with the Wind",y:1939,rt:233,g:"Epic",e:"🌅",d:"Victor Fleming",a:["Vivien Leigh","Clark Gable","Olivia de Havilland"]},
+  {id:22,t:"Rebecca",y:1940,rt:130,g:"Thriller",e:"🕯️",d:"Alfred Hitchcock",a:["Laurence Olivier","Joan Fontaine","George Sanders"]},
+  {id:23,t:"Gentlemen Prefer Blondes",y:1953,rt:91,g:"Musical",e:"✨",d:"Howard Hawks",a:["Marilyn Monroe","Jane Russell","Charles Coburn"]},
+  {id:24,t:"The Women",y:1939,rt:133,g:"Comedy",e:"💄",d:"George Cukor",a:["Norma Shearer","Joan Crawford","Rosalind Russell"]},
   // ── Jake's 2026 Films ──
-  {id:25,t:"The Roses",y:2025,g:"Comedy-Drama",e:"🌸",d:"Jay Roach",a:["Benedict Cumberbatch","Olivia Colman","Andy Samberg","Kate McKinnon","Allison Janney","Ncuti Gatwa"],tmdbId:1267905},
-  {id:26,t:"Inglourious Basterds",y:2009,g:"War",e:"🎖️",d:"Quentin Tarantino",a:["Brad Pitt","Christoph Waltz","Mélanie Laurent","Diane Kruger"],tmdbId:16869},
-  {id:27,t:"The Royal Tenenbaums",y:2001,g:"Comedy-Drama",e:"🎾",d:"Wes Anderson",a:["Gene Hackman","Anjelica Huston","Ben Stiller","Gwyneth Paltrow","Luke Wilson","Owen Wilson"],tmdbId:9428},
-  {id:28,t:"Amélie",y:2001,g:"Romance",e:"🎠",d:"Jean-Pierre Jeunet",a:["Audrey Tautou","Mathieu Kassovitz","Rufus"],tmdbId:194},
-  {id:29,t:"Stranger Than Fiction",y:2006,g:"Comedy-Drama",e:"📖",d:"Marc Forster",a:["Will Ferrell","Maggie Gyllenhaal","Dustin Hoffman","Emma Thompson","Queen Latifah"],tmdbId:1262,poster:"/nCzcepubwShvZ4vbCsygQNgF2Z1.jpg"},
-  {id:30,t:"Marty Supreme",y:2025,g:"Drama",e:"🏓",d:"Josh Safdie",a:["Timothée Chalamet","Gwyneth Paltrow","Odessa A'zion","Tyler, the Creator","Fran Drescher"],tmdbId:1317288},
-  {id:31,t:"The Talented Mr. Ripley",y:1999,g:"Thriller",e:"🎭",d:"Anthony Minghella",a:["Matt Damon","Gwyneth Paltrow","Jude Law","Cate Blanchett"],tmdbId:1213},
-  {id:32,t:"A Fish Called Wanda",y:1988,g:"Comedy",e:"🐟",d:"Charles Crichton",a:["John Cleese","Jamie Lee Curtis","Kevin Kline","Michael Palin"],tmdbId:11129},
-  {id:33,t:"The Others",y:2001,g:"Horror",e:"👻",d:"Alejandro Amenábar",a:["Nicole Kidman","Fionnula Flanagan","Christopher Eccleston"],tmdbId:1933,poster:"/p8g1vlTvpM6nr2hMMiZ1fUlKF0D.jpg"},
-  {id:34,t:"Anora",y:2024,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"],tmdbId:1218846},
-  {id:35,t:"Now You See Me",y:2013,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"],tmdbId:75656},
-  {id:36,t:"Love Actually",y:2003,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Alan Rickman","Emma Thompson","Liam Neeson","Martine McCutcheon","Colin Firth","Bill Nighy","Laura Linney","L\u00facia Moniz","Andrew Lincoln","Keira Knightley","Chiwetel Ejiofor"],tmdbId:508},
-  {id:37,t:"Mr. & Mrs. Smith",y:2005,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"],tmdbId:787,poster:"/kjD700RtyhveN3ZbOnSvUSne0Qj.jpg"},
-  {id:38,t:"Bugonia",y:2025,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"],tmdbId:701387},
-  {id:39,t:"Notting Hill",y:1999,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"],tmdbId:1094},
-  {id:40,t:"If I Had Legs I'd Kick You",y:2025,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"],tmdbId:1160360},
-  {id:41,t:"Leaving Las Vegas",y:1995,g:"Drama",e:"🎰",d:"Mike Figgis",a:["Nicolas Cage","Elisabeth Shue","Julian Sands"],tmdbId:9593},
-  {id:42,t:"Blue Jasmine",y:2013,g:"Drama",e:"💙",d:"Woody Allen",a:["Cate Blanchett","Alec Baldwin","Sally Hawkins","Bobby Cannavale"],tmdbId:162943},
-  {id:43,t:"Shutter Island",y:2010,g:"Thriller",e:"🏚️",d:"Martin Scorsese",a:["Leonardo DiCaprio","Mark Ruffalo","Ben Kingsley","Michelle Williams"],tmdbId:11324},
-  {id:44,t:"Steel Magnolias",y:1989,g:"Drama",e:"🌺",d:"Herbert Ross",a:["Sally Field","Dolly Parton","Shirley MacLaine","Olympia Dukakis","Daryl Hannah","Julia Roberts"],tmdbId:10868},
-  {id:45,t:"Before Sunrise",y:1995,g:"Romance",e:"🌄",d:"Richard Linklater",a:["Ethan Hawke","Julie Delpy"],tmdbId:76,poster:"/kf1Jb1c2JAOqjuzA3H4oDM263uB.jpg"},
-  {id:46,t:"Mission: Impossible",y:1996,g:"Action",e:"💣",d:"Brian De Palma",a:["Tom Cruise","Jon Voight","Emmanuelle Béart","Jean Reno","Ving Rhames"],tmdbId:954},
-  {id:47,t:"One Battle After Another",y:2025,g:"War",e:"⚔️",d:"Paul Thomas Anderson",a:["Leonardo DiCaprio","Sean Penn","Benicio del Toro","Regina Hall","Teyana Taylor"],tmdbId:1054867},
+  {id:25,t:"The Roses",y:2025,rt:105,g:"Comedy-Drama",e:"🌸",d:"Jay Roach",a:["Benedict Cumberbatch","Olivia Colman","Andy Samberg","Kate McKinnon","Allison Janney","Ncuti Gatwa"],tmdbId:1267905},
+  {id:26,t:"Inglourious Basterds",y:2009,rt:153,g:"War",e:"🎖️",d:"Quentin Tarantino",a:["Brad Pitt","Christoph Waltz","Mélanie Laurent","Diane Kruger"],tmdbId:16869},
+  {id:27,t:"The Royal Tenenbaums",y:2001,rt:110,g:"Comedy-Drama",e:"🎾",d:"Wes Anderson",a:["Gene Hackman","Anjelica Huston","Ben Stiller","Gwyneth Paltrow","Luke Wilson","Owen Wilson"],tmdbId:9428},
+  {id:28,t:"Amélie",y:2001,rt:122,g:"Romance",e:"🎠",d:"Jean-Pierre Jeunet",a:["Audrey Tautou","Mathieu Kassovitz","Rufus"],tmdbId:194},
+  {id:29,t:"Stranger Than Fiction",y:2006,rt:113,g:"Comedy-Drama",e:"📖",d:"Marc Forster",a:["Will Ferrell","Maggie Gyllenhaal","Dustin Hoffman","Emma Thompson","Queen Latifah"],tmdbId:1262,poster:"/nCzcepubwShvZ4vbCsygQNgF2Z1.jpg"},
+  {id:30,t:"Marty Supreme",y:2025,rt:150,g:"Drama",e:"🏓",d:"Josh Safdie",a:["Timothée Chalamet","Gwyneth Paltrow","Odessa A'zion","Tyler, the Creator","Fran Drescher"],tmdbId:1317288},
+  {id:31,t:"The Talented Mr. Ripley",y:1999,rt:140,g:"Thriller",e:"🎭",d:"Anthony Minghella",a:["Matt Damon","Gwyneth Paltrow","Jude Law","Cate Blanchett"],tmdbId:1213},
+  {id:32,t:"A Fish Called Wanda",y:1988,rt:100,g:"Comedy",e:"🐟",d:"Charles Crichton",a:["John Cleese","Jamie Lee Curtis","Kevin Kline","Michael Palin"],tmdbId:11129},
+  {id:33,t:"The Others",y:2001,rt:101,g:"Horror",e:"👻",d:"Alejandro Amenábar",a:["Nicole Kidman","Fionnula Flanagan","Christopher Eccleston"],tmdbId:1933,poster:"/p8g1vlTvpM6nr2hMMiZ1fUlKF0D.jpg"},
+  {id:34,t:"Anora",y:2024,rt:139,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"],tmdbId:1064213,poster:"/cgXk2tNYhJZLXdBDO5DidAVzQ82.jpg"},
+  {id:35,t:"Now You See Me",y:2013,rt:116,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"],tmdbId:75656},
+  {id:36,t:"Love Actually",y:2003,rt:135,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Alan Rickman","Emma Thompson","Liam Neeson","Martine McCutcheon","Colin Firth","Bill Nighy","Laura Linney","L\u00facia Moniz","Andrew Lincoln","Keira Knightley","Chiwetel Ejiofor"],tmdbId:508},
+  {id:37,t:"Mr. & Mrs. Smith",y:2005,rt:120,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"],tmdbId:787,poster:"/kjD700RtyhveN3ZbOnSvUSne0Qj.jpg"},
+  {id:38,t:"Bugonia",y:2025,rt:119,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"],tmdbId:701387},
+  {id:39,t:"Notting Hill",y:1999,rt:124,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"],tmdbId:1094},
+  {id:40,t:"If I Had Legs I'd Kick You",y:2025,rt:113,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"],tmdbId:1160360},
+  {id:41,t:"Leaving Las Vegas",y:1995,rt:131,g:"Drama",e:"🎰",d:"Mike Figgis",a:["Nicolas Cage","Elisabeth Shue","Julian Sands"],tmdbId:9593},
+  {id:42,t:"Blue Jasmine",y:2013,rt:99,g:"Drama",e:"💙",d:"Woody Allen",a:["Cate Blanchett","Alec Baldwin","Sally Hawkins","Bobby Cannavale"],tmdbId:162943},
+  {id:43,t:"Shutter Island",y:2010,rt:138,g:"Thriller",e:"🏚️",d:"Martin Scorsese",a:["Leonardo DiCaprio","Mark Ruffalo","Ben Kingsley","Michelle Williams"],tmdbId:11324},
+  {id:44,t:"Steel Magnolias",y:1989,rt:111,g:"Drama",e:"🌺",d:"Herbert Ross",a:["Sally Field","Dolly Parton","Shirley MacLaine","Olympia Dukakis","Daryl Hannah","Julia Roberts"],tmdbId:10868},
+  {id:45,t:"Before Sunrise",y:1995,rt:101,g:"Romance",e:"🌄",d:"Richard Linklater",a:["Ethan Hawke","Julie Delpy"],tmdbId:76,poster:"/kf1Jb1c2JAOqjuzA3H4oDM263uB.jpg"},
+  {id:46,t:"Mission: Impossible",y:1996,rt:111,g:"Action",e:"💣",d:"Brian De Palma",a:["Tom Cruise","Jon Voight","Emmanuelle Béart","Jean Reno","Ving Rhames"],tmdbId:954},
+  {id:47,t:"One Battle After Another",y:2025,rt:162,g:"War",e:"⚔️",d:"Paul Thomas Anderson",a:["Leonardo DiCaprio","Sean Penn","Benicio del Toro","Regina Hall","Teyana Taylor"],tmdbId:1054867},
 ];
 
 // Ranking order (1=best): Before Sunrise, Notting Hill, Anora, Stranger Than Fiction,
@@ -2617,7 +2623,7 @@ function tmdbToLocal(data){
     FILMS.push(local);
   }
   // Always try to enrich director + cast if missing or cast list is incomplete, async — doesn't block the return
-  if((!local.d || !local.a || local.a.length < 12) && local.tmdbId && tmdbReady()){
+  if((!local.d || !local.a || local.a.length < 12 || !(local.rt>0)) && local.tmdbId && tmdbReady()){
     enrichFilmFromTMDB(local);
   }
   return local;
@@ -2643,6 +2649,7 @@ async function enrichFilmFromTMDB(filmObj) {
     const _p=CAST_PATCHES[filmObj.tmdbId];if(_p)_p.forEach(n=>{if(!filmObj.a.includes(n))filmObj.a.push(n);});
     filmObj.g = genre;
     filmObj.poster = poster;
+    if (data.runtime > 0) filmObj.rt = data.runtime;
     // Persist the enriched data and re-render anything showing this film's metadata
     save();
     try {
@@ -2659,12 +2666,33 @@ async function enrichFilmFromTMDB(filmObj) {
   } catch(e) { /* non-critical */ }
 }
 
+// One-time sweep: fetch runtimes for any watched/watchlisted film that predates the
+// runtime feature. Saves once at the end; safe to re-run (no-ops when nothing is missing).
+async function backfillRuntimes(){
+  if(!tmdbReady())return;
+  const need=[...new Set([...W.map(w=>w.id),...WL])].map(id=>film(id)).filter(f=>f&&!(f.rt>0)&&f.tmdbId);
+  if(!need.length)return;
+  let changed=false;
+  for(const f of need){
+    try{
+      const res=await fetch(`${TMDB_BASE}/movie/${f.tmdbId}?language=en-US`,{headers:{Authorization:`Bearer ${TMDB_TOKEN}`}});
+      if(!res.ok)continue;
+      const data=await res.json();
+      if(data.runtime>0){f.rt=data.runtime;changed=true;}
+    }catch(e){}
+  }
+  if(changed){
+    save();
+    try{renderTable();renderWL();renderStats();}catch(e){}
+  }
+}
+
 async function openModalTMDB(safeJson){
   const data=JSON.parse(decodeURIComponent(safeJson));
   const local=tmdbToLocal(data);
   // If this is a new film missing director/cast, wait for enrichment before opening modal
   // so the modal shows accurate metadata and saveWatched stores it correctly
-  if((!local.d || !local.a || local.a.length < 12) && local.tmdbId && tmdbReady()){
+  if((!local.d || !local.a || local.a.length < 12 || !(local.rt>0)) && local.tmdbId && tmdbReady()){
     try { await enrichFilmFromTMDB(local); } catch(e){}
   }
   openModal(local.id);
@@ -2678,7 +2706,7 @@ async function addWLTMDB(safeJson){
     showToast(`"${local.t}" added to your watch list`);
     hideResults();
     // Enrich in background for watchlist films too
-    if((!local.d || !local.a || !local.a.length) && local.tmdbId && tmdbReady()){
+    if((!local.d || !local.a || !local.a.length || !(local.rt>0)) && local.tmdbId && tmdbReady()){
       try { await enrichFilmFromTMDB(local); } catch(e){}
     }
   }
@@ -2886,10 +2914,10 @@ function colSort(col){
   if(curSort===col){
     sortDir[col] = sortDir[col]==='asc' ? 'desc' : 'asc';
   } else {
-    sortDir[col] = (col==='date'||col==='year') ? 'desc' : 'asc';
+    sortDir[col] = (col==='date'||col==='year'||col==='runtime') ? 'desc' : 'asc';
   }
   curSort=col;
-  ['rank','alpha','genre','director','year','date'].forEach(c=>{
+  ['rank','alpha','genre','director','year','runtime','date'].forEach(c=>{
     const th=document.getElementById('th-'+c);
     if(!th)return;
     const arrow=th.querySelector('.sort-arrow');
@@ -2927,6 +2955,13 @@ function switchTab(tab,btn){
   if(tab==='watchlist')renderWL();
 }
 
+// Format a runtime in minutes as "2h 14m" (em dash when unknown)
+function fmtRuntime(min){
+  if(!(min>0))return '—';
+  const h=Math.floor(min/60),m=min%60;
+  return h?('' + h + 'h' + (m?' '+m+'m':'')):(m+'m');
+}
+
 // ══════════ COLUMN ORDER ══════════
 const COL_DEFS={
   rank:    {id:'th-rank',    style:'width:46px;cursor:pointer;',    sortKey:'rank',     label:'Rank'},
@@ -2936,10 +2971,13 @@ const COL_DEFS={
   genre:   {id:'th-genre',   style:'cursor:pointer;',               sortKey:'genre',    label:'Genre'},
   director:{id:'th-director',style:'cursor:pointer;',               sortKey:'director', label:'Director'},
   year:    {id:'th-year',    style:'cursor:pointer;',               sortKey:'year',     label:'Year'},
+  runtime: {id:'th-runtime', style:'width:86px;cursor:pointer;white-space:nowrap;', sortKey:'runtime', label:'Runtime'},
   date:    {id:'th-date',    style:'cursor:pointer;',               sortKey:'date',     label:'Date Watched'},
 };
-const DEFAULT_COL_ORDER=['rank','poster','title','review','genre','director','year','date'];
+const DEFAULT_COL_ORDER=['rank','poster','title','review','genre','director','year','runtime','date'];
 let _colOrder=JSON.parse(localStorage.getItem('jwl3_col_order')||'null')||[...DEFAULT_COL_ORDER];
+// Users with a saved column order from before the Runtime column existed: slot it in after Year
+if(!_colOrder.includes('runtime')){const _yi=_colOrder.indexOf('year');_colOrder.splice(_yi>=0?_yi+1:_colOrder.length,0,'runtime');}
 let _colDragSrc=null;
 
 function renderHead(){
@@ -3023,6 +3061,9 @@ function renderTable(){
   } else if(curSort==='year'){
     const dir=sortDir['year']==='desc'?-1:1;
     list.sort((a,b)=>dir*((film(a.id)?.y||0)-(film(b.id)?.y||0)));
+  } else if(curSort==='runtime'){
+    const dir=sortDir['runtime']==='desc'?-1:1;
+    list.sort((a,b)=>dir*((film(a.id)?.rt||0)-(film(b.id)?.rt||0)));
   }
 
   const gf=document.getElementById('dbGenre');const cv=gf.value;
@@ -3070,6 +3111,7 @@ function renderTable(){
       })(),
       director:`<td><div class="mt-year">${f.d}</div></td>`,
       year:`<td><div class="mt-year">${f.y}</div></td>`,
+      runtime:`<td><div class="mt-year">${fmtRuntime(f.rt)}</div></td>`,
       date:`<td><div class="mt-date">${fmtDate(w.d)}</div></td>`,
     };
     return `<tr class="${isElite?'elite-row':''}">${_colOrder.map(k=>_cells[k]||'').join('')}</tr>`;
@@ -3199,7 +3241,7 @@ async function fetchStreaming(f) {
 }
 // ══════════ RENDER WATCHLIST ══════════
 let _wlSort = 'alpha';
-let _wlSortDir = { alpha: 'asc', genre: 'asc', director: 'asc', year: 'desc', stream: 'asc' };
+let _wlSortDir = { alpha: 'asc', genre: 'asc', director: 'asc', year: 'desc', runtime: 'desc', stream: 'asc' };
 let _wlStreamData = {}; // { filmId: sources[] }
 
 function toggleWLSearch() {
@@ -3228,6 +3270,7 @@ function _wlRenderHead() {
     { key: null, label: '', style: 'width:44px;' },
     { key: 'alpha', label: 'Title', style: '' },
     { key: 'year', label: 'Year', style: 'width:100px;white-space:nowrap;' },
+    { key: 'runtime', label: 'Runtime', style: 'width:100px;white-space:nowrap;' },
     { key: 'genre', label: 'Genre', style: '' },
     { key: 'director', label: 'Director', style: '' },
     { key: 'stream', label: 'Streaming', style: '' },
@@ -3302,6 +3345,7 @@ function renderWL() {
     if (_wlSort === 'genre') return dir * (a.g||'').localeCompare(b.g||'');
     if (_wlSort === 'director') return dir * (a.d||'').localeCompare(b.d||'');
     if (_wlSort === 'year') return dir * ((a.y||0) - (b.y||0));
+    if (_wlSort === 'runtime') return dir * ((a.rt||0) - (b.rt||0));
     if (_wlSort === 'stream') {
       const as = (_wlStreamData[a.id]||[]).map(s=>s.name).join(',');
       const bs = (_wlStreamData[b.id]||[]).map(s=>s.name).join(',');
@@ -3311,7 +3355,7 @@ function renderWL() {
   });
 
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;font-style:italic;color:var(--white-20);font-family:'Times New Roman',Times,serif;">No films match your filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;font-style:italic;color:var(--white-20);font-family:'Times New Roman',Times,serif;">No films match your filters</td></tr>`;
     return;
   }
 
@@ -3332,6 +3376,7 @@ function renderWL() {
         <div class="mt-title">${f.t}</div>
       </td>
       <td><div class="mt-year">${f.y||'—'}</div></td>
+      <td><div class="mt-year">${fmtRuntime(f.rt)}</div></td>
       <td><span class="mt-genre">${f.g||'—'}</span></td>
       <td><div class="mt-year">${f.d||'—'}</div></td>
       <td>${streamCell}</td>
@@ -3714,9 +3759,9 @@ async function renderByNumbers(){
   const completedWeeks=Math.round((curWeekStart-fws)/(7*86400000));
   const filmsCompletedWeeks=W.filter(w=>w.d&&_dt(w.d)<curWeekStart).length;
   const avgWeek=(completedWeeks>=1?filmsCompletedWeeks/completedWeeks:total).toFixed(1);
-  // Ratings (Letterboxd, complete for all films; app rating as fallback)
-  const ratings=W.map(_filmRating).filter(r=>r>0);
-  const avgR=ratings.length?(ratings.reduce((s,r)=>s+r,0)/ratings.length):0;
+  // Time spent watching (TMDB runtimes; films still missing a runtime are skipped)
+  const totalMin=W.reduce((s,w)=>{const f=film(w.id);return s+(f&&f.rt>0?f.rt:0);},0);
+  const daysWatched=totalMin/1440;
   const perfect=W.filter(w=>_filmRating(w)===5).length;
   // Caption
   if(cap)cap.textContent='Keeping this diary since '+d0.toLocaleString('en-US',{month:'long',year:'numeric'})+'.';
@@ -3725,7 +3770,7 @@ async function renderByNumbers(){
     {stat:total, sub:'', label:'Films Watched'},
     {stat:avgMonth, sub:'', label:'Per Month'},
     {stat:avgWeek, sub:'', label:'Per Week'},
-    {stat:avgR?avgR.toFixed(1):'—', sub:avgR?_starStr(avgR):'', label:'Avg Rating'},
+    {stat:totalMin?daysWatched.toFixed(1):'—', sub:totalMin?(Math.floor(totalMin/60)+'h '+(totalMin%60)+'m'):'', label:'Days Watched'},
     {stat:perfect, sub:perfect?'★★★★★':'', label:perfect===1?'Perfect Score':'Perfect Scores'},
     {stat:WL.length, sub:'', label:'On the Watchlist'},
   ];
@@ -3751,10 +3796,52 @@ async function renderByNumbers(){
   _bestStrip(document.getElementById('bogStrip'),document.getElementById('bogSection'),genItems,'bog');
 }
 
+// ── Rating Distribution: half-star histogram of Letterboxd ratings ──
+function renderRatingHisto(){
+  const el=document.getElementById('ratingHisto');
+  if(!el)return;
+  const buckets={};for(let b=1;b<=10;b++)buckets[b]=[];
+  W.forEach(w=>{
+    const f=film(w.id);if(!f)return;
+    const r=_filmRating(w);if(!(r>0))return;
+    const b=Math.min(10,Math.max(1,Math.round(r*2)));
+    buckets[b].push({t:f.t,y:f.y});
+  });
+  const total=Object.values(buckets).reduce((s,a)=>s+a.length,0);
+  if(!total){el.innerHTML='<div style="color:var(--white-50);font-style:italic;font-size:.9rem">Rate some films to see your rating distribution</div>';return;}
+  const max=Math.max(...Object.values(buckets).map(a=>a.length),1);
+  const lbl=b=>{const r=b/2;return (r%1?((Math.floor(r)||'')+'½'):r)+'★';};
+  const oldTip=document.getElementById('rhTip');if(oldTip)oldTip.remove();
+  const tip=document.createElement('div');tip.className='decade-tooltip';tip.id='rhTip';document.body.appendChild(tip);
+  el.innerHTML='<div class="decade-chart-wrap">'+Object.keys(buckets).map(b=>{
+    const n=buckets[b].length;
+    const isMax=n===max&&n>0;
+    const h=n?Math.max(6,Math.round(n/max*120)):2;
+    return '<div class="decade-col" data-b="'+b+'">'
+      +'<div class="decade-pct">'+(n||'')+'</div>'
+      +'<div class="decade-vbar" style="height:'+h+'px;background:'+(isMax?'#d4a017':(n?'rgba(201,168,76,.45)':'rgba(255,255,255,.06)'))+'"></div>'
+      +'<div class="decade-vlabel">'+lbl(+b)+'</div>'
+    +'</div>';
+  }).join('')+'</div>';
+  el.querySelectorAll('.decade-col').forEach(col=>{
+    const fs=buckets[col.dataset.b];
+    col.addEventListener('mouseenter',e=>{
+      if(!fs.length)return;
+      const pct=Math.round(fs.length/total*100);
+      tip.innerHTML='<div class="decade-tip-label">'+lbl(+col.dataset.b)+' — '+fs.length+' film'+(fs.length===1?'':'s')+' · '+pct+'%</div>'
+        +fs.slice().sort((a,b)=>a.t.localeCompare(b.t)).map(f=>'<div class="decade-tip-film">'+f.t+'<span class="decade-tip-year">'+f.y+'</span></div>').join('');
+      tip.classList.add('show');_moveTip(e,tip);
+    });
+    col.addEventListener('mousemove',e=>_moveTip(e,tip));
+    col.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+  });
+}
+
 // ══════════ RENDER STATS ══════════
 function renderStats(){
   buildHeatmap();
   renderByNumbers();
+  renderRatingHisto();
   const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
 
 
@@ -4284,7 +4371,7 @@ renderTable();
 renderWL();
 renderRankings();
 renderStats();
-cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); });
+cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); backfillRuntimes(); });
 // If the cloud is empty but this device has data, seed it immediately so the
 // list is never lost and propagates to other devices.
 (async () => {
@@ -4483,6 +4570,7 @@ function addRecToWL(idx) {
     local = { id: newId, t: rec.title, y: rec.year, g: rec.genre, e: '🎬',
               d: rec.director, a: rec.stars.split(',').map(s=>s.trim()), tmdbId: rec.tmdb_id };
     FILMS.push(local);
+    if (local.tmdbId && tmdbReady()) enrichFilmFromTMDB(local);
   }
   if (!isWL(local.id) && !isW(local.id)) { WL.push(local.id); save(); }
   showToast(`"${rec.title}" added to your Watch List`);
