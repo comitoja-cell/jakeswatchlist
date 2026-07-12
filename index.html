@@ -3762,7 +3762,9 @@ async function renderByNumbers(){
   // Time spent watching (TMDB runtimes; films still missing a runtime are skipped)
   const totalMin=W.reduce((s,w)=>{const f=film(w.id);return s+(f&&f.rt>0?f.rt:0);},0);
   const daysWatched=totalMin/1440;
-  const perfect=W.filter(w=>_filmRating(w)===5).length;
+  // Ratings (Letterboxd, complete for all films; app rating as fallback)
+  const ratings=W.map(_filmRating).filter(r=>r>0);
+  const avgR=ratings.length?(ratings.reduce((s,r)=>s+r,0)/ratings.length):0;
   // Caption
   if(cap)cap.textContent='Keeping this diary since '+d0.toLocaleString('en-US',{month:'long',year:'numeric'})+'.';
   // Stat cells
@@ -3771,7 +3773,7 @@ async function renderByNumbers(){
     {stat:avgMonth, sub:'', label:'Per Month'},
     {stat:avgWeek, sub:'', label:'Per Week'},
     {stat:totalMin?daysWatched.toFixed(1):'—', sub:totalMin?(Math.floor(totalMin/60)+'h '+(totalMin%60)+'m'):'', label:'Days Watched'},
-    {stat:perfect, sub:perfect?'★★★★★':'', label:perfect===1?'Perfect Score':'Perfect Scores'},
+    {stat:avgR?avgR.toFixed(1):'—', sub:avgR?_starStr(avgR):'', label:'Avg Rating'},
     {stat:WL.length, sub:'', label:'On the Watchlist'},
   ];
   grid.innerHTML=cells.map(c=>'<div class="bynum-cell"><div class="bynum-stat">'+c.stat+'</div><div class="bynum-sub">'+c.sub+'</div><div class="bynum-label">'+c.label+'</div></div>').join('');
