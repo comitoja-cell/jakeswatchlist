@@ -4158,7 +4158,7 @@ async function loadLetterboxd(){
     const res=await fetch('/.netlify/functions/letterboxd');
     if(!res.ok)return;
     const data=await res.json();
-    if(Array.isArray(data)){_lbReviews=data;try{localStorage.setItem('jwl3_lb_cache',JSON.stringify({ts:Date.now(),d:data}));}catch(e){}renderTable();try{renderByNumbers();}catch(e){}}
+    if(Array.isArray(data)){_lbReviews=data;try{localStorage.setItem('jwl3_lb_cache',JSON.stringify({ts:Date.now(),d:data}));}catch(e){}renderTable();try{renderByNumbers();}catch(e){}try{renderRatingHisto();}catch(e){}}
   }catch(e){}
 }
 
