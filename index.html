@@ -2190,13 +2190,10 @@ const SEED_W=[];
 const SEED_WL=[];
 // Permanent cast corrections for films where TMDB billing order omits key actors
 // ── Cast selection ────────────────────────────────────
-// TMDB's billing order is unreliable on large ensembles: The Odyssey bills
-// Zendaya 33rd, Jon Bernthal 34th and Lupita Nyong'o 47th, while six "Trojan
-// Civilian" extras sit above them. A fixed top-N slice therefore drops real
-// performances (Mia Goth, billed 21st, went uncounted). Keep every credited
-// acting role inside the top 30, plus any notable performer billed deeper, and
-// discard uncredited/archive credits, loop-group "Additional Voices" entries
-// and non-acting department credits.
+// Top-12 credited acting roles. Deeper billing is deliberately NOT auto-included:
+// large ensembles (The Odyssey) bury stars below extras, but any threshold loose
+// enough to catch them floods the actor list with bit parts across the whole
+// library. Deep-billed standouts are hand-listed in CAST_PATCHES instead.
 function pickCast(cast){
   return (cast||[]).filter(c=>{
     if(!c.name)return false;
@@ -2205,13 +2202,13 @@ function pickCast(cast){
     if(/\((uncredited|archive)/i.test(ch))return false;
     if(/^(additional|various|ensemble|extra)\b/i.test(ch))return false;
     if(c.known_for_department&&c.known_for_department!=='Acting')return false;
-    return (c.order==null?99:c.order)<30||(c.popularity||0)>=4;
-  }).map(c=>c.name);
+    return true;
+  }).slice(0,12).map(c=>c.name);
 }
 // Deep-cast results cached by tmdbId. Built-in FILMS entries (id<=47) live in
 // this file and can't be written back by save(), so the sweep caches them here
 // and re-applies on load. Doubles as the "already fetched" marker.
-const CAST_CACHE_KEY='jwl3_cast_v2';
+const CAST_CACHE_KEY='jwl3_cast_v3';
 function loadCastCache(){try{return JSON.parse(localStorage.getItem(CAST_CACHE_KEY)||'{}');}catch(e){return {};}}
 function saveCastCache(c){try{localStorage.setItem(CAST_CACHE_KEY,JSON.stringify(c));}catch(e){}}
 // Union only — never replaces, so hand-curated names survive and a film whose
@@ -2223,7 +2220,7 @@ function applyCast(f,names){
   names.forEach(n=>{if(!f.a.includes(n)){f.a.push(n);ch=true;}});
   return ch;
 }
-const CAST_PATCHES={120:['Cate Blanchett']};// Fellowship of the Ring — Galadriel billed 13th
+const CAST_PATCHES={120:['Cate Blanchett'],1368337:['Mia Goth','Zendaya','Jon Bernthal',"Lupita Nyong'o",'Samantha Morton','Benny Safdie']};// Fellowship of the Ring — Galadriel billed 13th
 
 
 // ══════════ STATE ══════════
@@ -2234,8 +2231,6 @@ const CAST_PATCHES={120:['Cate Blanchett']};// Fellowship of the Ring — Galadr
     custom.forEach(f => { if (!FILMS.find(x=>x.id===f.id)) FILMS.push(f); });
     // Apply permanent cast patches to all films so billing-cutoff omissions are corrected
     FILMS.forEach(f=>{ const p=f.tmdbId&&CAST_PATCHES[f.tmdbId]; if(p)p.forEach(n=>{if(!f.a.includes(n))f.a.push(n);}); });
-    // Re-apply cached deep-cast results (built-in films can't be persisted by save())
-    const _cc=loadCastCache();FILMS.forEach(f=>{ if(f.tmdbId&&_cc[f.tmdbId])applyCast(f,_cc[f.tmdbId]); });
   } catch(e) {}
 })();
 
@@ -2680,7 +2675,7 @@ async function enrichFilmFromTMDB(filmObj) {
     const poster = data.poster_path || filmObj.poster || '';
     // Update in-memory record
     filmObj.d = director;
-    if(cast.length)applyCast(filmObj, cast);
+    if(cast.length)filmObj.a = cast;
     // Apply permanent patches so re-fetches from TMDB don't re-introduce billing-cutoff omissions
     const _p=CAST_PATCHES[filmObj.tmdbId];if(_p)_p.forEach(n=>{if(!filmObj.a.includes(n))filmObj.a.push(n);});
     filmObj.g = genre;
@@ -2702,16 +2697,15 @@ async function enrichFilmFromTMDB(filmObj) {
   } catch(e) { /* non-critical */ }
 }
 
-// One-time sweep: pull the full credited cast for every watched/watchlisted film
-// so Insights actor counts include performances billed below TMDB's old top-12
-// cutoff. Unions into existing cast, and skips empty responses so a rate-limited
-// film simply retries on the next load instead of losing its cast.
+// Cleanup sweep: rebuild each custom film's cast to strict top-12 (repairs data
+// persisted by the short-lived deep-cast experiment), then re-assert CAST_PATCHES.
+// Built-in films are never touched — their hand-curated HTML arrays are canonical.
+// Skips empty/failed fetches so a rate-limited film keeps its cast and retries.
 async function backfillCast(){
   if(!tmdbReady())return;
   const cache=loadCastCache();
   const need=[...new Set([...W.map(w=>w.id),...WL])].map(id=>film(id))
-    .filter(f=>f&&f.tmdbId&&!cache[f.tmdbId]);
-  if(!need.length)return;
+    .filter(f=>f&&f.tmdbId&&f.id>47&&!cache[f.tmdbId]);
   let changed=false;
   for(let i=0;i<need.length;i+=4){
     await Promise.all(need.slice(i,i+4).map(async f=>{
@@ -2722,12 +2716,14 @@ async function backfillCast(){
         if(!Array.isArray(data.cast)||!data.cast.length)return;
         const names=pickCast(data.cast);
         cache[f.tmdbId]=names;
-        if(applyCast(f,names))changed=true;
+        if(names.length){f.a=names.slice();changed=true;}
       }catch(e){}
     }));
     await new Promise(r=>setTimeout(r,120));
   }
   saveCastCache(cache);
+  try{localStorage.removeItem('jwl3_cast_v2');}catch(e){}
+  FILMS.forEach(f=>{const p=f.tmdbId&&CAST_PATCHES[f.tmdbId];if(p&&applyCast(f,p))changed=true;});
   if(changed){save();try{renderTable();renderStats();renderFacts();}catch(e){}}
 }
 
