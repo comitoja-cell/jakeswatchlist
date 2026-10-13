@@ -365,7 +365,7 @@ tbody tr:hover{background:var(--white-04)}
 .yir-year{font-family:var(--f-cond);font-weight:700;font-size:clamp(5rem,15vw,10.5rem);line-height:.78;letter-spacing:-.03em;color:transparent;-webkit-text-stroke:2px var(--amber)}
 .yir-lede{font-family:var(--f-display);font-size:clamp(1.25rem,2.6vw,1.9rem);line-height:1.25;margin-top:1.1rem;text-wrap:balance}
 .yir-lede b{font-style:italic;font-weight:500;color:var(--amber)}
-.yir-top5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(.4rem,1.2vw,.9rem);align-items:end}
+.yir-top5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(.4rem,1.2vw,.9rem);align-items:start}
 .yir-top5 .pc:first-child{grid-column:span 1}
 .yir-top5 .pc-title{font-size:.8rem}
 .yir-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
@@ -945,14 +945,14 @@ const FILMS=[
   // ── Classic Archive ──
   {id:1,t:"Sunset Boulevard",y:1950,rt:110,g:"Drama",e:"🎬",d:"Billy Wilder",a:["Gloria Swanson","William Holden","Erich von Stroheim"]},
   {id:2,t:"Casablanca",y:1942,rt:102,g:"Romance",e:"🌹",d:"Michael Curtiz",a:["Humphrey Bogart","Ingrid Bergman","Paul Henreid"]},
-  {id:3,t:"Rear Window",y:1954,rt:113,g:"Thriller",e:"🔦",d:"Alfred Hitchcock",a:["James Stewart","Grace Kelly","Raymond Burr"]},
+  {id:3,t:"Rear Window",y:1954,rt:113,g:"Thriller",e:"🔦",d:"Alfred Hitchcock",a:["James Stewart","Grace Kelly","Raymond Burr"],tmdbId:567,poster:"/ILVF0eJxHMddjxeQhswFtpMtqx.jpg"},
   {id:4,t:"All About Eve",y:1950,rt:139,g:"Drama",e:"🎭",d:"Joseph L. Mankiewicz",a:["Bette Davis","Anne Baxter","George Sanders"]},
   {id:5,t:"Double Indemnity",y:1944,rt:107,g:"Film Noir",e:"🌃",d:"Billy Wilder",a:["Fred MacMurray","Barbara Stanwyck","Edward G. Robinson"]},
   {id:6,t:"Singin' in the Rain",y:1952,rt:103,g:"Musical",e:"🎷",d:"Stanley Donen",a:["Gene Kelly","Debbie Reynolds","Donald O'Connor"]},
   {id:7,t:"Ben-Hur",y:1959,rt:212,g:"Epic",e:"🏛️",d:"William Wyler",a:["Charlton Heston","Jack Hawkins","Stephen Boyd"]},
-  {id:8,t:"Vertigo",y:1958,rt:128,g:"Thriller",e:"🌀",d:"Alfred Hitchcock",a:["James Stewart","Kim Novak","Barbara Bel Geddes"]},
+  {id:8,t:"Vertigo",y:1958,rt:128,g:"Thriller",e:"🌀",d:"Alfred Hitchcock",a:["James Stewart","Kim Novak","Barbara Bel Geddes"],tmdbId:426,poster:"/15uOEfqBNTVtDUT7hGBVCka0rZz.jpg"},
   {id:9,t:"Some Like It Hot",y:1959,rt:123,g:"Comedy",e:"💃",d:"Billy Wilder",a:["Marilyn Monroe","Tony Curtis","Jack Lemmon"]},
-  {id:10,t:"Roman Holiday",y:1953,rt:119,g:"Romance",e:"🛵",d:"William Wyler",a:["Audrey Hepburn","Gregory Peck","Eddie Albert"]},
+  {id:10,t:"Roman Holiday",y:1953,rt:119,g:"Romance",e:"🛵",d:"William Wyler",a:["Audrey Hepburn","Gregory Peck","Eddie Albert"],tmdbId:804,poster:"/8lI9dmz1RH20FAqltkGelY1v4BE.jpg"},
   {id:11,t:"To Have and Have Not",y:1944,rt:100,g:"Romance",e:"⚓",d:"Howard Hawks",a:["Humphrey Bogart","Lauren Bacall","Walter Brennan"]},
   {id:12,t:"Breakfast at Tiffany's",y:1961,rt:115,g:"Romance",e:"💎",d:"Blake Edwards",a:["Audrey Hepburn","George Peppard","Patricia Neal"]},
   {id:13,t:"Notorious",y:1946,rt:103,g:"Thriller",e:"🍾",d:"Alfred Hitchcock",a:["Cary Grant","Ingrid Bergman","Claude Rains"]},
@@ -968,29 +968,29 @@ const FILMS=[
   {id:23,t:"Gentlemen Prefer Blondes",y:1953,rt:91,g:"Musical",e:"✨",d:"Howard Hawks",a:["Marilyn Monroe","Jane Russell","Charles Coburn"]},
   {id:24,t:"The Women",y:1939,rt:133,g:"Comedy",e:"💄",d:"George Cukor",a:["Norma Shearer","Joan Crawford","Rosalind Russell"]},
   // ── Jake's 2026 Films ──
-  {id:25,t:"The Roses",y:2025,rt:105,g:"Comedy-Drama",e:"🌸",d:"Jay Roach",a:["Benedict Cumberbatch","Olivia Colman","Andy Samberg","Kate McKinnon","Allison Janney","Ncuti Gatwa"],tmdbId:1267905},
-  {id:26,t:"Inglourious Basterds",y:2009,rt:153,g:"War",e:"🎖️",d:"Quentin Tarantino",a:["Brad Pitt","Christoph Waltz","Mélanie Laurent","Diane Kruger"],tmdbId:16869},
-  {id:27,t:"The Royal Tenenbaums",y:2001,rt:110,g:"Comedy-Drama",e:"🎾",d:"Wes Anderson",a:["Gene Hackman","Anjelica Huston","Ben Stiller","Gwyneth Paltrow","Luke Wilson","Owen Wilson"],tmdbId:9428},
-  {id:28,t:"Amélie",y:2001,rt:122,g:"Romance",e:"🎠",d:"Jean-Pierre Jeunet",a:["Audrey Tautou","Mathieu Kassovitz","Rufus"],tmdbId:194},
+  {id:25,t:"The Roses",y:2025,rt:105,g:"Comedy-Drama",e:"🌸",d:"Jay Roach",a:["Benedict Cumberbatch","Olivia Colman","Andy Samberg","Kate McKinnon","Allison Janney","Ncuti Gatwa"],tmdbId:1267905,poster:"/99O8HLHklXGzvF2TqiRqr7WddzT.jpg"},
+  {id:26,t:"Inglourious Basterds",y:2009,rt:153,g:"War",e:"🎖️",d:"Quentin Tarantino",a:["Brad Pitt","Christoph Waltz","Mélanie Laurent","Diane Kruger"],tmdbId:16869,poster:"/aupnPtagH9JVBuMrGEanf4iqXEQ.jpg"},
+  {id:27,t:"The Royal Tenenbaums",y:2001,rt:110,g:"Comedy-Drama",e:"🎾",d:"Wes Anderson",a:["Gene Hackman","Anjelica Huston","Ben Stiller","Gwyneth Paltrow","Luke Wilson","Owen Wilson"],tmdbId:9428,poster:"/nG7hZJn7wQTSDCQT39Gy3s3tbrp.jpg"},
+  {id:28,t:"Amélie",y:2001,rt:122,g:"Romance",e:"🎠",d:"Jean-Pierre Jeunet",a:["Audrey Tautou","Mathieu Kassovitz","Rufus"],tmdbId:194,poster:"/nSxDa3M9aMvGVLoItzWTepQ5h5d.jpg"},
   {id:29,t:"Stranger Than Fiction",y:2006,rt:113,g:"Comedy-Drama",e:"📖",d:"Marc Forster",a:["Will Ferrell","Maggie Gyllenhaal","Dustin Hoffman","Emma Thompson","Queen Latifah"],tmdbId:1262,poster:"/nCzcepubwShvZ4vbCsygQNgF2Z1.jpg"},
-  {id:30,t:"Marty Supreme",y:2025,rt:150,g:"Drama",e:"🏓",d:"Josh Safdie",a:["Timothée Chalamet","Gwyneth Paltrow","Odessa A'zion","Tyler, the Creator","Fran Drescher"],tmdbId:1317288},
-  {id:31,t:"The Talented Mr. Ripley",y:1999,rt:140,g:"Thriller",e:"🎭",d:"Anthony Minghella",a:["Matt Damon","Gwyneth Paltrow","Jude Law","Cate Blanchett"],tmdbId:1213},
-  {id:32,t:"A Fish Called Wanda",y:1988,rt:100,g:"Comedy",e:"🐟",d:"Charles Crichton",a:["John Cleese","Jamie Lee Curtis","Kevin Kline","Michael Palin"],tmdbId:11129},
+  {id:30,t:"Marty Supreme",y:2025,rt:150,g:"Drama",e:"🏓",d:"Josh Safdie",a:["Timothée Chalamet","Gwyneth Paltrow","Odessa A'zion","Tyler, The Creator","Fran Drescher"],tmdbId:1317288,poster:"/lYWEXbQgRTR4ZQleSXAgRbxAjvq.jpg"},
+  {id:31,t:"The Talented Mr. Ripley",y:1999,rt:140,g:"Thriller",e:"🎭",d:"Anthony Minghella",a:["Matt Damon","Gwyneth Paltrow","Jude Law","Cate Blanchett"],tmdbId:1213,poster:"/6ojHgqtIR41O2qLKa7LFUVj0cZa.jpg"},
+  {id:32,t:"A Fish Called Wanda",y:1988,rt:109,g:"Comedy",e:"🐟",d:"Charles Crichton",a:["John Cleese","Jamie Lee Curtis","Kevin Kline","Michael Palin"],tmdbId:623,poster:"/hkSGFNVfEEUXFCxRZDITFHVhUlu.jpg"},
   {id:33,t:"The Others",y:2001,rt:101,g:"Horror",e:"👻",d:"Alejandro Amenábar",a:["Nicole Kidman","Fionnula Flanagan","Christopher Eccleston"],tmdbId:1933,poster:"/p8g1vlTvpM6nr2hMMiZ1fUlKF0D.jpg"},
   {id:34,t:"Anora",y:2024,rt:139,g:"Drama",e:"💃",d:"Sean Baker",a:["Mikey Madison","Yura Borisov","Karren Karagulian"],tmdbId:1064213,poster:"/cgXk2tNYhJZLXdBDO5DidAVzQ82.jpg"},
-  {id:35,t:"Now You See Me",y:2013,rt:116,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"],tmdbId:75656},
-  {id:36,t:"Love Actually",y:2003,rt:135,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Alan Rickman","Emma Thompson","Liam Neeson","Martine McCutcheon","Colin Firth","Bill Nighy","Laura Linney","L\u00facia Moniz","Andrew Lincoln","Keira Knightley","Chiwetel Ejiofor"],tmdbId:508},
+  {id:35,t:"Now You See Me",y:2013,rt:116,g:"Thriller",e:"🎩",d:"Louis Leterrier",a:["Jesse Eisenberg","Mark Ruffalo","Woody Harrelson","Isla Fisher","Dave Franco"],tmdbId:75656,poster:"/tWsNYbrqy1p1w6K9zRk0mSchztT.jpg"},
+  {id:36,t:"Love Actually",y:2003,rt:135,g:"Romance",e:"❤️",d:"Richard Curtis",a:["Hugh Grant","Alan Rickman","Emma Thompson","Liam Neeson","Martine McCutcheon","Colin Firth","Bill Nighy","Laura Linney","L\u00facia Moniz","Andrew Lincoln","Keira Knightley","Chiwetel Ejiofor"],tmdbId:508,poster:"/7QPeVsr9rcFU9Gl90yg0gTOTpVv.jpg"},
   {id:37,t:"Mr. & Mrs. Smith",y:2005,rt:120,g:"Action",e:"🔫",d:"Doug Liman",a:["Brad Pitt","Angelina Jolie","Vince Vaughn"],tmdbId:787,poster:"/kjD700RtyhveN3ZbOnSvUSne0Qj.jpg"},
-  {id:38,t:"Bugonia",y:2025,rt:119,g:"Comedy",e:"🐛",d:"John Carney",a:["Sydney Sweeney","Glen Powell"],tmdbId:701387},
-  {id:39,t:"Notting Hill",y:1999,rt:124,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"],tmdbId:509},
-  {id:40,t:"If I Had Legs I'd Kick You",y:2025,rt:113,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"],tmdbId:1160360},
-  {id:41,t:"Leaving Las Vegas",y:1995,rt:131,g:"Drama",e:"🎰",d:"Mike Figgis",a:["Nicolas Cage","Elisabeth Shue","Julian Sands"],tmdbId:9593},
-  {id:42,t:"Blue Jasmine",y:2013,rt:99,g:"Drama",e:"💙",d:"Woody Allen",a:["Cate Blanchett","Alec Baldwin","Sally Hawkins","Bobby Cannavale"],tmdbId:160588},
-  {id:43,t:"Shutter Island",y:2010,rt:138,g:"Thriller",e:"🏚️",d:"Martin Scorsese",a:["Leonardo DiCaprio","Mark Ruffalo","Ben Kingsley","Michelle Williams"],tmdbId:11324},
-  {id:44,t:"Steel Magnolias",y:1989,rt:111,g:"Drama",e:"🌺",d:"Herbert Ross",a:["Sally Field","Dolly Parton","Shirley MacLaine","Olympia Dukakis","Daryl Hannah","Julia Roberts"],tmdbId:10868},
+  {id:38,t:"Bugonia",y:2025,rt:119,g:"Comedy",e:"🐛",d:"Yorgos Lanthimos",a:["Emma Stone","Jesse Plemons","Aidan Delbis","Stavros Halkias","Alicia Silverstone"],tmdbId:701387,poster:"/rSdOua3wKMEaFWDcKAYWRjXQWOt.jpg"},
+  {id:39,t:"Notting Hill",y:1999,rt:124,g:"Romance",e:"🏡",d:"Roger Michell",a:["Hugh Grant","Julia Roberts","Rhys Ifans","Emma Chambers","Hugh Bonneville","Tim McInnerny","Gina McKee","Alec Baldwin"],tmdbId:509,poster:"/hHRIf2XHeQMbyRb3HUx19SF5Ujw.jpg"},
+  {id:40,t:"If I Had Legs I'd Kick You",y:2025,rt:113,g:"Drama",e:"🦋",d:"Mary Bronstein",a:["Rose Byrne","A$AP Rocky","Conan O'Brien"],tmdbId:1160360,poster:"/va0TQ9WprMXRqQAzY56vyqY0Yd5.jpg"},
+  {id:41,t:"Leaving Las Vegas",y:1995,rt:111,g:"Drama",e:"🎰",d:"Mike Figgis",a:["Nicolas Cage","Elisabeth Shue","Julian Sands"],tmdbId:451,poster:"/wIfP6uLXD9Ptu68SyRx8WuSNNSK.jpg"},
+  {id:42,t:"Blue Jasmine",y:2013,rt:99,g:"Drama",e:"💙",d:"Woody Allen",a:["Cate Blanchett","Alec Baldwin","Sally Hawkins","Bobby Cannavale"],tmdbId:160588,poster:"/nsj0RLRI10351uYMoAKPur6Derd.jpg"},
+  {id:43,t:"Shutter Island",y:2010,rt:138,g:"Thriller",e:"🏚️",d:"Martin Scorsese",a:["Leonardo DiCaprio","Mark Ruffalo","Ben Kingsley","Michelle Williams"],tmdbId:11324,poster:"/nrmXQ0zcZUL8jFLrakWc90IR8z9.jpg"},
+  {id:44,t:"Steel Magnolias",y:1989,rt:117,g:"Drama",e:"🌺",d:"Herbert Ross",a:["Sally Field","Dolly Parton","Shirley MacLaine","Olympia Dukakis","Daryl Hannah","Julia Roberts","Tom Skerritt","Sam Shepard"],tmdbId:10860,poster:"/7ExUSN9s9gX9bhVM17zDLEizano.jpg"},
   {id:45,t:"Before Sunrise",y:1995,rt:101,g:"Romance",e:"🌄",d:"Richard Linklater",a:["Ethan Hawke","Julie Delpy"],tmdbId:76,poster:"/kf1Jb1c2JAOqjuzA3H4oDM263uB.jpg"},
-  {id:46,t:"Mission: Impossible",y:1996,rt:111,g:"Action",e:"💣",d:"Brian De Palma",a:["Tom Cruise","Jon Voight","Emmanuelle Béart","Jean Reno","Ving Rhames"],tmdbId:954},
-  {id:47,t:"One Battle After Another",y:2025,rt:162,g:"War",e:"⚔️",d:"Paul Thomas Anderson",a:["Leonardo DiCaprio","Sean Penn","Benicio del Toro","Regina Hall","Teyana Taylor"],tmdbId:1054867},
+  {id:46,t:"Mission: Impossible",y:1996,rt:111,g:"Action",e:"💣",d:"Brian De Palma",a:["Tom Cruise","Jon Voight","Emmanuelle Béart","Jean Reno","Ving Rhames"],tmdbId:954,poster:"/l5uxY5m5OInWpcExIpKG6AR3rgL.jpg"},
+  {id:47,t:"One Battle After Another",y:2025,rt:162,g:"War",e:"⚔️",d:"Paul Thomas Anderson",a:["Leonardo DiCaprio","Sean Penn","Benicio del Toro","Regina Hall","Teyana Taylor"],tmdbId:1054867,poster:"/lbBWwxBht4JFP5PsuJ5onpMqugW.jpg"},
 ];
 
 // Ranking order (1=best): Before Sunrise, Notting Hill, Anora, Stranger Than Fiction,
@@ -1138,7 +1138,10 @@ function pickCast(cast){
 // Deep-cast results cached by tmdbId. Built-in FILMS entries (id<=47) live in
 // this file and can't be written back by save(), so the sweep caches them here
 // and re-applies on load. Doubles as the "already fetched" marker.
-const CAST_CACHE_KEY='jwl3_cast_v3';
+const CAST_CACHE_KEY='jwl3_cast_v4';
+// TMDB occasionally renames people ("Cher Bono" became "Cher"), which splits one actor into two
+// in the insights. Cached casts are therefore thrown away and re-fetched every 30 days.
+const CAST_CHECKED_KEY='jwl3_cast_checked', CAST_TTL=30*86400000;
 function loadCastCache(){try{return JSON.parse(localStorage.getItem(CAST_CACHE_KEY)||'{}');}catch(e){return {};}}
 function saveCastCache(c){try{localStorage.setItem(CAST_CACHE_KEY,JSON.stringify(c));}catch(e){}}
 // Union only — never replaces, so hand-curated names survive and a film whose
@@ -1613,7 +1616,8 @@ async function enrichFilmFromTMDB(filmObj) {
 // Skips empty/failed fetches so a rate-limited film keeps its cast and retries.
 async function backfillCast(){
   if(!tmdbReady())return;
-  const cache=loadCastCache();
+  const stale=Date.now()-(parseInt(localStorage.getItem(CAST_CHECKED_KEY)||'0',10)||0)>CAST_TTL;
+  const cache=stale?{}:loadCastCache();
   const need=[...new Set([...W.map(w=>w.id),...WL])].map(id=>film(id))
     .filter(f=>f&&f.tmdbId&&f.id>47&&!cache[f.tmdbId]);
   let changed=false;
@@ -1626,13 +1630,13 @@ async function backfillCast(){
         if(!Array.isArray(data.cast)||!data.cast.length)return;
         const names=pickCast(data.cast);
         cache[f.tmdbId]=names;
-        if(names.length){f.a=names.slice();changed=true;}
+        if(names.length&&JSON.stringify(names)!==JSON.stringify(f.a)){f.a=names.slice();changed=true;}
       }catch(e){}
     }));
     await new Promise(r=>setTimeout(r,120));
   }
   saveCastCache(cache);
-  try{localStorage.removeItem('jwl3_cast_v2');}catch(e){}
+  try{if(stale)localStorage.setItem(CAST_CHECKED_KEY,String(Date.now()));localStorage.removeItem('jwl3_cast_v2');localStorage.removeItem('jwl3_cast_v3');}catch(e){}
   FILMS.forEach(f=>{const p=f.tmdbId&&CAST_PATCHES[f.tmdbId];if(p&&applyCast(f,p))changed=true;});
   if(changed){save();try{refreshAll();}catch(e){}}
 }
@@ -3168,7 +3172,7 @@ function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 // ── Posters ──────────────────────────────────────────────
 // Films with a stored TMDB poster path render instantly; the rest show a title
 // card and are filled in by hydratePosters() (result cached per film id).
-let _pUrlCache=lsGet('jwl3_pcache',{});
+let _pUrlCache=lsGet('jwl3_pcache2',{});
 function posterSrc(f,size){
   if(!f)return '';
   if(f.poster)return IMG_BASE+(size||'w342')+f.poster;
@@ -3205,7 +3209,7 @@ function hydratePosters(){
         img.src=url;el.appendChild(img);
       });
     }
-    if(changed)lsSet('jwl3_pcache',_pUrlCache);
+    if(changed)lsSet('jwl3_pcache2',_pUrlCache);
   },80);
 }
 
@@ -3346,7 +3350,21 @@ function insJump(id){
   if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
   return false;
 }
+// The same person can be stored under slightly different spellings ("Tyler, the Creator" /
+// "Tyler, The Creator"). Collapse them to one spelling so appearance counts add up.
+function castKey(n){return String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+function canonCast(){
+  const seen={};
+  FILMS.slice().sort((a,b)=>b.id-a.id).forEach(f=>(f.a||[]).forEach(n=>{const k=castKey(n);if(k&&!seen[k])seen[k]=n;}));
+  FILMS.forEach(f=>{
+    if(!Array.isArray(f.a))return;
+    const out=[];
+    f.a.forEach(n=>{const c=seen[castKey(n)]||n;if(!out.includes(c))out.push(c);});
+    f.a=out;
+  });
+}
 function refreshAll(){
+  try{canonCast();}catch(e){}
   [renderHome,renderTable,renderWL,renderRankings,renderStats].forEach(fn=>{try{fn();}catch(e){console.warn('render failed',e);}});
 }
 
@@ -3888,6 +3906,7 @@ function renderTaste(){
 // locally yet) shows a brief loading hint instead of a blank strip.
 if (W.length === 0) showVisitorLoading();
 setView(_view);
+try{canonCast();}catch(e){}
 showPage(pageFromHash());
 cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); backfillRuntimes(); backfillCast(); backfillMeta(); });
 // If the cloud is empty but this device has data, seed it immediately so the
