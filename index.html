@@ -1124,7 +1124,7 @@ const SEED_WL=[];
 // large ensembles (The Odyssey) bury stars below extras, but any threshold loose
 // enough to catch them floods the actor list with bit parts across the whole
 // library. Deep-billed standouts are hand-listed in CAST_PATCHES instead.
-function pickCast(cast){
+function pickCast(cast,limit){
   return (cast||[]).filter(c=>{
     if(!c.name)return false;
     const ch=(c.character||'').trim();
@@ -1133,7 +1133,7 @@ function pickCast(cast){
     if(/^(additional|various|ensemble|extra)\b/i.test(ch))return false;
     if(c.known_for_department&&c.known_for_department!=='Acting')return false;
     return true;
-  }).slice(0,12).map(c=>c.name);
+  }).slice(0,limit||12).map(c=>c.name);
 }
 // Deep-cast results cached by tmdbId. Built-in FILMS entries (id<=47) live in
 // this file and can't be written back by save(), so the sweep caches them here
@@ -1154,6 +1154,63 @@ function applyCast(f,names){
   return ch;
 }
 const CAST_PATCHES={120:['Cate Blanchett'],1368337:['Mia Goth','Zendaya','Jon Bernthal',"Lupita Nyong'o",'Samantha Morton','Benny Safdie'],9571:['Parker Posey']};// Fellowship of the Ring — Galadriel billed 13th
+// ── Deep cast: fixes actors billed below 12th going uncounted ─────────────
+// Voice-heavy or ensemble films push real stars down TMDB's billing (Emma Thompson
+// is 13th in The Sheep Detectives, behind eight voiced sheep). The top-12 list in
+// f.a stays the canonical cast, but each watched film's top-30 is cached here, and
+// a deeper-billed name is counted for that film ONLY if the same person is top-12
+// billed in another film in the diary. Real repeat faces get credited; one-off bit
+// parts never flood the actor lists.
+const DEEP_CAST_KEY='jwl3_deepcast_v1', DEEP_CAST_N=30;
+function loadDeepCast(){try{return JSON.parse(localStorage.getItem(DEEP_CAST_KEY)||'{}');}catch(e){return {};}}
+function saveDeepCast(c){try{localStorage.setItem(DEEP_CAST_KEY,JSON.stringify(c));}catch(e){}}
+function storeDeepCast(tmdbId,cast){
+  if(!tmdbId||!Array.isArray(cast)||!cast.length)return;
+  const c=loadDeepCast();c[tmdbId]={t:Date.now(),n:pickCast(cast,DEEP_CAST_N)};saveDeepCast(c);_castExtra=null;
+}
+let _castExtra=null;
+function buildCastExtra(){
+  const deep=loadDeepCast(),seen=new Set(),films=[];
+  W.forEach(w=>{const f=film(w.id);if(f&&!seen.has(f.id)){seen.add(f.id);films.push(f);}});
+  const top={};
+  films.forEach(f=>(f.a||[]).forEach(n=>{const k=castKey(n);if(k&&!top[k])top[k]=n;}));
+  const out={};
+  films.forEach(f=>{
+    const d=f.tmdbId&&deep[f.tmdbId];if(!d||!Array.isArray(d.n))return;
+    const have=new Set((f.a||[]).map(castKey)),add=[];
+    d.n.forEach(n=>{const k=castKey(n);if(!k||have.has(k)||!top[k])return;have.add(k);add.push(top[k]);});
+    if(add.length)out[f.id]=add;
+  });
+  return out;
+}
+// Every actor count on the site goes through this, so all sections agree.
+function filmCast(f){
+  if(!f)return [];
+  if(!_castExtra){try{_castExtra=buildCastExtra();}catch(e){_castExtra={};}}
+  return (f.a||[]).concat(_castExtra[f.id]||[]);
+}
+// Fetch top-30 credits for every watched film missing (or >30 days stale in) the deep cache.
+async function backfillDeepCast(){
+  if(!tmdbReady())return;
+  const deep=loadDeepCast(),now=Date.now();
+  const need=[...new Set(W.map(w=>w.id))].map(id=>film(id))
+    .filter(f=>f&&f.tmdbId&&!(deep[f.tmdbId]&&now-(deep[f.tmdbId].t||0)<CAST_TTL));
+  if(!need.length)return;
+  let changed=false;
+  for(let i=0;i<need.length;i+=4){
+    await Promise.all(need.slice(i,i+4).map(async f=>{
+      try{
+        const res=await fetch(`${TMDB_BASE}/movie/${f.tmdbId}/credits`,{headers:{Authorization:`Bearer ${TMDB_TOKEN}`}});
+        if(!res.ok)return;
+        const data=await res.json();
+        if(!Array.isArray(data.cast)||!data.cast.length)return;
+        deep[f.tmdbId]={t:Date.now(),n:pickCast(data.cast,DEEP_CAST_N)};changed=true;
+      }catch(e){}
+    }));
+    await new Promise(r=>setTimeout(r,120));
+  }
+  if(changed){saveDeepCast(deep);_castExtra=null;try{refreshAll();}catch(e){}}
+}
 
 
 // ══════════ STATE ══════════
@@ -1587,6 +1644,7 @@ async function enrichFilmFromTMDB(filmObj) {
     const data = await res.json();
     const director = data.credits?.crew?.find(c => c.job === 'Director')?.name || '';
     const cast = pickCast(data.credits?.cast);
+    storeDeepCast(filmObj.tmdbId, data.credits?.cast);
     const genre = data.genres?.[0]?.name || filmObj.g;
     const poster = data.poster_path || filmObj.poster || '';
     // Update in-memory record
@@ -1629,6 +1687,7 @@ async function backfillCast(){
         const data=await res.json();
         if(!Array.isArray(data.cast)||!data.cast.length)return;
         const names=pickCast(data.cast);
+        storeDeepCast(f.tmdbId,data.cast);
         cache[f.tmdbId]=names;
         if(names.length&&JSON.stringify(names)!==JSON.stringify(f.a)){f.a=names.slice();changed=true;}
       }catch(e){}
@@ -3038,7 +3097,7 @@ function renderActors(films,_sort){if(_sort)window._actorSort=_sort;const sortBy
   // Build map: actor → [{title, year}]
   const ac={};
   films.forEach(w=>{
-    (w.f.a||[]).forEach(a=>{
+    filmCast(w.f).forEach(a=>{
       if(!ac[a])ac[a]=[];
       ac[a].push({t:w.f.t,y:w.f.y,rank:w.rank});
     });
@@ -3365,6 +3424,7 @@ function canonCast(){
 }
 function refreshAll(){
   try{canonCast();}catch(e){}
+  _castExtra=null;
   [renderHome,renderTable,renderWL,renderRankings,renderStats].forEach(fn=>{try{fn();}catch(e){console.warn('render failed',e);}});
 }
 
@@ -3594,7 +3654,7 @@ function buildFacts(D){
   const dirTop=Object.entries(dirs).filter(e=>e[1].length>1).sort((a,b2)=>b2[1].length-a[1].length||avg(a[1].map(x=>x.rank))-avg(b2[1].map(x=>x.rank)))[0];
   if(dirTop){const r=dirTop[1].filter(x=>x.rating>0);facts.push({k:'Most-watched director',h:b(dirTop[0])+' leads with '+plural(dirTop[1].length,'film')+(r.length?', averaging '+fmtRating(avg(r.map(x=>x.rating)))+'★.':'.')});}
   // actors
-  const ac={};D.forEach(x=>(x.f.a||[]).forEach(a=>{(ac[a]=ac[a]||[]).push(x);}));
+  const ac={};D.forEach(x=>filmCast(x.f).forEach(a=>{(ac[a]=ac[a]||[]).push(x);}));
   const aTop=Object.entries(ac).filter(e=>e[1].length>1).sort((a,b2)=>b2[1].length-a[1].length||a[0].localeCompare(b2[0]))[0];
   if(aTop)facts.push({k:'Familiar face',h:b(aTop[0])+' shows up more than anyone: '+plural(aTop[1].length,'film')+', including '+b(aTop[1].slice().sort((a,b2)=>a.rank-b2.rank)[0].f.t)+'.'});
   // five stars
@@ -3799,7 +3859,7 @@ function renderYIR(){
   const count=(keyFn)=>{const m={};L.forEach(x=>{const k=keyFn(x);if(k)m[k]=(m[k]||0)+1;});return m;};
   const gTop=topEntry(count(x=>getFilmGenre(x.id)));
   const dTop=topEntry(count(x=>(x.f.d||'').trim()));
-  const ac={};L.forEach(x=>(x.f.a||[]).forEach(a=>{ac[a]=(ac[a]||0)+1;}));
+  const ac={};L.forEach(x=>filmCast(x.f).forEach(a=>{ac[a]=(ac[a]||0)+1;}));
   const aTop=topEntry(ac);
   const perMonth=MONTHS.map((_,i)=>L.filter(x=>+x.d.slice(5,7)===i+1));
   const maxM=Math.max(1,...perMonth.map(a=>a.length));
@@ -3880,13 +3940,14 @@ function renderTaste(){
   // Favorite people
   const people=(keyFn,min,limit)=>{const m={};D.forEach(x=>keyFn(x).forEach(n=>{if(n)(m[n]=m[n]||[]).push(x);}));
     return Object.entries(m).filter(e=>e[1].length>=min).sort((a,b)=>b[1].length-a[1].length||avg(a[1].map(x=>x.rank))-avg(b[1].map(x=>x.rank))).slice(0,limit);};
-  const actors=people(x=>x.f.a||[],2,8),dirs=people(x=>[(x.f.d||'').trim()],2,8);
-  const person=e=>{const r=e[1].filter(x=>x.rating>0);
+  const actors=people(x=>filmCast(x.f),2,12),dirs=people(x=>[(x.f.d||'').trim()],2,8);
+  const faceStat=e=>' · Avg. rank #'+(Math.round(avg(e[1].map(x=>x.rank))*10)/10);
+  const person=(e,stat)=>{const r=e[1].filter(x=>x.rating>0);
     return '<div class="person" data-tip="'+tipList(e[0],plural(e[1].length,'film'),e[1].slice().sort((p,q)=>p.rank-q.rank).map(x=>x.f))+'">'+avatarHTML(e[0])
-      +'<div class="person-n">'+esc(e[0])+'</div><div class="person-s">'+plural(e[1].length,'film')+(r.length?' · '+fmtRating(avg(r.map(x=>x.rating)))+'★':'')+'</div></div>';};
+      +'<div class="person-n">'+esc(e[0])+'</div><div class="person-s">'+plural(e[1].length,'film')+(stat?stat(e):(r.length?' · '+fmtRating(avg(r.map(x=>x.rating)))+'★':''))+'</div></div>';};
   const faces='<div class="grid-2">'
-    +'<div class="card"><div class="card-h">Favorite faces<small>Most-watched actors</small></div>'+(actors.length?'<div class="people">'+actors.map(person).join('')+'</div>':'<p class="sec-sub">No actor has appeared twice yet.</p>')+'</div>'
-    +'<div class="card"><div class="card-h">Go-to directors<small>Two or more films</small></div>'+(dirs.length?'<div class="people">'+dirs.map(person).join('')+'</div>':'<p class="sec-sub">No director has appeared twice yet.</p>')+'</div></div>';
+    +'<div class="card"><div class="card-h">Favorite faces<small>Most films, then best avg. rank</small></div>'+(actors.length?'<div class="people">'+actors.map(e=>person(e,faceStat)).join('')+'</div>':'<p class="sec-sub">No actor has appeared twice yet.</p>')+'</div>'
+    +'<div class="card"><div class="card-h">Go-to directors<small>Two or more films</small></div>'+(dirs.length?'<div class="people">'+dirs.map(e=>person(e)).join('')+'</div>':'<p class="sec-sub">No director has appeared twice yet.</p>')+'</div></div>';
 
   host.innerHTML=typeLine+'<div class="grid-2">'+crowd+runtime+'</div>'+faces;
   hydratePosters();
@@ -3908,7 +3969,7 @@ if (W.length === 0) showVisitorLoading();
 setView(_view);
 try{canonCast();}catch(e){}
 showPage(pageFromHash());
-cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); backfillRuntimes(); backfillCast(); backfillMeta(); });
+cloudLoad().finally(() => { if (!W.length) showVisitorEmpty(); backfillRuntimes(); backfillCast(); backfillDeepCast(); backfillMeta(); });
 // If the cloud is empty but this device has data, seed it immediately so the
 // list is never lost and propagates to other devices.
 (async () => {
@@ -3959,7 +4020,7 @@ function buildTasteProfile() {
   const favDirs = Object.entries(dirCount).filter(([,c])=>c>1).map(([d])=>d).join(', ');
 
   const actorCount = {};
-  films.forEach(f => (f.a||[]).forEach(a => { actorCount[a] = (actorCount[a]||0)+1; }));
+  films.forEach(f => filmCast(f).forEach(a => { actorCount[a] = (actorCount[a]||0)+1; }));
   const favActors = Object.entries(actorCount).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([a])=>a).join(', ');
 
   const leastFav = films.slice(-5).map(f => f.t).join(', ');
