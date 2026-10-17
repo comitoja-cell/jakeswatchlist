@@ -1161,12 +1161,17 @@ const CAST_PATCHES={120:['Cate Blanchett'],1368337:['Mia Goth','Zendaya','Jon Be
 // a deeper-billed name is counted for that film ONLY if the same person is top-12
 // billed in another film in the diary. Real repeat faces get credited; one-off bit
 // parts never flood the actor lists.
-const DEEP_CAST_KEY='jwl3_deepcast_v1', DEEP_CAST_N=30;
+const DEEP_CAST_KEY='jwl3_deepcast_v2', DEEP_CAST_N=30;
+// Only billing slots 13-15 can add an actor. Anything deeper is a cameo or bit part
+// (Meryl Streep is 28th of 28 in Project Hail Mary as a "Rejected Rocky Voice").
+const DEEP_CAST_MAX=15;
+// Never count playing yourself or a credited cameo, however high it's billed.
+function isCameoRole(c){const ch=(c.character||'').trim();return /\b(himself|herself|themselves|cameo|rejected)\b/i.test(ch)||castKey(ch)===castKey(c.name);}
 function loadDeepCast(){try{return JSON.parse(localStorage.getItem(DEEP_CAST_KEY)||'{}');}catch(e){return {};}}
 function saveDeepCast(c){try{localStorage.setItem(DEEP_CAST_KEY,JSON.stringify(c));}catch(e){}}
 function storeDeepCast(tmdbId,cast){
   if(!tmdbId||!Array.isArray(cast)||!cast.length)return;
-  const c=loadDeepCast();c[tmdbId]={t:Date.now(),n:pickCast(cast,DEEP_CAST_N)};saveDeepCast(c);_castExtra=null;
+  const c=loadDeepCast();c[tmdbId]={t:Date.now(),n:pickCast(cast.filter(x=>!isCameoRole(x)),DEEP_CAST_N)};saveDeepCast(c);_castExtra=null;
 }
 let _castExtra=null;
 function buildCastExtra(){
@@ -1178,7 +1183,7 @@ function buildCastExtra(){
   films.forEach(f=>{
     const d=f.tmdbId&&deep[f.tmdbId];if(!d||!Array.isArray(d.n))return;
     const have=new Set((f.a||[]).map(castKey)),add=[];
-    d.n.forEach(n=>{const k=castKey(n);if(!k||have.has(k)||!top[k])return;have.add(k);add.push(top[k]);});
+    d.n.slice(0,DEEP_CAST_MAX).forEach(n=>{const k=castKey(n);if(!k||have.has(k)||!top[k])return;have.add(k);add.push(top[k]);});
     if(add.length)out[f.id]=add;
   });
   return out;
@@ -1189,6 +1194,7 @@ function filmCast(f){
   if(!_castExtra){try{_castExtra=buildCastExtra();}catch(e){_castExtra={};}}
   return (f.a||[]).concat(_castExtra[f.id]||[]);
 }
+try{localStorage.removeItem('jwl3_deepcast_v1');}catch(e){}
 // Fetch top-30 credits for every watched film missing (or >30 days stale in) the deep cache.
 async function backfillDeepCast(){
   if(!tmdbReady())return;
@@ -1204,7 +1210,7 @@ async function backfillDeepCast(){
         if(!res.ok)return;
         const data=await res.json();
         if(!Array.isArray(data.cast)||!data.cast.length)return;
-        deep[f.tmdbId]={t:Date.now(),n:pickCast(data.cast,DEEP_CAST_N)};changed=true;
+        deep[f.tmdbId]={t:Date.now(),n:pickCast(data.cast.filter(x=>!isCameoRole(x)),DEEP_CAST_N)};changed=true;
       }catch(e){}
     }));
     await new Promise(r=>setTimeout(r,120));
