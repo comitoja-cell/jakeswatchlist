@@ -733,6 +733,14 @@ body.rank-dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
 .bynum-cell.wide{grid-column:span 2}
 .bynum-cell.wide .bynum-sub b{font-weight:700;color:var(--amber)}
 .bynum-cell.wide .bynum-sub span{color:var(--ink-3)}
+/* movies: tag filter chips */
+.db-tags{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin:.2rem 0 .9rem}
+.db-tags-lbl{font-family:var(--f-cond);font-weight:600;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-right:.2rem}
+.db-tags .tog{min-height:36px;padding:.2rem .8rem;font-size:.82rem}
+.db-tags .tog .n{font-weight:400;opacity:.7;margin-left:.1rem}
+.db-tags-clear{font-size:.82rem;color:var(--ink-3);text-decoration:underline;text-underline-offset:3px;padding:.3rem .4rem}
+.rv-foot .chip svg,.hero-kicker .chip svg{margin-right:.3rem;vertical-align:-1px}
+.chip.rose{border-color:rgba(255,131,148,.4);color:#ff8394}
 /* film sheet tag toggles */
 .sheet-tags .tog{min-height:34px;padding:.2rem .75rem;font-size:.8rem}
 .cmp-v .cmp-hash{font-size:1.1rem;color:var(--ink-3);margin-right:.05rem}
@@ -861,6 +869,7 @@ body.rank-dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
         <select class="db-filter" id="dbDateWatched" onchange="renderTable()" aria-label="Date watched"></select>
         <select class="db-filter" id="dbReleaseYear" onchange="renderTable()" aria-label="Release year"></select>
       </div>
+      <div class="db-tags" id="dbTags" role="group" aria-label="Filter by tag"></div>
       <div class="count-line" id="diaryCount"></div>
       <div class="pgrid" id="diaryGrid"></div>
       <div class="table-scroll">
@@ -1524,20 +1533,72 @@ function setSyncStatus(state) { // 'syncing' | 'synced' | 'serror' | ''
   if (state === 'synced') setTimeout(() => { btn.className = ''; }, 4000);
 }
 
+// _syncTs: the cloud version this tab's copy of the diary is based on (null = not known yet).
+// DIRTY_KEY: set the moment something changes locally, cleared once the cloud has it, so a
+// change made just before the tab closes is pushed on the next visit instead of being lost.
+let _syncTs = null, _saving = false, _saveAgain = false;
+const DIRTY_KEY = 'jwl3_dirty';
+function _setDirty(on){try{if(on)localStorage.setItem(DIRTY_KEY,'1');else localStorage.removeItem(DIRTY_KEY);}catch(e){}}
+function _isDirty(){try{return localStorage.getItem(DIRTY_KEY)==='1';}catch(e){return false;}}
 function cloudSave() {
   if (!IS_LIVE) return; // previews are read-only
+  _setDirty(true);
   clearTimeout(_cloudSaveTimer);
   _cloudSaveTimer = setTimeout(_doCloudSave, 2000);
+}
+// Take the cloud's copy of the diary as this tab's copy.
+function _applyCloud(cloud){
+  const cloudTs = cloud._ts || 0;
+  W = cloud.w;
+  WL = cloud.wl || [];
+  if (Array.isArray(cloud.custom)) {
+    let i = FILMS.length;
+    while (i-- > 0) { if (FILMS[i].id > 47) FILMS.splice(i, 1); }
+    cloud.custom.forEach(f => { if (!FILMS.find(x => x.id === f.id)) FILMS.push(f); });
+  }
+  // Persist locally — always write directly, bypassing the isOwner gate in save()
+  try {
+    localStorage.setItem('jwl3_w', JSON.stringify(W));
+    localStorage.setItem('jwl3_wl', JSON.stringify(WL));
+    localStorage.setItem('jwl3_custom', JSON.stringify(FILMS.filter(f => f.id > 47)));
+  } catch(e) {}
+  const ts = String(cloudTs || Date.now());
+  try { localStorage.setItem('jwl3_ts', ts); } catch(e) {}
+  _setCookie('jwl3_ts', ts, 365);
+  _syncTs = cloudTs;
+  try { refreshAll(); } catch(e) {}
 }
 
 async function _doCloudSave() {
   // Single shared list — every device saves to the same global key.
+  clearTimeout(_cloudSaveTimer); _cloudSaveTimer = null;
+  if (!IS_LIVE) return;
+  if (_saving) { _saveAgain = true; return; } // one save at a time; run again after
+  _saving = true;
   setSyncStatus('syncing');
   try {
+    // Stale-tab guard: if another tab or device has saved since this tab last synced,
+    // this tab's copy is out of date. Saving it would wipe their changes, so take the
+    // newer copy instead and say so.
+    if (_syncTs != null) {
+      let cur = null;
+      try {
+        const r = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID, { cache: 'no-store' });
+        if (r.ok) cur = await r.json();
+      } catch(e) {}
+      if (cur && Array.isArray(cur.w) && cur.w.length && (cur._ts || 0) > _syncTs) {
+        _applyCloud(cur);
+        _setDirty(false);
+        setSyncStatus('synced');
+        showToast('This tab was out of date, so I loaded the latest diary. Please redo that last change.');
+        return;
+      }
+    }
+    const ts = Math.max(Date.now(), (_syncTs || 0) + 1); // always moves forward, even if a device clock is behind
     const payload = JSON.stringify({
       w: W, wl: WL,
       custom: FILMS.filter(f => f.id > 47),
-      _ts: Date.now()
+      _ts: ts
     });
     const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID, {
       method: 'POST',
@@ -1545,14 +1606,31 @@ async function _doCloudSave() {
       body: payload
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const ts = String(Date.now());
-    try { localStorage.setItem('jwl3_ts', ts); } catch(e) {}
-    _setCookie('jwl3_ts', ts, 365);
+    _syncTs = ts;
+    if (!_saveAgain && !_cloudSaveTimer) _setDirty(false);
+    try { localStorage.setItem('jwl3_ts', String(ts)); } catch(e) {}
+    _setCookie('jwl3_ts', String(ts), 365);
     setSyncStatus('synced');
   } catch(e) {
     setSyncStatus('serror');
+  } finally {
+    _saving = false;
+    if (_saveAgain) { _saveAgain = false; _doCloudSave(); }
   }
 }
+// Leaving the tab: push anything still waiting on the 2-second timer right away.
+// Coming back: pick up changes made on another device, unless something is mid-edit.
+let _lastFocusLoad = 0;
+document.addEventListener('visibilitychange', () => {
+  if (!IS_LIVE) return;
+  if (document.visibilityState === 'hidden') { if (_cloudSaveTimer) _doCloudSave(); return; }
+  if (_cloudSaveTimer || _saving || _isDirty()) return;
+  if (Date.now() - _lastFocusLoad < 30000) return;
+  if (document.querySelector('.sheet-overlay.open,.search-overlay.open,.modal-overlay.open')) return;
+  if (typeof _reorder !== 'undefined' && _reorder) return;
+  _lastFocusLoad = Date.now();
+  cloudLoad();
+});
 
 async function cloudLoad() {
   // Always fetch Jake's canonical data — this is a public watchlist.
@@ -1569,30 +1647,18 @@ async function cloudLoad() {
       const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
       const cloudHasMore = cloud.w.length > W.length;
       const cloudIsNewer = cloudTs > localTs && cloudTs > 0;
-      if (!cloudHasMore && !cloudIsNewer && W.length > 0) return;
+      if ((!cloudHasMore || _isDirty()) && !cloudIsNewer && W.length > 0) {
+        // Local copy is current. If a change never reached the cloud (tab closed
+        // inside the save delay, or the save failed), push it now.
+        _syncTs = cloudTs;
+        if (IS_LIVE && _isDirty()) cloudSave();
+        return;
+      }
     }
     // Visitors: always apply Jake's cloud data (no local state to protect)
     // Cloud has better data — restore it
-    W = cloud.w;
-    WL = cloud.wl || [];
-    // Replace custom films with cloud's version
-    if (Array.isArray(cloud.custom)) {
-      let i = FILMS.length;
-      while (i-- > 0) { if (FILMS[i].id > 47) FILMS.splice(i, 1); }
-      cloud.custom.forEach(f => { if (!FILMS.find(x => x.id === f.id)) FILMS.push(f); });
-    }
-    // Persist locally — always write directly, bypassing the isOwner gate in save()
-    try {
-      localStorage.setItem('jwl3_w', JSON.stringify(W));
-      localStorage.setItem('jwl3_wl', JSON.stringify(WL));
-      const custom = FILMS.filter(f => f.id > 47);
-      localStorage.setItem('jwl3_custom', JSON.stringify(custom));
-    } catch(e) {}
-    const ts = String(cloudTs || Date.now());
-    try { localStorage.setItem('jwl3_ts', ts); } catch(e) {}
-    _setCookie('jwl3_ts', ts, 365);
-    // Re-render everything with restored data
-    try { refreshAll(); } catch(e) {}
+    _applyCloud(cloud);
+    _setDirty(false);
     setSyncStatus('synced');
   } catch(e) { /* cloud unavailable — local data still intact */ }
 }
@@ -1684,6 +1750,10 @@ function tagIcons(w,cls){
   const on=TAGS.filter(t=>w[t.k]);
   if(!on.length)return '';
   return '<span class="'+(cls||'tagrow')+'">'+on.map(t=>'<span class="tg '+t.k+'" title="'+t.label+'" role="img" aria-label="'+t.label+'">'+t.svg+'</span>').join('')+'</span>';
+}
+// Labelled chips for wherever there's room for words (hero, reviews)
+function tagChipsHTML(t){
+  return TAGS.filter(x=>t&&t[x.k]).map(x=>'<span class="chip '+(x.k==='rw'?'teal':x.k==='tara'?'rose':'amber')+'">'+x.svg+esc(x.label)+'</span>').join('');
 }
 function setTags(w,t){TAGS.forEach(x=>{if(t&&t[x.k])w[x.k]=1;else delete w[x.k];});w.tg=1;}
 // Most recent time a film was watched: the first log, or a later viewing.
@@ -2379,6 +2449,9 @@ function _colDragEnd(){
 }
 
 // ══════════ RENDER TABLE ══════════
+let _tagF={}; // Movies tag filter: {rw:1,tara:1,th:1}
+function toggleTagFilter(k){if(_tagF[k])delete _tagF[k];else _tagF[k]=1;renderTable();}
+function clearTagFilter(){_tagF={};renderTable();}
 function renderTable(){
   if(!document.getElementById('tableBody'))return;
   renderHead();
@@ -2392,17 +2465,20 @@ function renderTable(){
   const showYears=diaryYears();
   const showWas=showSel.value;
   showSel.innerHTML='<option value="">All films</option>'+showYears.map(y=>'<option value="y'+y+'">'+y+' first watches</option>').join('')
-    +'<option value="rw">Rewatches</option><option value="tara">With Tara</option><option value="th">In a theater</option><option value="todo">Not tagged yet</option>';
+    +'<option value="todo">Not tagged yet</option>';
   if([...showSel.options].some(o=>o.value===showWas))showSel.value=showWas;
   const show=showSel.value;
   const showYear=/^y\d{4}$/.test(show)?+show.slice(1):0;
 
   let list=W.slice();
   if(showYear)list=list.filter(w=>isFirstWatchOf(w,showYear));
-  else if(show==='rw')list=list.filter(w=>w.rw);
-  else if(show==='tara')list=list.filter(w=>w.tara);
-  else if(show==='th')list=list.filter(w=>w.th);
   else if(show==='todo')list=list.filter(w=>!w.tg);
+  // Tag chips: every chip that's on must apply
+  const tagsOn=TAGS.filter(t=>_tagF[t.k]);
+  const tagHost=document.getElementById('dbTags');
+  if(tagHost)tagHost.innerHTML='<span class="db-tags-lbl">Tags</span>'+TAGS.map(t=>'<button type="button" class="tog" aria-pressed="'+(_tagF[t.k]?'true':'false')+'" onclick="toggleTagFilter(\''+t.k+'\')">'+t.svg+t.label+'<span class="n">'+W.filter(w=>w[t.k]).length+'</span></button>').join('')
+    +(tagsOn.length?'<button type="button" class="db-tags-clear" onclick="clearTagFilter()">Clear</button>':'');
+  if(tagsOn.length)list=list.filter(w=>tagsOn.every(t=>w[t.k]));
   if(q)list=list.filter(w=>{const f=film(w.id);return f&&(f.t.toLowerCase().includes(q)||getFilmGenre(w.id).toLowerCase().includes(q)||f.d.toLowerCase().includes(q))});
   if(genre)list=list.filter(w=>getFilmGenre(w.id)===genre);
   if(director)list=list.filter(w=>film(w.id)?.d===director);
@@ -3950,7 +4026,7 @@ function renderHome(){
   const lbLink=(top.lb&&top.lb.link)||lbUrl(f.t);
   hero.innerHTML=
     '<div class="hero-head">'
-      +'<div class="hero-kicker"><span class="kicker">Latest watch</span><span class="chip">'+esc(fmtDate(top.last.d))+'</span><span class="chip amber">#'+top.rank+' of '+D.length+' all-time</span>'+((top.rw||top.last.again)?'<span class="chip teal">'+TAGS[0].svg+'Rewatch</span>':'')+'</div>'
+      +'<div class="hero-kicker"><span class="kicker">Latest watch</span><span class="chip">'+esc(fmtDate(top.last.d))+'</span><span class="chip amber">#'+top.rank+' of '+D.length+' all-time</span>'+tagChipsHTML({rw:top.rw||top.last.again,tara:top.last.tara,th:top.last.th})+'</div>'
       +'<h1 class="hero-title">'+esc(f.t)+'</h1>'
       +'<div class="hero-meta">'+meta.map(m=>'<span>'+esc(m)+'</span>').join('<span class="dot" aria-hidden="true"></span>')+'</div>'
       +(top.rating?'<div class="hero-rating">'+starsHTML(top.rating)+'<span class="num" style="color:var(--ink-2)">'+fmtRating(top.rating)+' / 5</span></div>':'')
@@ -4005,7 +4081,7 @@ function renderHome(){
       +'<h3 class="rv-title">'+esc(x.f.t)+'<span class="y">'+esc(x.f.y||'')+'</span></h3>'
       +'<div>'+starsHTML(x.rating)+'</div>'
       +reviewHTML(x.rev,'rv-text')
-      +'<div class="rv-foot"><span class="chip">#'+x.rank+' all-time</span>'+(x.rev.spoiler?'<span class="chip amber">Spoilers</span>':'')+(x.f.d?'<span class="chip">'+esc(x.f.d)+'</span>':'')+'</div></div></article>';
+      +'<div class="rv-foot"><span class="chip">#'+x.rank+' all-time</span>'+tagChipsHTML(x.w)+(x.rev.spoiler?'<span class="chip amber">Spoilers</span>':'')+(x.f.d?'<span class="chip">'+esc(x.f.d)+'</span>':'')+'</div></div></article>';
   }).join('');
 
   // Top ten: all-time, or one year's first watches
