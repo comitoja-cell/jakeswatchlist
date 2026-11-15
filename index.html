@@ -317,6 +317,7 @@ tbody tr:hover{background:var(--white-04)}
 .pod.first .pod-n{-webkit-text-stroke-color:var(--amber)}
 .pod-title{font-family:var(--f-display);font-weight:500;font-size:clamp(1rem,2.4vw,1.5rem);line-height:1.12}
 .pod-meta{font-size:.82rem;color:var(--ink-3)}
+.pod .stars{align-self:flex-start}
 .rank-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--bg-2);overflow:hidden}
 .rank-item{display:grid;grid-template-columns:3.2rem 46px minmax(0,1fr) auto;gap:.9rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid var(--line)}
 .rank-item:last-child{border-bottom:0}
@@ -628,6 +629,70 @@ footer.site a{color:var(--ink-2)}
   .yir-grid{grid-template-columns:1fr}
   .logo{font-size:1.12rem}
 }
+
+/* ═════════ VIEWING TAGS: rewatch / with Tara / theater ═════════ */
+.tagrow{position:absolute;right:6px;bottom:6px;z-index:2;display:flex;gap:3px}
+.tg{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(10,12,16,.84);box-shadow:0 0 0 1px rgba(255,255,255,.16);flex-shrink:0}
+.tg svg{width:12px;height:12px;display:block}
+.tg.rw{color:var(--teal)}.tg.tara{color:#ff8394}.tg.th{color:var(--amber)}
+.tags-inline{display:inline-flex;gap:4px;vertical-align:-5px;margin-left:.45rem}
+.tags-inline .tg{background:var(--bg-4);box-shadow:none}
+td .tags-inline{margin-left:0}
+.chip svg{width:12px;height:12px;flex-shrink:0}
+.tog-row{display:flex;flex-wrap:wrap;gap:.45rem}
+.tog{display:inline-flex;align-items:center;gap:.4rem;min-height:40px;padding:.3rem .85rem;border-radius:999px;border:1px solid var(--line-2);background:var(--bg-2);color:var(--ink-2);font-size:.86rem;font-weight:600;white-space:nowrap}
+.tog svg{width:14px;height:14px;flex-shrink:0}
+.tog:hover{border-color:var(--ink-2)}
+.tog[aria-pressed="true"]{border-color:var(--amber);background:var(--amber-soft);color:var(--amber)}
+.tog.none[aria-pressed="true"]{border-color:var(--teal-mid);background:var(--teal-soft);color:var(--teal)}
+.modal-opt{font-family:var(--f-body);font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink-3);margin-left:.3rem}
+.modal-hint{margin-top:.75rem;font-size:.82rem;line-height:1.45;color:var(--ink-3)}
+.sheet-tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.viewings{display:flex;flex-direction:column;gap:.3rem}
+.viewing{display:flex;align-items:center;gap:.3rem;font-size:.92rem;color:var(--ink-2)}
+.viewing-x{width:30px;height:30px;border-radius:50%;color:var(--ink-3);font-size:.7rem;margin-left:.2rem}
+.viewing-x:hover{color:var(--danger)}
+.scope-row{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin:0 0 1.2rem}
+.scope-note{font-size:.88rem;color:var(--ink-3)}
+.seg.sm button{min-height:32px;padding:.2rem .85rem;font-size:.8rem}
+.how-grid .card{display:flex;flex-direction:column;gap:1rem}
+.how-grid .card-h{margin-bottom:0}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.cmp-side{display:flex;flex-direction:column;gap:.25rem;padding:.9rem 1rem;background:var(--bg-2);min-width:0}
+.cmp-side.win{background:#1d1a14}
+.cmp-k{font-family:var(--f-cond);font-weight:600;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.cmp-side.win .cmp-k{color:var(--amber)}
+.cmp-v{font-family:var(--f-display);font-weight:500;font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.cmp-v small{font-size:.95rem;color:var(--amber);margin-left:.1rem}
+.cmp-s{font-size:.8rem;color:var(--ink-3);line-height:1.4}
+.cmp-verdict{font-size:.92rem;line-height:1.5;color:var(--ink-2)}
+.cmp-verdict b{color:var(--amber);font-weight:600}
+.how-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin-top:1.2rem;font-size:.88rem;color:var(--ink-3)}
+.tagger{display:flex;flex-direction:column;gap:.5rem;padding:clamp(1.3rem,4vw,2.2rem)}
+.tagger .sheet-title{padding-right:2.6rem}
+.tagger .sheet-title em{font-style:italic;color:var(--amber)}
+.tagger-prog{display:flex;justify-content:space-between;gap:1rem;margin-top:.6rem;font-size:.88rem;color:var(--ink-2)}
+.tagger-bar{height:6px;border-radius:3px;background:var(--white-04);overflow:hidden;margin-bottom:.8rem}
+.tagger-bar span{display:block;height:100%;width:0;background:var(--amber);transition:width .3s}
+.tagger-ctl{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;margin-bottom:.6rem}
+.tagger-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.trow{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:.8rem;align-items:center;padding:.55rem .8rem;border-bottom:1px solid var(--line)}
+.trow:last-child{border-bottom:0}
+.trow.done{background:rgba(68,194,179,.05)}
+.trow .poster{border-radius:3px}
+.trow-info{min-width:0}
+.trow-t{font-weight:600;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow-s{font-size:.78rem;color:var(--ink-3)}
+.trow-c{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:flex-end}
+.trow .tog{min-height:36px;padding:.25rem .7rem;font-size:.8rem}
+@media (max-width:760px){
+  .trow{grid-template-columns:34px minmax(0,1fr)}
+  .trow-c{grid-column:1/-1;justify-content:flex-start}
+  .trow .tog{min-height:40px}
+  .tagrow{right:4px;bottom:4px;gap:2px}
+  .tg{width:19px;height:19px}.tg svg{width:10px;height:10px}
+  .yir-top5 .tagrow{display:none}
+}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style></head>
 <body>
@@ -686,8 +751,9 @@ footer.site a{color:var(--ink-2)}
 
     <section class="section">
       <div class="sec-row">
-        <div class="sec-head"><div class="kicker">All-time</div><h2 class="sec-title">The top <em>ten</em></h2></div>
-        <a class="link-more" href="#rank" onclick="showPage('rankings');return false">Full ranking →</a>
+        <div class="sec-head"><div class="kicker" id="topKicker">All-time</div><h2 class="sec-title">The top <em>ten</em></h2></div>
+        <div class="scope-row" style="margin:0"><div class="seg sm" id="topScope" role="group" aria-label="Which ranking"></div>
+        <a class="link-more" href="#rank" onclick="goRanking();return false">Full ranking →</a></div>
       </div>
       <div class="rail top10" id="top10"></div>
     </section>
@@ -717,6 +783,7 @@ footer.site a{color:var(--ink-2)}
         <button class="tsb active" onclick="switchTab('watched',this)">Watched<span class="n" id="cntW"></span></button>
         <button class="tsb" onclick="switchTab('watchlist',this)">Watch list<span class="n" id="cntWL"></span></button>
       </div>
+      <button class="btn sm" onclick="openTagger()">Tag films</button>
       <div class="view-toggle" role="group" aria-label="View">
         <button id="viewGridBtn" onclick="setView('grid')" aria-label="Poster grid" title="Poster grid"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg></button>
         <button id="viewListBtn" onclick="setView('list')" aria-label="List" title="List"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
@@ -734,6 +801,7 @@ footer.site a{color:var(--ink-2)}
           <option value="year">Sort: Release year</option>
           <option value="runtime">Sort: Runtime</option>
         </select>
+        <select class="db-filter" id="dbShow" onchange="renderTable()" aria-label="Show"></select>
         <select class="db-filter" id="dbGenre" onchange="renderTable()" aria-label="Genre"></select>
         <select class="db-filter" id="dbDirector" onchange="renderTable()" aria-label="Director"></select>
         <select class="db-filter" id="dbDateWatched" onchange="renderTable()" aria-label="Date watched"></select>
@@ -780,11 +848,12 @@ footer.site a{color:var(--ink-2)}
   <div class="wrap page-inner rank-page" id="rankPage">
     <div class="sec-row">
       <div class="page-head" style="margin-bottom:0">
-        <div class="kicker">The definitive order</div>
-        <h1 class="page-title">All-time <em>ranking</em></h1>
+        <div class="kicker" id="rankKicker">The definitive order</div>
+        <h1 class="page-title" id="rankTitle">All-time <em>ranking</em></h1>
       </div>
       <button class="btn sm" id="reorderBtn" onclick="toggleReorder()">Edit order</button>
     </div>
+    <div class="scope-row"><div class="seg" id="rankScope" role="group" aria-label="Which ranking"></div><span class="scope-note" id="rankNote"></span></div>
     <div class="podium" id="podium"></div>
     <div class="rank-list" id="rankList"></div>
     <div id="rankEmpty" class="empty" style="display:none">
@@ -801,6 +870,7 @@ footer.site a{color:var(--ink-2)}
       <a href="#ins-numbers" onclick="return insJump('ins-numbers')">By the numbers</a>
       <a href="#ins-year" onclick="return insJump('ins-year')">Year in review</a>
       <a href="#ins-taste" onclick="return insJump('ins-taste')">Taste profile</a>
+      <a href="#ins-how" onclick="return insJump('ins-how')">How I watch</a>
       <a href="#ins-activity" onclick="return insJump('ins-activity')">Activity</a>
       <a href="#ins-best" onclick="return insJump('ins-best')">Best of</a>
       <a href="#ins-breakdown" onclick="return insJump('ins-breakdown')">Breakdowns</a>
@@ -831,6 +901,12 @@ footer.site a{color:var(--ink-2)}
     <section class="section ins-sec" id="ins-taste">
       <div class="sec-head"><div class="kicker">Taste profile</div><h2 class="sec-title">What I actually <em>go for</em></h2></div>
       <div class="stack" id="taste"></div>
+    </section>
+
+    <section class="section ins-sec" id="ins-how">
+      <div class="sec-head"><div class="kicker">How I watch</div><h2 class="sec-title">Does the <em>company</em> matter?</h2><p class="sec-sub">Whether a film lands better with Tara next to me, on a big screen, or the second time around.</p></div>
+      <div class="grid-3 how-grid" id="howGrid"></div>
+      <div class="how-foot" id="howFoot"></div>
     </section>
 
     <section class="section ins-sec" id="ins-activity">
@@ -909,6 +985,14 @@ footer.site a{color:var(--ink-2)}
   </div>
 </div>
 
+<!-- Bulk tagger: rewatch / with Tara / theater for every diary entry -->
+<div class="sheet-overlay" id="taggerOverlay" onclick="if(event.target===this)closeTagger()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="taggerTitle">
+    <button class="sheet-x" onclick="closeTagger()" aria-label="Close">✕</button>
+    <div class="tagger" id="taggerContent"></div>
+  </div>
+</div>
+
 <!-- Log watched film / add new film -->
 <div class="modal-overlay" id="watchedModal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
@@ -933,6 +1017,13 @@ footer.site a{color:var(--ink-2)}
     </div>
     <label class="modal-lbl" for="mDate">Date watched</label>
     <input class="modal-date" type="date" id="mDate">
+    <div id="mRankWrap">
+      <label class="modal-lbl" for="mRank">All-time rank<span class="modal-opt">optional</span></label>
+      <input class="modal-input" type="number" id="mRank" min="1" inputmode="numeric">
+    </div>
+    <div class="modal-lbl" id="mTagsLbl">How I watched it</div>
+    <div class="tog-row" id="mTags" role="group" aria-labelledby="mTagsLbl"></div>
+    <div class="modal-hint" id="mHint"></div>
     <button class="modal-save" id="mSaveBtn" onclick="saveWatched()">Log This Film</button>
   </div>
 </div>
@@ -1517,6 +1608,46 @@ function film(id){return FILMS.find(f=>f.id===id)}
 function isW(id){return W.some(w=>w.id===id)}
 function isWL(id){return WL.includes(id)}
 function nextRank(){return W.length?Math.max(...W.map(w=>w.rank||0))+1:1}
+// ══════════ VIEWING TAGS ══════════
+// Optional fields on a diary entry (older entries simply don't have them):
+//   rw   – a rewatch: I'd already seen the film before it entered this diary.
+//          Rewatches are ranked all-time like everything else, but sit out the
+//          "best of the year" lists, which are first watches only.
+//   tara – watched with Tara            th – seen in a theater
+//   tg   – the three tags above have been reviewed, so "no" is a real answer and
+//          not just "never filled in". Only tagged entries feed the comparisons.
+//   v    – later viewings of a film already in the diary: [{d,tara,th}].
+//          w.d always stays the date the film was first logged.
+const TAGS=[
+  {k:'rw',label:'Rewatch',short:'Rewatch',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>'},
+  {k:'tara',label:'With Tara',short:'Tara',svg:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'},
+  {k:'th',label:'In a theater',short:'Theater',svg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v3a3 3 0 0 0 0 6v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a3 3 0 0 0 0-6z"/><path d="M14 8v1.5M14 14.5V16"/></svg>'}
+];
+function tagIcons(w,cls){
+  if(!w)return '';
+  const on=TAGS.filter(t=>w[t.k]);
+  if(!on.length)return '';
+  return '<span class="'+(cls||'tagrow')+'">'+on.map(t=>'<span class="tg '+t.k+'" title="'+t.label+'" role="img" aria-label="'+t.label+'">'+t.svg+'</span>').join('')+'</span>';
+}
+function setTags(w,t){TAGS.forEach(x=>{if(t&&t[x.k])w[x.k]=1;else delete w[x.k];});w.tg=1;}
+// Most recent time a film was watched: the first log, or a later viewing.
+function lastViewing(w){
+  let best={d:w.d||'',tara:!!w.tara,th:!!w.th,again:false};
+  (w.v||[]).forEach(x=>{if(x&&x.d&&x.d>=best.d)best={d:x.d,tara:!!x.tara,th:!!x.th,again:true};});
+  return best;
+}
+// Put one film at an exact position in the all-time order and close the gaps.
+function placeAtRank(id,pos){
+  const me=W.find(w=>w.id===id);if(!me)return;
+  const order=W.filter(w=>w.id!==id).sort((a,b)=>a.rank-b.rank);
+  pos=Math.max(1,Math.min(order.length+1,parseInt(pos,10)||order.length+1));
+  order.splice(pos-1,0,me);
+  order.forEach((w,i)=>{w.rank=i+1;});
+}
+// Years that have at least one first watch, newest first.
+function diaryYears(){return [...new Set(W.filter(w=>!w.rw&&w.d).map(w=>+w.d.slice(0,4)))].sort((a,b)=>b-a);}
+function isFirstWatchOf(w,year){return !w.rw&&!!w.d&&+w.d.slice(0,4)===year;}
+
 
 // ══════════ TMDB CONFIG ══════════
 // Paste your TMDB API Read Access Token below (starts with eyJ...)
@@ -1801,7 +1932,31 @@ function addWL(id){
 function removeWL(id){WL=WL.filter(x=>x!==id);delete _wlStreamData[id];save();renderWL();showToast('Removed from watch list')}
 
 // ══════════ MODAL ══════════
-let mIsNew=false, mRating=0;
+let mIsNew=false, mRating=0, mMode='new'; // mMode: 'new' | 'edit' | 'again' (another viewing)
+
+function togPress(b){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');}
+function _readModalTags(){
+  const t={};
+  document.querySelectorAll('#mTags .tog').forEach(b=>{if(b.getAttribute('aria-pressed')==='true')t[b.dataset.k]=1;});
+  return t;
+}
+function _setupModalExtras(mode,existing){
+  const rankWrap=document.getElementById('mRankWrap'),rankEl=document.getElementById('mRank');
+  const n=W.length;
+  rankWrap.style.display=mode==='again'?'none':'';
+  if(mode==='edit'&&existing){
+    const pos=W.slice().sort((a,b)=>a.rank-b.rank).findIndex(w=>w.id===existing.id)+1;
+    rankEl.value=pos;rankEl.max=n;rankEl.placeholder='';rankEl.dataset.was=pos;
+  }else{
+    rankEl.value='';rankEl.max=n+1;rankEl.placeholder='Blank = bottom of the list (#'+(n+1)+')';rankEl.dataset.was='';
+  }
+  const cur=mode==='edit'?existing:null;
+  document.getElementById('mTags').innerHTML=TAGS.filter(x=>!(mode==='again'&&x.k==='rw')).map(x=>
+    '<button type="button" class="tog" data-k="'+x.k+'" aria-pressed="'+(cur&&cur[x.k]?'true':'false')+'" onclick="togPress(this)">'+x.svg+x.label+'</button>').join('');
+  document.getElementById('mHint').textContent=mode==='again'
+    ?'This adds another viewing to the film\u2019s entry. Its rank and first-watch date stay as they are.'
+    :'Rewatch means I\u2019d seen it before it entered the diary. Rewatches count in the all-time ranking but sit out the best of the year.';
+}
 
 function setModalStar(v){
   mRating=v;
@@ -1814,23 +1969,30 @@ function resetModalStars(){
   document.querySelectorAll('#mStars .ms').forEach(s=>s.classList.remove('lit'));
 }
 
-function openModal(id){
+function openModal(id,mode){
   mId=id;mIsNew=false;
   const f=film(id);
-  document.getElementById('mTitle').textContent=f.t;
-  document.getElementById('mMeta').textContent=f.d?`${f.y} · ${f.g} · Dir. ${f.d}`:`${f.y} · ${f.g}`;
-  document.getElementById('mDate').value=new Date().toISOString().split('T')[0];
-  document.getElementById('mNewFields').style.display='none';
-  document.getElementById('mSaveBtn').textContent='Log This Film';
-  // Pre-fill existing rating if already logged
   const existing=W.find(w=>w.id===id);
+  // A film already in the diary opens for editing, unless a new viewing was asked for.
+  mMode=existing?(mode==='again'?'again':'edit'):'new';
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('mTitle').textContent=f.t;
+  document.getElementById('mMeta').textContent=mMode==='again'
+    ?'Watching it again · first logged '+fmtDate(existing.d)
+    :(f.d?`${f.y} · ${f.g} · Dir. ${f.d}`:`${f.y} · ${f.g}`);
+  document.getElementById('mDate').value=(mMode==='edit'&&existing.d)?existing.d:today;
+  document.getElementById('mNewFields').style.display='none';
+  document.getElementById('mSaveBtn').textContent=mMode==='edit'?'Save Changes':(mMode==='again'?'Log This Rewatch':'Log This Film');
+  _setupModalExtras(mMode,existing);
+  // Pre-fill existing rating if already logged
   if(existing && existing.r) setModalStar(existing.r); else resetModalStars();
   document.getElementById('watchedModal').classList.add('open');
   hideResults();
 }
 
 function openAddModal(title){
-  mId=null;mIsNew=true;
+  mId=null;mIsNew=true;mMode='new';
+  _setupModalExtras('new',null);
   document.getElementById('mTitle').textContent='Add New Film';
   document.getElementById('mMeta').textContent='This film isn\'t in the archive yet — fill in the details below.';
   document.getElementById('mNewFields').style.display='block';
@@ -1851,6 +2013,9 @@ document.getElementById('watchedModal').addEventListener('click',e=>{if(e.target
 function saveWatched(){
   const date=document.getElementById('mDate').value||new Date().toISOString().split('T')[0];
   const rating=mRating||0;
+  const tags=_readModalTags();
+  const rankEl=document.getElementById('mRank');
+  const rankIn=parseInt(rankEl.value,10), rankWas=parseInt(rankEl.dataset.was||'',10);
 
   if(mIsNew){
     // Add a brand-new film to the FILMS array
@@ -1864,7 +2029,10 @@ function saveWatched(){
     const newId=Math.max(...allIds,0)+1;
     const newFilm={id:newId,t:title,y:year,g:genre,e:'🎬',d:director,a:[]};
     FILMS.push(newFilm);
-    W.push({id:newId,d:date,r:rating,rank:nextRank()});
+    const entry={id:newId,d:date,r:rating,rank:nextRank()};
+    setTags(entry,tags);
+    W.push(entry);
+    if(rankIn>=1)placeAtRank(newId,rankIn);
     save(); // ← persist FIRST before any render that could throw
     closeModal();closeFilm();closeSearch();
     showLbToast(title);
@@ -1874,25 +2042,43 @@ function saveWatched(){
   }
 
   if(!mId)return;
+  const wasEdit=isW(mId)&&mMode!=='again';
   if(isW(mId)){
-    // Update existing entry
     const w=W.find(x=>x.id===mId);
-    w.d=date;
-    if(rating) w.r=rating;
+    if(mMode==='again'){
+      // Another viewing of a film already in the diary
+      const v={d:date};if(tags.tara)v.tara=1;if(tags.th)v.th=1;
+      (w.v=w.v||[]).push(v);
+      w.v.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
+    }else{
+      // Update existing entry
+      w.d=date;
+      if(rating) w.r=rating;
+      setTags(w,tags);
+      if(rankIn>=1&&rankIn!==rankWas)placeAtRank(mId,rankIn);
+    }
   } else {
-    W.push({id:mId,d:date,r:rating,rank:nextRank()});
+    const entry={id:mId,d:date,r:rating,rank:nextRank()};
+    setTags(entry,tags);
+    W.push(entry);
+    if(rankIn>=1)placeAtRank(mId,rankIn);
     WL=WL.filter(x=>x!==mId);
   }
   const loggedTitle = film(mId)?.t; // capture before closeModal() nullifies mId
   save(); // ← persist FIRST before any render that could throw
   closeModal();closeFilm();closeSearch();
-  showLbToast(loggedTitle);
+  if(wasEdit)showToast('Entry updated');else showLbToast(loggedTitle);
   try { refreshAll(); }
   catch(e) { console.warn('Re-render after log failed:', e); }
 }
 
 // ══════════ REMOVE WATCHED ══════════
 function removeW(id){W=W.filter(w=>w.id!==id);save();showToast('Removed from diary');closeFilm();refreshAll();}
+function removeViewing(id,i){
+  const w=W.find(x=>x.id===id);if(!w||!Array.isArray(w.v))return;
+  w.v.splice(i,1);if(!w.v.length)delete w.v;
+  save();refreshAll();openFilm(id);
+}
 
 // ── Inline genre setter (watched table dropdown) ──
 window._setGenreInline = function(sel) {
@@ -2008,16 +2194,19 @@ const COL_DEFS={
   poster:  {id:'',           style:'width:44px;',                   sortKey:null,       label:''},
   title:   {id:'th-alpha',   style:'cursor:pointer;',               sortKey:'alpha',    label:'Title'},
   review:  {id:'th-review',  style:'width:54px;text-align:center;', sortKey:null,       label:'Review'},
+  tags:    {id:'',           style:'width:84px;',                   sortKey:null,       label:'Tags'},
   genre:   {id:'th-genre',   style:'cursor:pointer;',               sortKey:'genre',    label:'Genre'},
   director:{id:'th-director',style:'cursor:pointer;',               sortKey:'director', label:'Director'},
   year:    {id:'th-year',    style:'cursor:pointer;',               sortKey:'year',     label:'Year'},
   runtime: {id:'th-runtime', style:'width:86px;cursor:pointer;white-space:nowrap;', sortKey:'runtime', label:'Runtime'},
   date:    {id:'th-date',    style:'cursor:pointer;',               sortKey:'date',     label:'Date Watched'},
 };
-const DEFAULT_COL_ORDER=['rank','poster','title','review','genre','director','year','runtime','date'];
+const DEFAULT_COL_ORDER=['rank','poster','title','review','tags','genre','director','year','runtime','date'];
 let _colOrder=JSON.parse(localStorage.getItem('jwl3_col_order')||'null')||[...DEFAULT_COL_ORDER];
 // Users with a saved column order from before the Runtime column existed: slot it in after Year
 if(!_colOrder.includes('runtime')){const _yi=_colOrder.indexOf('year');_colOrder.splice(_yi>=0?_yi+1:_colOrder.length,0,'runtime');}
+// Same for the Tags column: slot it in after Review
+if(!_colOrder.includes('tags')){const _ri=_colOrder.indexOf('review');_colOrder.splice(_ri>=0?_ri+1:_colOrder.length,0,'tags');}
 let _colDragSrc=null;
 
 function renderHead(){
@@ -2076,8 +2265,22 @@ function renderTable(){
   const director=document.getElementById('dbDirector').value;
   const dateWatched=document.getElementById('dbDateWatched').value;
   const releaseYear=document.getElementById('dbReleaseYear').value;
-  
+  // Show: everything, one year's first watches, or a single tag
+  const showSel=document.getElementById('dbShow');
+  const showYears=diaryYears();
+  const showWas=showSel.value;
+  showSel.innerHTML='<option value="">All films</option>'+showYears.map(y=>'<option value="y'+y+'">'+y+' first watches</option>').join('')
+    +'<option value="rw">Rewatches</option><option value="tara">With Tara</option><option value="th">In a theater</option><option value="todo">Not tagged yet</option>';
+  if([...showSel.options].some(o=>o.value===showWas))showSel.value=showWas;
+  const show=showSel.value;
+  const showYear=/^y\d{4}$/.test(show)?+show.slice(1):0;
+
   let list=W.slice();
+  if(showYear)list=list.filter(w=>isFirstWatchOf(w,showYear));
+  else if(show==='rw')list=list.filter(w=>w.rw);
+  else if(show==='tara')list=list.filter(w=>w.tara);
+  else if(show==='th')list=list.filter(w=>w.th);
+  else if(show==='todo')list=list.filter(w=>!w.tg);
   if(q)list=list.filter(w=>{const f=film(w.id);return f&&(f.t.toLowerCase().includes(q)||getFilmGenre(w.id).toLowerCase().includes(q)||f.d.toLowerCase().includes(q))});
   if(genre)list=list.filter(w=>getFilmGenre(w.id)===genre);
   if(director)list=list.filter(w=>film(w.id)?.d===director);
@@ -2137,9 +2340,10 @@ function renderTable(){
   const tbody=document.getElementById('tableBody');
   if(!list.length){tbody.innerHTML='';document.getElementById('watchedEmpty').style.display='block';return}
   document.getElementById('watchedEmpty').style.display='none';
-  const sortedAll=W.slice().sort((a,b)=>a.rank-b.rank);
+  // In a year view the rank shown is the film's place among that year's first watches
+  const sortedAll=(showYear?W.filter(w=>isFirstWatchOf(w,showYear)):W.slice()).sort((a,b)=>a.rank-b.rank);
   const isRankSort = curSort==='rank';
-  const top10Cutoff = isRankSort ? Math.max(1, Math.ceil(W.length * 0.1)) : 0;
+  const top10Cutoff = isRankSort ? Math.max(1, Math.ceil(sortedAll.length * 0.1)) : 0;
   tbody.innerHTML=list.map(w=>{
     const f=film(w.id);if(!f)return'';
     const rank=sortedAll.findIndex(x=>x.id===w.id)+1;
@@ -2150,6 +2354,7 @@ function renderTable(){
       poster:`<td>${posterEl(f.t,'mt-poster')}</td>`,
       title:`<td><div class="mt-title">${f.t}</div></td>`,
       review:`<td class="lb-cell"><span class="lb-icon" data-fid="${f.id}" ${rev?`onmouseenter="_lbEnter(event)" onmouseleave="_lbLeave()" onmousemove="_lbMove(event)"`:''}  onclick="_lbClick(event)">${rev&&rev.rating?lbStars(rev.rating):'·'}</span></td>`,
+      tags:`<td>${tagIcons(w,'tags-inline')}</td>`,
       genre:(()=>{
         const gVal = getFilmGenre(f.id);
         const opts = GENRE_OPTIONS.map(o=>`<option value="${o}"${o===gVal?' selected':''}>${o}</option>`).join('');
@@ -2700,7 +2905,7 @@ async function renderByNumbers(){
   // Best-of strips — highest-ranked (lowest rank #) film per period/group.
   const bestBy=keyFn=>{const b={};W.forEach(w=>{const k=keyFn(w);if(k==null||k===''||!film(w.id))return;const wr=w.rank>0?w.rank:Infinity;if(!b[k]||wr<b[k]._r)b[k]={id:w.id,rank:w.rank,_r:wr};});return b;};
   // Best of Each Month — newest month first
-  const byMonth=bestBy(w=>(w.d||'').slice(0,7)||null);
+  const byMonth=bestBy(w=>w.rw?null:((w.d||'').slice(0,7)||null)); // first watches only
   const monthItems=Object.keys(byMonth).sort().reverse().map(m=>{const p=m.split('-');return {id:byMonth[m].id,rank:byMonth[m].rank,label:new Date(+p[0],+p[1]-1,1).toLocaleString('en-US',{month:'short',year:'numeric'})};});
   _bestStrip(document.getElementById('bomStrip'),document.getElementById('bomSection'),monthItems);
   // Best of Each Decade — newest decade first
@@ -2763,6 +2968,7 @@ function renderRatingHisto(){
 function renderStats(){
   buildHeatmap();
   try{renderYIR();renderTaste();renderFacts();}catch(e){console.warn('insights render failed',e);}
+  try{renderHow();}catch(e){console.warn('how-I-watch render failed',e);}
   renderByNumbers();
   renderRatingHisto();
   const films=W.map(w=>({...w,f:film(w.id)})).filter(x=>x.f);
@@ -3296,17 +3502,21 @@ function reviewParts(rev){
 function diary(){
   const order=W.slice().sort((a,b)=>a.rank-b.rank);
   const pos={};order.forEach((w,i)=>{pos[w.id]=i+1;});
+  // yrank: place among the first watches of the year it was logged (0 for rewatches)
+  const ypos={},yc={};
+  order.forEach(w=>{if(w.rw||!w.d)return;const y=w.d.slice(0,4);yc[y]=(yc[y]||0)+1;ypos[w.id]=yc[y];});
   return W.map(w=>{
     const f=film(w.id);if(!f)return null;
     const rev=findLbReview(f.t,f.y);
-    return {w,f,id:w.id,d:w.d||'',rank:pos[w.id],rating:_filmRating(w),rev:reviewParts(rev),lb:rev};
+    return {w,f,id:w.id,d:w.d||'',rank:pos[w.id],yrank:ypos[w.id]||0,rw:!!w.rw,last:lastViewing(w),rating:_filmRating(w),rev:reviewParts(rev),lb:rev};
   }).filter(Boolean);
 }
-function byRecent(a,b){return (dateOf(b.d)-dateOf(a.d))||(b.id-a.id);}
+function byRecent(a,b){return (dateOf(b.last.d)-dateOf(a.last.d))||(b.id-a.id);}
 function cardHTML(x,o){
   o=o||{};const f=x.f;
-  const badge=o.badge?'<span class="badge'+(x.rank===1?' top':'')+'">#'+x.rank+'</span>':'';
-  return '<button class="pc" onclick="openFilm('+f.id+')">'+posterHTML(f,'w342',badge)
+  const rk=o.rank!=null?o.rank:x.rank;
+  const badge=o.badge?'<span class="badge'+(rk===1?' top':'')+'">#'+rk+'</span>':'';
+  return '<button class="pc" onclick="openFilm('+f.id+')">'+posterHTML(f,'w342',badge+tagIcons(x.w))
     +'<span class="pc-title">'+esc(f.t)+'</span>'
     +'<span class="pc-meta"><span>'+esc(o.sub!=null?o.sub:(f.y||''))+'</span>'+(x.rating?starsHTML(x.rating):'')+'</span></button>';
 }
@@ -3459,6 +3669,7 @@ function closeFilm(){
 document.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
   if(document.getElementById('watchedModal').classList.contains('open')){closeModal();_lockScroll();return;}
+  if(document.getElementById('taggerOverlay').classList.contains('open')){closeTagger();return;}
   if(document.getElementById('filmSheet').classList.contains('open')){closeFilm();return;}
   closeSearch();
 });
@@ -3482,15 +3693,21 @@ async function openFilm(id){
   const facts=[];
   if(x){
     facts.push(['All-time rank','#'+x.rank+' <span style="color:var(--ink-3);font-weight:400">of '+total+'</span>']);
-    facts.push(['Watched',esc(fmtDate(x.d))]);
+    if(x.yrank){const yy=+x.d.slice(0,4);facts.push([yy+' rank','#'+x.yrank+' <span style="color:var(--ink-3);font-weight:400">of '+W.filter(w=>isFirstWatchOf(w,yy)).length+' first watches</span>']);}
+    facts.push([(x.w.v&&x.w.v.length)?'First logged':'Watched',esc(fmtDate(x.d))]);
   }
+  const tagChips=x?TAGS.filter(t=>x.w[t.k]).map(t=>'<span class="chip'+(t.k==='rw'?' teal':'')+'">'+t.svg+esc(t.label)+'</span>').join(''):'';
+  const again=(x&&x.w.v&&x.w.v.length)?'<div><div class="sf-k" style="margin-bottom:.5rem">Watched again</div><div class="viewings">'
+    +x.w.v.map((v,i)=>'<div class="viewing"><span>'+esc(fmtDate(v.d))+'</span>'+tagIcons(v,'tags-inline')
+      +'<button class="viewing-x" onclick="removeViewing('+id+','+i+')" aria-label="Remove this viewing" title="Remove this viewing">✕</button></div>').join('')+'</div></div>':'';
   if(f.rt>0)facts.push(['Runtime',esc(fmtRuntime(f.rt))]);
   facts.push(['TMDB score','<span id="sfCrowd">–</span>']);
   const cast=(f.a||[]).slice(0,8);
   const actions=[];
   if(x){
     actions.push('<a class="btn sm" href="'+esc(lbLink)+'" target="_blank" rel="noopener">Letterboxd ↗</a>');
-    actions.push('<button class="btn sm ghost" onclick="openModal('+id+')">Change watch date</button>');
+    actions.push('<button class="btn sm" onclick="openModal('+id+',\'again\')">Log a rewatch</button>');
+    actions.push('<button class="btn sm ghost" onclick="openModal('+id+')">Edit entry</button>');
   }else{
     actions.push('<button class="btn sm primary" onclick="openModal('+id+')">Mark as watched</button>');
     if(onWL)actions.push('<button class="btn sm danger" onclick="removeWL('+id+');closeFilm()">Remove from watch list</button>');
@@ -3505,10 +3722,12 @@ async function openFilm(id){
         +'<h2 class="sheet-title" id="sheetTitle">'+esc(f.t)+'</h2>'
         +'<div class="sheet-meta">'+meta.map(m=>'<span>'+esc(m)+'</span>').join('<span aria-hidden="true">·</span>')+'</div>'
         +(x?'<div class="sheet-rating">'+starsHTML(x.rating)+(x.rating?'<span class="num" style="color:var(--ink-2)">'+fmtRating(x.rating)+' / 5</span>':'')+'</div>':'')
+        +(tagChips?'<div class="sheet-tags">'+tagChips+'</div>':'')
       +'</div>'
       +'<div class="sheet-body">'
         +(x&&x.rev?reviewHTML(x.rev,'sheet-review'):'')
         +(!x?'<div id="sheetStream"></div>':'')
+        +again
         +'<div class="sheet-facts">'+facts.map(p=>'<div><div class="sf-k">'+p[0]+'</div><div class="sf-v num">'+p[1]+'</div></div>').join('')+'</div>'
         +(cast.length?'<div><div class="sf-k" style="margin-bottom:.5rem">Cast</div><div class="cast">'+cast.map(a=>'<span class="chip">'+esc(a)+'</span>').join('')+'</div></div>':'')
         +'<div class="sheet-actions">'+actions.join('')+'</div>'
@@ -3564,6 +3783,9 @@ function streaks(D){
   return {cur,best};
 }
 let _heroFor=null;
+let _topScope='all'; // 'all' or a year: which ranking the home top ten shows
+function setTopScope(v){_topScope=v;renderHome();}
+function goRanking(){_rankScope=_topScope;showPage('rankings');}
 function renderHome(){
   const D=diary();
   const hero=document.getElementById('heroInner');
@@ -3576,7 +3798,7 @@ function renderHome(){
   const lbLink=(top.lb&&top.lb.link)||lbUrl(f.t);
   hero.innerHTML=
     '<div class="hero-head">'
-      +'<div class="hero-kicker"><span class="kicker">Latest watch</span><span class="chip">'+esc(fmtDate(top.d))+'</span><span class="chip amber">#'+top.rank+' of '+D.length+' all-time</span></div>'
+      +'<div class="hero-kicker"><span class="kicker">Latest watch</span><span class="chip">'+esc(fmtDate(top.last.d))+'</span><span class="chip amber">#'+top.rank+' of '+D.length+' all-time</span>'+((top.rw||top.last.again)?'<span class="chip teal">'+TAGS[0].svg+'Rewatch</span>':'')+'</div>'
       +'<h1 class="hero-title">'+esc(f.t)+'</h1>'
       +'<div class="hero-meta">'+meta.map(m=>'<span>'+esc(m)+'</span>').join('<span class="dot" aria-hidden="true"></span>')+'</div>'
       +(top.rating?'<div class="hero-rating">'+starsHTML(top.rating)+'<span class="num" style="color:var(--ink-2)">'+fmtRating(top.rating)+' / 5</span></div>':'')
@@ -3617,7 +3839,7 @@ function renderHome(){
   document.getElementById('statBand').innerHTML=cells.map(c=>'<div class="stat'+(c.hl?' hl':'')+'"><div class="stat-n">'+c.n+'</div><div class="stat-l">'+esc(c.l)+'</div><div class="stat-s">'+esc(c.s)+'</div></div>').join('');
 
   // Recently watched rail (hero film excluded)
-  document.getElementById('rw-tiles').innerHTML=recent.slice(1,15).map(x=>cardHTML(x,{sub:fmtDate(x.d).replace(/, \d{4}$/,''),badge:true})).join('');
+  document.getElementById('rw-tiles').innerHTML=recent.slice(1,15).map(x=>cardHTML(x,{sub:fmtDate(x.last.d).replace(/, \d{4}$/,''),badge:true})).join('');
 
   // Review feed
   const withRev=recent.slice(1).filter(x=>x.rev).slice(0,7);
@@ -3627,16 +3849,21 @@ function renderHome(){
     const open='openFilm('+x.id+')';
     return '<article class="rv'+(i===0?' lead':'')+'" role="button" tabindex="0" onclick="'+open+'" onkeydown="if(event.key===\'Enter\')'+open+'">'
       +posterHTML(x.f,i===0?'w500':'w342')
-      +'<div class="rv-body"><div class="rv-date">'+esc(fmtDate(x.d))+'</div>'
+      +'<div class="rv-body"><div class="rv-date">'+esc(fmtDate(x.last.d))+'</div>'
       +'<h3 class="rv-title">'+esc(x.f.t)+'<span class="y">'+esc(x.f.y||'')+'</span></h3>'
       +'<div>'+starsHTML(x.rating)+'</div>'
       +reviewHTML(x.rev,'rv-text')
       +'<div class="rv-foot"><span class="chip">#'+x.rank+' all-time</span>'+(x.rev.spoiler?'<span class="chip amber">Spoilers</span>':'')+(x.f.d?'<span class="chip">'+esc(x.f.d)+'</span>':'')+'</div></div></article>';
   }).join('');
 
-  // Top ten
-  const best=D.slice().sort((a,b)=>a.rank-b.rank).slice(0,10);
-  document.getElementById('top10').innerHTML=best.map((x,i)=>'<button class="t10" onclick="openFilm('+x.id+')"><span class="t10-n" aria-hidden="true">'+(i+1)+'</span>'+posterHTML(x.f,'w342')+'<span class="t10-text"><span class="pc-title">'+esc(x.f.t)+'</span><span class="pc-meta"><span>'+esc(x.f.y||'')+'</span>'+(x.rating?starsHTML(x.rating):'')+'</span></span></button>').join('');
+  // Top ten: all-time, or one year's first watches
+  const tYears=diaryYears();
+  if(_topScope!=='all'&&!tYears.includes(_topScope))_topScope='all';
+  const best=(_topScope==='all'?D.slice():D.filter(x=>isFirstWatchOf(x.w,_topScope))).sort((a,b)=>a.rank-b.rank).slice(0,10);
+  document.getElementById('topScope').innerHTML='<button class="'+(_topScope==='all'?'active':'')+'" onclick="setTopScope(\'all\')">All-time</button>'
+    +tYears.map(y=>'<button class="'+(_topScope===y?'active':'')+'" onclick="setTopScope('+y+')">'+y+'</button>').join('');
+  document.getElementById('topKicker').textContent=_topScope==='all'?'All-time':'First watches of '+_topScope;
+  document.getElementById('top10').innerHTML=best.map((x,i)=>'<button class="t10" onclick="openFilm('+x.id+')"><span class="t10-n" aria-hidden="true">'+(i+1)+'</span>'+posterHTML(x.f,'w342',tagIcons(x.w))+'<span class="t10-text"><span class="pc-title">'+esc(x.f.t)+'</span><span class="pc-meta"><span>'+esc(x.f.y||'')+'</span>'+(x.rating?starsHTML(x.rating):'')+'</span></span></button>').join('');
 
   renderFacts();
   hydratePosters();
@@ -3718,6 +3945,14 @@ function buildFacts(D){
     facts.push({k:'Me vs. the crowd',h:'I rate films '+b(Math.abs(d).toFixed(1)+'★ '+(d>=0?'higher':'lower'))+' than the TMDB audience on average.'});
     const hot=cmp.slice().sort((a,b2)=>a.diff-b2.diff)[0];
     if(hot.diff<=-1)facts.push({k:'Hot take',h:'My biggest disagreement with the crowd: '+b(hot.x.f.t)+'. They say '+(metaOf(hot.x.f).v/2).toFixed(1)+'★, I say '+fmtRating(hot.x.rating)+'★.'});}
+  // how I watch: company, big screen
+  [['tara','The Tara effect'],['th','Big screen bump']].forEach(p=>{
+    const h=HOW.find(o=>o.k===p[0]),s=tagSplit(D,p[0]);
+    if(s.yes.nr<3||s.no.nr<3)return;
+    const d=s.yes.r-s.no.r;if(Math.abs(d)<0.15)return;
+    const lc1=t=>t.charAt(0).toLowerCase()+t.slice(1);
+    facts.push({k:p[1],h:b(d>0?h.yesS:h.noS)+' rate '+b(Math.abs(d).toFixed(1)+'★ higher')+' than '+lc1(d>0?h.noS:h.yesS)+' ('+s.yes.r.toFixed(1)+'★ vs. '+s.no.r.toFixed(1)+'★).'});
+  });
   // backlog
   if(WL.length>=5&&thisYr.length>=5){const doy=Math.max(1,Math.floor((now-new Date(yr,0,1))/86400000)+1);const perMonth=thisYr.length/doy*30.4;
     facts.push({k:'The backlog',h:'There are '+b(WL.length+' films')+' on the watch list. At my current pace that\'s '+b((WL.length/perMonth).toFixed(1)+' months')+' of viewing.'});}
@@ -3758,7 +3993,9 @@ function renderDiaryGrid(list){
   const el=document.getElementById('diaryGrid');if(!el)return;
   const D=diary(),byId={};D.forEach(x=>{byId[x.id]=x;});
   const sub=x=>curSort==='date'?fmtDate(x.d).replace(/, \d{4}$/,''):(curSort==='runtime'?fmtRuntime(x.f.rt):(x.f.y||''));
-  el.innerHTML=list.map(w=>byId[w.id]).filter(Boolean).map(x=>cardHTML(x,{badge:true,sub:sub(x)})).join('');
+  const showV=(document.getElementById('dbShow')||{}).value||'';
+  const yearView=/^y\d{4}$/.test(showV);
+  el.innerHTML=list.map(w=>byId[w.id]).filter(Boolean).map(x=>cardHTML(x,{badge:true,sub:sub(x),rank:yearView?x.yrank:null})).join('');
   const cnt=document.getElementById('diaryCount');
   if(cnt)cnt.textContent=list.length===W.length?plural(W.length,'film')+' watched':list.length+' of '+plural(W.length,'film');
   const sel=document.getElementById('dbSortSel');
@@ -3795,10 +4032,26 @@ function toggleReorder(){
   document.getElementById('reorderBtn').classList.toggle('primary',_reorder);
   renderRankings();
 }
+let _rankScope='all'; // 'all' or a year (that year's first watches only)
+function setRankScope(v){_rankScope=v;if(v!=='all'&&_reorder){_reorder=false;const b=document.getElementById('reorderBtn');b.textContent='Edit order';b.classList.remove('primary');}renderRankings();window.scrollTo(0,0);}
 function renderRankings(){
   const el=document.getElementById('rankList'),pod=document.getElementById('podium');
   if(!el)return;
-  const D=diary().sort((a,b)=>a.rank-b.rank);
+  const all=diary().sort((a,b)=>a.rank-b.rank);
+  const years=diaryYears();
+  if(_rankScope!=='all'&&!years.includes(_rankScope))_rankScope='all';
+  const scoped=_rankScope!=='all';
+  const D=scoped?all.filter(x=>isFirstWatchOf(x.w,_rankScope)):all;
+  const num=x=>scoped?x.yrank:x.rank;
+  const nRw=all.filter(x=>x.rw).length;
+  document.getElementById('rankScope').innerHTML='<button class="'+(scoped?'':'active')+'" onclick="setRankScope(\'all\')">All-time<span class="n">'+all.length+'</span></button>'
+    +years.map(y=>'<button class="'+(_rankScope===y?'active':'')+'" onclick="setRankScope('+y+')">'+y+'<span class="n">'+all.filter(x=>isFirstWatchOf(x.w,y)).length+'</span></button>').join('');
+  document.getElementById('rankKicker').textContent=scoped?'First watches only':'The definitive order';
+  document.getElementById('rankTitle').innerHTML=scoped?'Best of <em>'+_rankScope+'</em>':'All-time <em>ranking</em>';
+  document.getElementById('rankNote').textContent=scoped
+    ?'Films I saw for the first time in '+_rankScope+', in all-time order. Rewatches sit this one out.'
+    :(nRw?'Everything in the diary, including '+plural(nRw,'rewatch','rewatches')+'.':'Everything in the diary.');
+  document.getElementById('reorderBtn').style.display=scoped?'none':'';
   document.getElementById('rankEmpty').style.display=D.length?'none':'block';
   document.getElementById('rankPage').classList.toggle('reorder',_reorder);
   if(!D.length){el.innerHTML='';pod.innerHTML='';el.style.display='none';return;}
@@ -3806,20 +4059,20 @@ function renderRankings(){
   const showPodium=!_reorder&&D.length>=3;
   pod.style.display=showPodium?'':'none';
   if(showPodium){
-    pod.innerHTML=D.slice(0,3).map(x=>'<button class="pod'+(x.rank===1?' first':'')+'" onclick="openFilm('+x.id+')">'
-      +'<span class="pod-n" aria-hidden="true">'+x.rank+'</span>'+posterHTML(x.f,'w500')
+    pod.innerHTML=D.slice(0,3).map(x=>'<button class="pod'+(num(x)===1?' first':'')+'" onclick="openFilm('+x.id+')">'
+      +'<span class="pod-n" aria-hidden="true">'+num(x)+'</span>'+posterHTML(x.f,'w500',tagIcons(x.w))
       +'<span class="pod-title">'+esc(x.f.t)+'</span>'
       +'<span class="pod-meta">'+esc([x.f.y,x.f.d].filter(Boolean).join(' · '))+'</span>'
       +(x.rating?starsHTML(x.rating):'')+'</button>').join('');
   }
   const elite=Math.ceil(D.length*.10);
   el.innerHTML=(showPodium?D.slice(3):D).map(x=>{
-    const f=x.f,rank=x.rank;
+    const f=x.f,rank=num(x);
     const safeT=f.t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return '<div class="rank-item">'
       +'<div class="rank-num'+(rank<=elite?' t3':'')+'"'+(_reorder?' onclick="editRank('+f.id+','+rank+')" title="Tap to type a new rank"':'')+'>'+rank+'</div>'
       +'<div class="rank-poster" onclick="openFilm('+f.id+')">'+posterHTML(f,'w185')+'</div>'
-      +'<div class="rank-info" onclick="openFilm('+f.id+')"><div class="rank-title">'+esc(f.t)+'</div>'
+      +'<div class="rank-info" onclick="openFilm('+f.id+')"><div class="rank-title">'+esc(f.t)+tagIcons(x.w,'tags-inline')+'</div>'
       +'<div class="rank-meta">'+esc([f.y,getFilmGenre(f.id)||f.g,f.d].filter(Boolean).join(' · '))+'</div></div>'
       +'<div class="rank-side">'+(x.rating?starsHTML(x.rating):'')
       +'<div class="rank-arrows">'
@@ -3829,6 +4082,125 @@ function renderRankings(){
       +'</div></div></div>';
   }).join('');
   hydratePosters();
+}
+
+
+// ══════════ HOW I WATCH: do company, screen and repeat viewings move the rating? ══════════
+const HOW=[
+  {k:'tara',title:'With Tara vs. without',yes:'With Tara',no:'Without Tara',yesS:'Films I watch with Tara',noS:'Films I watch without her'},
+  {k:'th',title:'Theater vs. at home',yes:'In a theater',no:'At home',yesS:'Films I see in a theater',noS:'Films I watch at home'},
+  {k:'rw',title:'Rewatches vs. first watches',yes:'Rewatches',no:'First watches',yesS:'Rewatches',noS:'First watches'}
+];
+const HOW_MIN=3; // rated films needed on each side before a verdict is given
+// Split the tagged diary rows on one tag and average each side.
+function tagSplit(D,key){
+  const T=D.filter(x=>x.w.tg);
+  const side=a=>{const r=a.filter(x=>x.rating>0);return {n:a.length,nr:r.length,r:r.length?avg(r.map(x=>x.rating)):0,rank:a.length?avg(a.map(x=>x.rank)):0};};
+  return {yes:side(T.filter(x=>x.w[key])),no:side(T.filter(x=>!x.w[key])),tagged:T.length};
+}
+function renderHow(){
+  const grid=document.getElementById('howGrid'),foot=document.getElementById('howFoot');
+  if(!grid)return;
+  const D=diary(),nTag=D.filter(x=>x.w.tg).length;
+  const tagBtn='<button class="btn sm" onclick="openTagger()">'+(nTag?'Tag the rest':'Tag the diary')+'</button>';
+  if(!nTag){
+    grid.innerHTML='<div class="card" style="grid-column:1/-1"><p class="sec-sub">Nothing is tagged yet. Once films are marked as a rewatch, watched with Tara, or seen in a theater, the comparisons build themselves here.</p></div>';
+    foot.innerHTML=D.length?tagBtn:'';
+    return;
+  }
+  grid.innerHTML=HOW.map(h=>{
+    const s=tagSplit(D,h.k);
+    const ok=s.yes.nr>=HOW_MIN&&s.no.nr>=HOW_MIN;
+    const d=s.yes.r-s.no.r,close=Math.abs(d)<0.15;
+    const win=ok&&!close?(d>0?'yes':'no'):'';
+    const sideHTML=(lbl,v,w)=>'<div class="cmp-side'+(w?' win':'')+'"><div class="cmp-k">'+esc(lbl)+'</div>'
+      +'<div class="cmp-v">'+(v.nr?v.r.toFixed(2)+'<small>★</small>':'–')+'</div>'
+      +'<div class="cmp-s">'+plural(v.n,'film')+(v.n?' · avg. rank #'+Math.round(v.rank):'')+'</div></div>';
+    let verdict;
+    if(!ok)verdict='Not enough tagged films to call it yet. This needs at least '+HOW_MIN+' rated films on each side.';
+    else{
+      verdict=close?'No real difference: the two sides average within '+Math.abs(d).toFixed(2)+'★ of each other.'
+        :'<b>'+esc(d>0?h.yesS:h.noS)+'</b> rate <b>'+Math.abs(d).toFixed(1)+'★ higher</b> on average.';
+      if(Math.min(s.yes.nr,s.no.nr)<10)verdict+=' Small sample, so treat it as a hint.';
+    }
+    return '<div class="card"><div class="card-h">'+esc(h.title)+'</div><div class="cmp">'+sideHTML(h.yes,s.yes,win==='yes')+sideHTML(h.no,s.no,win==='no')+'</div><p class="cmp-verdict">'+verdict+'</p></div>';
+  }).join('');
+  foot.innerHTML='<span>Based on '+nTag+' of '+plural(D.length,'film')+' tagged so far. Rank is the all-time rank, so lower is better.</span>'+(nTag<D.length?tagBtn:'');
+}
+
+// ══════════ BULK TAGGER ══════════
+let _tagFilter='todo',_tagArm=false;
+function openTagger(){
+  closeFilm();closeSearch();
+  _tagFilter=W.some(w=>!w.tg)?'todo':'all';_tagArm=false;
+  _taggerBuild();
+  const ov=document.getElementById('taggerOverlay');
+  ov.classList.add('open');ov.scrollTop=0;_lockScroll();
+}
+function closeTagger(){
+  const o=document.getElementById('taggerOverlay');
+  if(!o||!o.classList.contains('open'))return;
+  o.classList.remove('open');_lockScroll();
+  refreshAll();
+}
+function setTagFilter(v){_tagFilter=v;_tagArm=false;_taggerBuild();}
+function _trowNone(w){return !!w.tg&&!TAGS.some(t=>w[t.k]);}
+function _trowHTML(w,f){
+  return '<div class="trow'+(w.tg?' done':'')+'" id="trow-'+w.id+'">'+posterHTML(f,'w92')
+    +'<div class="trow-info"><div class="trow-t">'+esc(f.t)+'</div><div class="trow-s">'+esc([f.y,w.d?'watched '+fmtDate(w.d):''].filter(Boolean).join(' · '))+'</div></div>'
+    +'<div class="trow-c">'+TAGS.map(t=>'<button type="button" class="tog" aria-pressed="'+(w[t.k]?'true':'false')+'" title="'+t.label+'" onclick="tagToggle('+w.id+',\''+t.k+'\')">'+t.svg+t.short+'</button>').join('')
+    +'<button type="button" class="tog none" aria-pressed="'+(_trowNone(w)?'true':'false')+'" title="None of these apply" onclick="tagNone('+w.id+')">None</button></div></div>';
+}
+function _taggerBuild(){
+  const host=document.getElementById('taggerContent');if(!host)return;
+  const D=diary().sort((a,b)=>(a.d<b.d?1:a.d>b.d?-1:0)||(a.rank-b.rank)); // newest first
+  // The list is fixed while it's open: a film stays put after it's tagged, so a second tag can be added.
+  const rows=_tagFilter==='todo'?D.filter(x=>!x.w.tg):D;
+  const seg=(v,l,id)=>'<button class="'+(_tagFilter===v?'active':'')+'" onclick="setTagFilter(\''+v+'\')">'+l+'<span class="n" id="'+id+'"></span></button>';
+  host.innerHTML='<div class="kicker">Bulk edit</div><h2 class="sheet-title" id="taggerTitle">Tag the <em>diary</em></h2>'
+    +'<p class="sec-sub">For each film, tap what applies. If nothing does, tap None so it still counts as reviewed. Changes save as you go.</p>'
+    +'<div class="tagger-prog"><span id="tagProgTxt"></span><span id="tagProgPct"></span></div><div class="tagger-bar"><span id="tagProgBar"></span></div>'
+    +'<div class="tagger-ctl"><div class="seg">'+seg('todo','To do','tagCntTodo')+seg('all','All films','tagCntAll')+'</div>'
+    +'<button class="btn sm" id="tagRestBtn" onclick="tagRestNone()"></button></div>'
+    +(rows.length?'<div class="tagger-list">'+rows.map(x=>_trowHTML(x.w,x.f)).join('')+'</div>'
+      :'<div class="empty"><div class="empty-title">All caught up</div><div class="empty-text">Every film in the diary has been tagged.</div></div>');
+  _taggerProgress();hydratePosters();
+}
+function _taggerProgress(){
+  const n=W.length,done=W.filter(w=>w.tg).length,left=n-done;
+  const set=(id,t)=>{const el=document.getElementById(id);if(el)el.textContent=t;};
+  set('tagProgTxt',done+' of '+plural(n,'film')+' tagged');
+  set('tagProgPct',n?Math.round(done/n*100)+'%':'');
+  set('tagCntTodo',left);set('tagCntAll',n);
+  const bar=document.getElementById('tagProgBar');if(bar)bar.style.width=(n?done/n*100:0)+'%';
+  const rest=document.getElementById('tagRestBtn');
+  if(rest){rest.style.display=left?'':'none';rest.textContent=_tagArm?'Tap again to confirm ('+plural(left,'film')+')':'Mark the rest \u201cNone\u201d';rest.classList.toggle('primary',_tagArm);}
+}
+function _trowSync(w){
+  const r=document.getElementById('trow-'+w.id);if(!r)return;
+  r.classList.toggle('done',!!w.tg);
+  const b=r.querySelectorAll('.tog');
+  TAGS.forEach((t,i)=>{if(b[i])b[i].setAttribute('aria-pressed',w[t.k]?'true':'false');});
+  if(b[TAGS.length])b[TAGS.length].setAttribute('aria-pressed',_trowNone(w)?'true':'false');
+}
+function tagToggle(id,k){
+  const w=W.find(x=>x.id===id);if(!w)return;
+  if(w[k])delete w[k];else w[k]=1;
+  w.tg=1;_tagArm=false;
+  save();_trowSync(w);_taggerProgress();
+}
+// "None": nothing applies. Tapping it again on a None film puts it back in the to-do pile.
+function tagNone(id){
+  const w=W.find(x=>x.id===id);if(!w)return;
+  if(_trowNone(w))delete w.tg;
+  else{TAGS.forEach(t=>{delete w[t.k];});w.tg=1;}
+  _tagArm=false;
+  save();_trowSync(w);_taggerProgress();
+}
+function tagRestNone(){
+  if(!_tagArm){_tagArm=true;_taggerProgress();return;}
+  W.forEach(w=>{if(!w.tg)w.tg=1;});
+  _tagArm=false;save();_taggerBuild();
 }
 
 // ══════════ BEST-OF STRIPS (month / decade / genre) ══════════
@@ -3861,7 +4233,10 @@ function renderYIR(){
   const L=D.filter(x=>+x.d.slice(0,4)===Y);
   const mins=L.reduce((s,x)=>s+(x.f.rt>0?x.f.rt:0),0);
   const rated=L.filter(x=>x.rating>0);
-  const byRank=L.slice().sort((a,b)=>a.rank-b.rank);
+  // "Best of the year" is first watches only; rewatches still count toward totals
+  const firsts=L.filter(x=>!x.rw),nRw=L.length-firsts.length;
+  const byRank=firsts.slice().sort((a,b)=>a.rank-b.rank);
+  const tagged=L.filter(x=>x.w.tg),nTara=tagged.filter(x=>x.w.tara).length,nTh=tagged.filter(x=>x.w.th).length;
   const count=(keyFn)=>{const m={};L.forEach(x=>{const k=keyFn(x);if(k)m[k]=(m[k]||0)+1;});return m;};
   const gTop=topEntry(count(x=>getFilmGenre(x.id)));
   const dTop=topEntry(count(x=>(x.f.d||'').trim()));
@@ -3883,12 +4258,15 @@ function renderYIR(){
     busiest&&busiest[1]?yc('Busiest month',esc(MONTHS[busiest[0]]),plural(busiest[1],'film')):'',
     fresh?yc('Best new release',esc(fresh.f.t),'Top-ranked film released in '+Y+' · #'+fresh.rank+' all-time'):'',
     longest?yc('Longest sit',esc(longest.f.t),esc(fmtRuntime(longest.f.rt))):'',
-    worst&&worst.rating<=3?yc('Biggest letdown',esc(worst.f.t),fmtRating(worst.rating)+'★'):''
+    worst&&worst.rating<=3?yc('Biggest letdown',esc(worst.f.t),fmtRating(worst.rating)+'★'):'',
+    tagged.length?yc('With Tara',plural(nTara,'film'),Math.round(nTara/tagged.length*100)+'% of '+plural(tagged.length,'tagged film')):'',
+    tagged.length?yc('In a theater',plural(nTh,'film'),Math.round(nTh/tagged.length*100)+'% of '+plural(tagged.length,'tagged film')):'',
+    nRw?yc('Rewatches',String(nRw),'Old favorites revisited, left out of the top five'):''
   ].filter(Boolean);
   host.innerHTML='<div class="yir">'
     +'<div class="yir-top"><div><div class="yir-year">'+Y+'</div>'
       +'<p class="yir-lede"><b>'+plural(L.length,'film')+'</b> and <b>'+Math.round(mins/60)+' hours</b> in front of a screen'+(isNow?' so far.':'.')+(byRank[0]?' The one to beat: <b>'+esc(byRank[0].f.t)+'</b>.':'')+'</p></div>'
-      +'<div><div class="card-h">Top five of '+Y+'</div><div class="yir-top5">'+byRank.slice(0,5).map(x=>cardHTML(x,{sub:'#'+x.rank})).join('')+'</div></div></div>'
+      +'<div><div class="card-h">Top five of '+Y+(nRw?'<small>First watches</small>':'')+'</div><div class="yir-top5">'+byRank.slice(0,5).map(x=>cardHTML(x,{sub:'#'+x.rank})).join('')+'</div></div></div>'
     +'<div class="yir-months"><div class="card-h">Films per month<small>'+(busiest&&busiest[1]?'Peak: '+MONTHS[busiest[0]]:'')+'</small></div>'
       +'<div class="cols">'+perMonth.map((a,i)=>'<div class="col'+(a.length&&a.length===maxM?' best':'')+(a.length?'':' zero')+'" data-tip="'+tipList(MONTHS[i]+' '+Y,plural(a.length,'film'),a.slice().sort((p,q)=>p.rank-q.rank).map(x=>x.f))+'">'
         +'<span class="col-v">'+(a.length||'')+'</span><span class="col-bar" style="height:'+(a.length?Math.max(4,Math.round(a.length/maxM*100)):1)+'%"></span><span class="col-l">'+MONTHS[i].slice(0,3)+'</span></div>').join('')+'</div></div>'
