@@ -693,6 +693,60 @@ td .tags-inline{margin-left:0}
   .tg{width:19px;height:19px}.tg svg{width:10px;height:10px}
   .yir-top5 .tagrow{display:none}
 }
+
+/* ═════════ RANK: edit-order mode ═════════ */
+.reorder-bar{display:none}
+.reorder .reorder-bar{display:flex;flex-direction:column;gap:.6rem;position:sticky;top:var(--header-h);z-index:20;margin:0 0 1rem;padding:.8rem 0;background:var(--bg);border-bottom:1px solid var(--line)}
+.reorder-row{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .8rem}
+.reorder-find{flex:1 1 220px;min-width:0;height:40px;padding:0 .9rem;border-radius:999px;border:1px solid var(--line-2);background:var(--bg-2);color:var(--ink);font-size:.92rem}
+.reorder-find:focus{outline:none;border-color:var(--amber)}
+.reorder-jump{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;font-family:var(--f-cond);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.reorder-jump button{min-width:40px;height:32px;padding:0 .6rem;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2);font-family:var(--f-cond);font-weight:600;font-size:.8rem;letter-spacing:.06em}
+.reorder-jump button:hover{border-color:var(--amber);color:var(--amber)}
+.reorder-help{font-size:.82rem;color:var(--ink-3);line-height:1.4}
+.rank-edit{display:none;align-items:center;gap:.35rem}
+.reorder .rank-edit{display:flex}
+.reorder .rank-num{display:none}
+.reorder .rank-item{grid-template-columns:auto 34px minmax(0,1fr) auto;padding:.35rem .8rem;gap:.7rem;scroll-margin-top:calc(var(--header-h) + 170px)}
+.reorder .rank-poster{width:34px}
+.rank-grip{display:flex;align-items:center;justify-content:center;width:30px;height:40px;border-radius:6px;color:var(--ink-3);font-size:1.1rem;line-height:1;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.rank-grip:hover{color:var(--amber);background:var(--white-04)}
+.rank-in{width:3.6rem;height:38px;padding:0 .3rem;border-radius:8px;border:1px solid var(--line-2);background:var(--bg-2);color:var(--ink);font-family:var(--f-cond);font-weight:700;font-size:1.15rem;text-align:center;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.rank-in::-webkit-outer-spin-button,.rank-in::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.rank-in:focus{outline:none;border-color:var(--amber);color:var(--amber)}
+.rank-item.t3 .rank-in{color:var(--amber)}
+.rank-item.moved{animation:rankMoved 1.6s ease}
+@keyframes rankMoved{0%,35%{background:var(--amber-soft);box-shadow:inset 3px 0 0 var(--amber)}100%{background:transparent;box-shadow:inset 3px 0 0 transparent}}
+.rank-item.dragging{opacity:.4}
+.rank-item.drop-before{box-shadow:inset 0 3px 0 var(--amber)}
+.rank-item.drop-after{box-shadow:inset 0 -3px 0 var(--amber)}
+body.rank-dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
+.rank-none{padding:1.4rem 1rem;color:var(--ink-3);font-size:.92rem}
+/* heatmap day popover */
+.hm-tip.pinned{pointer-events:auto;overflow:auto}
+.hm-tip-film{display:block;width:100%;text-align:left;padding:.16rem 0;color:var(--ink);line-height:1.4}
+.hm-tip.pinned .hm-tip-film{padding:.38rem 0;text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:3px}
+.hm-tip.pinned .hm-tip-film:hover{color:var(--amber)}
+.hm-tip-hint{margin-top:.35rem;font-size:.72rem;color:var(--ink-3)}
+.hm-day.hm-sel{outline:2px solid var(--ink);outline-offset:1px}
+/* by the numbers: tag cards */
+.bynum-cell.wide{grid-column:span 2}
+.bynum-cell.wide .bynum-sub b{font-weight:700;color:var(--amber)}
+.bynum-cell.wide .bynum-sub span{color:var(--ink-3)}
+/* film sheet tag toggles */
+.sheet-tags .tog{min-height:34px;padding:.2rem .75rem;font-size:.8rem}
+.cmp-v .cmp-hash{font-size:1.1rem;color:var(--ink-3);margin-right:.05rem}
+.cmp-s b{color:var(--ink-2);font-weight:600}
+@media (max-width:1020px){.bynum-cell.wide{grid-column:auto}}
+@media (max-width:760px){
+  .reorder .rank-item{grid-template-columns:auto minmax(0,1fr) auto;gap:.5rem;padding:.3rem .5rem}
+  .reorder .rank-poster,.reorder .rank-top{display:none}
+  .reorder .rank-ab,.reorder .rank-remove{width:34px;height:34px}
+  .reorder .rank-arrows{gap:.15rem}
+  .rank-in{width:3.1rem}
+  .reorder-help{display:none}
+  .bynum-cell.wide:last-child{grid-column:span 2}
+}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style></head>
 <body>
@@ -854,6 +908,7 @@ td .tags-inline{margin-left:0}
       <button class="btn sm" id="reorderBtn" onclick="toggleReorder()">Edit order</button>
     </div>
     <div class="scope-row"><div class="seg" id="rankScope" role="group" aria-label="Which ranking"></div><span class="scope-note" id="rankNote"></span></div>
+    <div class="reorder-bar" id="reorderBar"></div>
     <div class="podium" id="podium"></div>
     <div class="rank-list" id="rankList"></div>
     <div id="rankEmpty" class="empty" style="display:none">
@@ -926,7 +981,6 @@ td .tags-inline{margin-left:0}
           <div class="card"><div class="card-h">Rating distribution</div><div id="ratingHisto"></div></div>
         </div>
       </div>
-      <div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
     </section>
 
     <section class="section ins-sec" id="ins-best">
@@ -984,6 +1038,8 @@ td .tags-inline{margin-left:0}
     <div id="sheetContent"></div>
   </div>
 </div>
+
+<div class="hm-tip" id="hmTip"><div class="hm-tip-date" id="hmTipDate"></div><div class="hm-tip-films" id="hmTipFilms"></div></div>
 
 <!-- Bulk tagger: rewatch / with Tara / theater for every diary entry -->
 <div class="sheet-overlay" id="taggerOverlay" onclick="if(event.target===this)closeTagger()">
@@ -2074,6 +2130,13 @@ function saveWatched(){
 
 // ══════════ REMOVE WATCHED ══════════
 function removeW(id){W=W.filter(w=>w.id!==id);save();showToast('Removed from diary');closeFilm();refreshAll();}
+// Tag toggles on the film page: one tap, saved straight away
+function sheetTag(id,k){
+  const w=W.find(x=>x.id===id);if(!w)return;
+  if(w[k])delete w[k];else w[k]=1;
+  w.tg=1;
+  save();refreshAll();openFilm(id);
+}
 function removeViewing(id,i){
   const w=W.find(x=>x.id===id);if(!w||!Array.isArray(w.v))return;
   w.v.splice(i,1);if(!w.v.length)delete w.v;
@@ -2098,34 +2161,93 @@ function moveRank(id,dir){
   const sorted=W.slice().sort((a,b)=>a.rank-b.rank);
   const i=sorted.findIndex(w=>w.id===id);
   const j=dir==='up'?i-1:i+1;
-  if(j<0||j>=sorted.length)return;
-  const tmp=sorted[i].rank;sorted[i].rank=sorted[j].rank;sorted[j].rank=tmp;
-  save();renderRankings();
+  if(i<0||j<0||j>=sorted.length)return;
+  placeAtRank(id,j+1);
+  save();renderRankings();_rankFlash(id,false);
 }
-
-function editRank(id,currentRank){
-  const newRank=prompt(`Change rank for this film (1-${W.length}):`,currentRank);
-  if(!newRank||newRank==currentRank)return;
-  const num=parseInt(newRank);
-  if(isNaN(num)||num<1||num>W.length){
-    alert('Please enter a valid rank between 1 and '+W.length);
-    return;
+// Send a film straight to a typed position; everything between shifts by one.
+function setRankTo(id,val){
+  const n=parseInt(val,10);
+  const cur=W.slice().sort((a,b)=>a.rank-b.rank).findIndex(w=>w.id===id)+1;
+  if(isNaN(n)||n===cur){renderRankings();return;}
+  placeAtRank(id,n);
+  _reorderQ='';
+  save();renderRankings();_rankFlash(id,true);
+}
+function _rankFlash(id,scroll){
+  const el=document.getElementById('rk-'+id);if(!el)return;
+  if(scroll)el.scrollIntoView({block:'center'});
+  else{const b=el.getBoundingClientRect();if(b.top<120||b.bottom>window.innerHeight-90)el.scrollIntoView({block:'center'});}
+  el.classList.add('moved');setTimeout(()=>el.classList.remove('moved'),1700);
+}
+// Find-a-film filter while editing the order (ranks shown stay the real ranks)
+let _reorderQ='';
+function reorderFilter(q){
+  _reorderQ=(q||'').trim().toLowerCase();
+  let shown=0;
+  document.querySelectorAll('#rankList .rank-item').forEach(r=>{const hit=!_reorderQ||(r.dataset.t||'').includes(_reorderQ);r.style.display=hit?'':'none';if(hit)shown++;});
+  const none=document.getElementById('rankNone');if(none)none.style.display=shown?'none':'';
+}
+function reorderJump(n){
+  if(_reorderQ){_reorderQ='';const f=document.getElementById('reorderFind');if(f)f.value='';reorderFilter('');}
+  const rows=document.querySelectorAll('#rankList .rank-item');
+  const el=rows[Math.max(0,Math.min(rows.length-1,n-1))];
+  if(el){el.scrollIntoView({block:'center'});el.classList.add('moved');setTimeout(()=>el.classList.remove('moved'),1700);}
+}
+// Drag a row by its grip; the page scrolls by itself near the top and bottom edges.
+let _drag=null;
+function rankDragStart(e,id){
+  if(_reorderQ||(e.button!=null&&e.button>0))return;
+  const row=document.getElementById('rk-'+id);if(!row)return;
+  e.preventDefault();
+  _drag={id,row,y:e.clientY,target:null,after:false};
+  row.classList.add('dragging');document.body.classList.add('rank-dragging');
+  window.addEventListener('pointermove',_rankDragMove);
+  window.addEventListener('pointerup',_rankDragEnd);
+  window.addEventListener('pointercancel',_rankDragCancel);
+  requestAnimationFrame(_rankDragTick);
+}
+function _rankDragMove(e){if(!_drag)return;_drag.y=e.clientY;_rankDragMark();}
+function _rankDragMark(){
+  if(!_drag)return;
+  document.querySelectorAll('#rankList .drop-before,#rankList .drop-after').forEach(el=>el.classList.remove('drop-before','drop-after'));
+  let t=null,after=false;
+  for(const r of document.querySelectorAll('#rankList .rank-item')){
+    const b=r.getBoundingClientRect();
+    t=r;if(_drag.y<b.top+b.height/2){after=false;break;}
+    after=true;
   }
-  // Find the film
-  const w=W.find(x=>x.id===id);
-  if(!w)return;
-  const oldRank=w.rank;
-  // Shift other ranks
-  W.forEach(x=>{
-    if(x.id===id){
-      x.rank=num;
-    } else if(oldRank<num && x.rank>oldRank && x.rank<=num){
-      x.rank--;
-    } else if(oldRank>num && x.rank>=num && x.rank<oldRank){
-      x.rank++;
-    }
-  });
-  save();renderRankings();renderTable();renderHome();
+  if(!t||t===_drag.row){_drag.target=null;return;}
+  _drag.target=t;_drag.after=after;t.classList.add(after?'drop-after':'drop-before');
+}
+function _rankDragTick(){
+  if(!_drag)return;
+  const edge=110,top=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||60,vh=window.innerHeight;
+  let dy=0;
+  if(_drag.y<top+edge)dy=-Math.ceil((top+edge-_drag.y)/4);
+  else if(_drag.y>vh-edge)dy=Math.ceil((_drag.y-(vh-edge))/4);
+  if(dy){window.scrollBy(0,Math.max(-32,Math.min(32,dy)));_rankDragMark();}
+  requestAnimationFrame(_rankDragTick);
+}
+function _rankDragStop(){
+  window.removeEventListener('pointermove',_rankDragMove);
+  window.removeEventListener('pointerup',_rankDragEnd);
+  window.removeEventListener('pointercancel',_rankDragCancel);
+  document.body.classList.remove('rank-dragging');
+  const d=_drag;_drag=null;
+  if(d)d.row.classList.remove('dragging');
+  document.querySelectorAll('#rankList .drop-before,#rankList .drop-after').forEach(el=>el.classList.remove('drop-before','drop-after'));
+  return d;
+}
+function _rankDragCancel(){_rankDragStop();}
+function _rankDragEnd(){
+  const d=_rankDragStop();
+  if(!d||!d.target)return;
+  const from=+d.row.dataset.rank,to=+d.target.dataset.rank;
+  // position in the final list: the target's slot once the dragged film is lifted out
+  const slot=to-(from<to?1:0);
+  placeAtRank(d.id,d.after?slot+1:slot);
+  save();renderRankings();_rankFlash(d.id,false);
 }
 
 // ══════════ SORT ══════════
@@ -2706,7 +2828,7 @@ function _hmRender(){
     const key=w.d.slice(0,10);
     if(!dayMap[key])dayMap[key]=[];
     const f=filmIdx[w.id];
-    if(f)dayMap[key].push(f.t||'');
+    if(f)dayMap[key].push({t:f.t||'',id:w.id});
   }
   // Build rank map: date -> [ranks]
   const rankMap={};
@@ -2776,8 +2898,8 @@ function _hmMonthHtml(year,month,dayMap,todayKey,stats,isBest,maxCount){
       const isToday=k===todayKey;
       const isActive=fs.length>0;
       let cls='hm-day'+(fs.length>1?' hm-multi':isActive?' hm-active':' hm-inactive')+(isToday?' hm-today':'');
-      const sf=fs.map(t=>t.replace(/\|/g,'')).join('|').replace(/"/g,'&quot;');
-      return'<div class="'+cls+'" data-date="'+k+'" data-films="'+sf+'" onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" ontouchstart="_hmTouch(event)"></div>';
+      const sf=fs.map(x=>x.t.replace(/\|/g,'')).join('|').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      return'<div class="'+cls+'" data-date="'+k+'" data-films="'+sf+'" data-ids="'+fs.map(x=>x.id).join(',')+'"'+(isActive?' tabindex="0" role="button" aria-label="'+fs.length+' watched on '+k+'" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();_hmPin(event)}"':'')+' onmouseenter="_hmEnter(event)" onmouseleave="_hmLeave()" onmousemove="_hmMove(event)" onclick="_hmPin(event)"></div>';
     }).join('');
     rows.push('<div class="hm-week-row">'+week+'</div>');
   }
@@ -2813,23 +2935,44 @@ function _hmMonthHtml(year,month,dayMap,todayKey,stats,isBest,maxCount){
     statsHtml+
   '</div>';
 }
-function _hmEnter(e){_hmShow(e.currentTarget,e.clientX,e.clientY);}
-function _hmLeave(){const t=document.getElementById('hmTip');if(t)t.classList.remove('show');}
-function _hmMove(e){_hmPos(e.clientX,e.clientY);}
-function _hmTouch(e){
-  const t=e.touches[0];
-  _hmShow(e.currentTarget,t.clientX,t.clientY);
-  setTimeout(()=>document.addEventListener('touchstart',_hmLeave,{once:true}),80);
+// Hover shows what was watched that day. A click or tap pins the popover open so
+// the titles can be tapped; clicking anywhere else (or Esc) closes it.
+let _hmPinned=null;
+function _hmEnter(e){if(_hmPinned)return;_hmShow(e.currentTarget,e.clientX,e.clientY);}
+function _hmLeave(){if(_hmPinned)return;const t=document.getElementById('hmTip');if(t)t.classList.remove('show');}
+function _hmMove(e){if(_hmPinned)return;_hmPos(e.clientX,e.clientY);}
+function _hmUnpin(){
+  if(_hmPinned)_hmPinned.classList.remove('hm-sel');
+  _hmPinned=null;
+  const t=document.getElementById('hmTip');if(t)t.classList.remove('show','pinned');
 }
+function _hmPin(e){
+  const el=e.currentTarget;e.stopPropagation();
+  if(_hmPinned===el){_hmUnpin();return;}
+  _hmUnpin();
+  const b=el.getBoundingClientRect();
+  if(!(el.dataset.ids||'')){_hmShow(el,b.right,b.top+b.height/2);setTimeout(()=>{if(!_hmPinned)_hmLeave();},1400);return;}
+  _hmPinned=el;el.classList.add('hm-sel');
+  document.getElementById('hmTip').classList.add('pinned');
+  _hmShow(el,b.right-8,b.top+b.height/2);
+}
+document.addEventListener('click',e=>{if(_hmPinned&&!e.target.closest('#hmTip'))_hmUnpin();});
+window.addEventListener('scroll',()=>{if(_hmPinned)_hmUnpin();},{passive:true});
+function _hmOpen(id){_hmUnpin();openFilm(id);}
 function _hmShow(el,cx,cy){
   const tip=document.getElementById('hmTip');if(!tip)return;
+  // position:fixed only measures from the viewport when the tip sits directly on <body>
+  if(tip.parentNode!==document.body)document.body.appendChild(tip);
   const dateStr=el.dataset.date;if(!dateStr)return;
   const dt=new Date(dateStr+'T12:00:00');
   const MLONG=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('hmTipDate').textContent=MLONG[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear();
   const films=(el.dataset.films||'').split('|').filter(Boolean);
+  const ids=(el.dataset.ids||'').split(',').filter(Boolean);
+  const pinned=tip.classList.contains('pinned');
   document.getElementById('hmTipFilms').innerHTML=films.length
-    ?films.map(t=>`<div>· ${t}</div>`).join('')
+    ?films.map((t,i)=>pinned?'<button class="hm-tip-film" onclick="_hmOpen('+(+ids[i])+')">'+esc(t)+'</button>':'<div class="hm-tip-film">· '+esc(t)+'</div>').join('')
+      +(pinned?'':'<div class="hm-tip-hint">Click for details</div>')
     :'<div style="opacity:.5;font-style:italic">No films watched</div>';
   tip.classList.add('show');
   _hmPos(cx,cy);
@@ -2901,7 +3044,15 @@ async function renderByNumbers(){
     {stat:avgR?avgR.toFixed(1):'—', sub:avgR?_starStr(avgR):'', label:'Avg Rating'},
     {stat:WL.length, sub:'', label:'On the Watchlist'},
   ];
-  grid.innerHTML=cells.map(c=>'<div class="bynum-cell"><div class="bynum-stat">'+c.stat+'</div><div class="bynum-sub">'+c.sub+'</div><div class="bynum-label">'+c.label+'</div></div>').join('');
+  // How I watch: count, then average all-time rank (the headline) and average stars
+  const _D=diary(),_anyTag=_D.some(x=>x.w.tg);
+  [['rw','Rewatches'],['tara','With Tara'],['th','In a Theater']].forEach(p=>{
+    const a=_D.filter(x=>x.w[p[0]]&&(p[0]==='rw'||x.w.tg)),r=a.filter(x=>x.rating>0);
+    cells.push({wide:true,stat:_anyTag||a.length?a.length:'—',label:p[1],
+      sub:a.length?'<b>Avg. rank #'+Math.round(avg(a.map(x=>x.rank)))+'</b>'+(r.length?' <span>· '+avg(r.map(x=>x.rating)).toFixed(1)+'★</span>':'')
+        :'<span>'+(_anyTag?'None yet':'Tag films to fill this in')+'</span>'});
+  });
+  grid.innerHTML=cells.map(c=>'<div class="bynum-cell'+(c.wide?' wide':'')+'"><div class="bynum-stat">'+c.stat+'</div><div class="bynum-sub">'+c.sub+'</div><div class="bynum-label">'+c.label+'</div></div>').join('');
   // Best-of strips — highest-ranked (lowest rank #) film per period/group.
   const bestBy=keyFn=>{const b={};W.forEach(w=>{const k=keyFn(w);if(k==null||k===''||!film(w.id))return;const wr=w.rank>0?w.rank:Infinity;if(!b[k]||wr<b[k]._r)b[k]={id:w.id,rank:w.rank,_r:wr};});return b;};
   // Best of Each Month — newest month first
@@ -3669,6 +3820,7 @@ function closeFilm(){
 document.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
   if(document.getElementById('watchedModal').classList.contains('open')){closeModal();_lockScroll();return;}
+  if(typeof _hmPinned!=='undefined'&&_hmPinned){_hmUnpin();return;}
   if(document.getElementById('taggerOverlay').classList.contains('open')){closeTagger();return;}
   if(document.getElementById('filmSheet').classList.contains('open')){closeFilm();return;}
   closeSearch();
@@ -3696,7 +3848,7 @@ async function openFilm(id){
     if(x.yrank){const yy=+x.d.slice(0,4);facts.push([yy+' rank','#'+x.yrank+' <span style="color:var(--ink-3);font-weight:400">of '+W.filter(w=>isFirstWatchOf(w,yy)).length+' first watches</span>']);}
     facts.push([(x.w.v&&x.w.v.length)?'First logged':'Watched',esc(fmtDate(x.d))]);
   }
-  const tagChips=x?TAGS.filter(t=>x.w[t.k]).map(t=>'<span class="chip'+(t.k==='rw'?' teal':'')+'">'+t.svg+esc(t.label)+'</span>').join(''):'';
+  const tagChips=x?TAGS.map(t=>'<button type="button" class="tog" aria-pressed="'+(x.w[t.k]?'true':'false')+'" title="Tap to turn '+(x.w[t.k]?'off':'on')+'" onclick="sheetTag('+id+',\''+t.k+'\')">'+t.svg+esc(t.label)+'</button>').join(''):'';
   const again=(x&&x.w.v&&x.w.v.length)?'<div><div class="sf-k" style="margin-bottom:.5rem">Watched again</div><div class="viewings">'
     +x.w.v.map((v,i)=>'<div class="viewing"><span>'+esc(fmtDate(v.d))+'</span>'+tagIcons(v,'tags-inline')
       +'<button class="viewing-x" onclick="removeViewing('+id+','+i+')" aria-label="Remove this viewing" title="Remove this viewing">✕</button></div>').join('')+'</div></div>':'';
@@ -3872,90 +4024,133 @@ function renderHome(){
 function renderRecentlyWatched(){renderHome();}
 
 // ══════════ FUN FACTS ══════════
+// Every line here is recomputed from the diary on each render. The reel leans on
+// things that move as films are logged (form, pace, streaks, the top ten, tags);
+// one-off records that almost never change, and facts that only repeated a chart
+// or a Year in Review card on the same page, were dropped in the Nov 2026 audit.
 function buildFacts(D){
   const facts=[];if(D.length<3)return facts;
   const b=s=>'<b>'+esc(s)+'</b>';
-  const now=new Date(),yr=now.getFullYear();
+  const N=D.length,now=new Date(),yr=now.getFullYear();
+  const day0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const daysAgo=d=>Math.round((day0-new Date(d+'T00:00:00'))/86400000);
+  const ago=n=>n<=0?'today':n===1?'yesterday':n+' days ago';
   const rated=D.filter(x=>x.rating>0);
-  const group=(keyFn)=>{const m={};D.forEach(x=>{const k=keyFn(x);if(k==null||k==='')return;(m[k]=m[k]||[]).push(x);});return m;};
-  // day of week
-  const dow=group(x=>x.d?WEEKDAYS[dateOf(x.d).getDay()]:null);
-  const dTop=Object.entries(dow).sort((a,b2)=>b2[1].length-a[1].length)[0];
-  if(dTop)facts.push({k:'Movie night',h:b(dTop[0]+'s')+' are movie night: '+dTop[1].length+' of '+D.length+' films ('+Math.round(dTop[1].length/D.length*100)+'%) were watched on one.'});
-  // directors
-  const dirs=group(x=>(x.f.d||'').trim()||null);
-  const dirTop=Object.entries(dirs).filter(e=>e[1].length>1).sort((a,b2)=>b2[1].length-a[1].length||avg(a[1].map(x=>x.rank))-avg(b2[1].map(x=>x.rank)))[0];
-  if(dirTop){const r=dirTop[1].filter(x=>x.rating>0);facts.push({k:'Most-watched director',h:b(dirTop[0])+' leads with '+plural(dirTop[1].length,'film')+(r.length?', averaging '+fmtRating(avg(r.map(x=>x.rating)))+'★.':'.')});}
-  // actors
-  const ac={};D.forEach(x=>filmCast(x.f).forEach(a=>{(ac[a]=ac[a]||[]).push(x);}));
-  const aTop=Object.entries(ac).filter(e=>e[1].length>1).sort((a,b2)=>b2[1].length-a[1].length||a[0].localeCompare(b2[0]))[0];
-  if(aTop)facts.push({k:'Familiar face',h:b(aTop[0])+' shows up more than anyone: '+plural(aTop[1].length,'film')+', including '+b(aTop[1].slice().sort((a,b2)=>a.rank-b2.rank)[0].f.t)+'.'});
-  // five stars
-  if(rated.length>=5){const five=rated.filter(x=>x.rating>=5).length;
-    facts.push({k:'Five-star rate',h:'A perfect five stars goes to '+b(Math.round(five/rated.length*100)+'%')+' of what I rate ('+five+' of '+rated.length+').'});}
-  // runtime extremes + average
-  const rt=D.filter(x=>x.f.rt>0);
-  if(rt.length>=3){const lo=rt.slice().sort((a,b2)=>a.f.rt-b2.f.rt)[0],hi=rt.slice().sort((a,b2)=>b2.f.rt-a.f.rt)[0];
-    facts.push({k:'Longest sit',h:b(hi.f.t)+' is the marathon at '+fmtRuntime(hi.f.rt)+'. The quickest watch was '+b(lo.f.t)+' at '+fmtRuntime(lo.f.rt)+'.'});
-    facts.push({k:'Typical runtime',h:'The average film in the diary runs '+b(fmtRuntime(Math.round(avg(rt.map(x=>x.f.rt)))))+'.'});}
-  // oldest
-  const withY=D.filter(x=>x.f.y>1880);
-  if(withY.length){const old=withY.slice().sort((a,b2)=>a.f.y-b2.f.y)[0];
-    facts.push({k:'Deepest cut',h:'The oldest film I\'ve logged is '+b(old.f.t)+' from '+old.f.y+', '+(yr-old.f.y)+' years old.'});}
-  // decades
-  const dec=group(x=>x.f.y>1880?Math.floor(x.f.y/10)*10:null);
-  const decTop=Object.entries(dec).sort((a,b2)=>b2[1].length-a[1].length)[0];
-  const decRated=Object.entries(dec).map(e=>[e[0],e[1].filter(x=>x.rating>0)]).filter(e=>e[1].length>=4).sort((a,b2)=>avg(b2[1].map(x=>x.rating))-avg(a[1].map(x=>x.rating)))[0];
-  if(decTop)facts.push({k:'Favorite era',h:'The '+b(decTop[0]+'s')+' are my most-watched decade with '+plural(decTop[1].length,'film')+(decRated&&decRated[0]!==decTop[0]?', but the '+b(decRated[0]+'s')+' get my highest ratings ('+fmtRating(avg(decRated[1].map(x=>x.rating)))+'★).':'.')});
-  // genres by rating
-  const gen=Object.entries(group(x=>getFilmGenre(x.id)||null)).map(e=>[e[0],e[1].filter(x=>x.rating>0)]).filter(e=>e[1].length>=4)
-    .sort((a,b2)=>avg(b2[1].map(x=>x.rating))-avg(a[1].map(x=>x.rating)));
-  if(gen.length>=2){const hi=gen[0],lo=gen[gen.length-1];
-    facts.push({k:'Soft spot',h:b(hi[0])+' gets my kindest ratings ('+fmtRating(avg(hi[1].map(x=>x.rating)))+'★ average). '+b(lo[0])+' has the toughest time ('+fmtRating(avg(lo[1].map(x=>x.rating)))+'★).'});}
-  // busiest month
-  const mon=group(x=>x.d?x.d.slice(0,7):null);
-  const mTop=Object.entries(mon).sort((a,b2)=>b2[1].length-a[1].length)[0];
-  if(mTop){const p=mTop[0].split('-');facts.push({k:'Busiest month',h:b(MONTHS[+p[1]-1]+' '+p[0])+' was the busiest stretch: '+plural(mTop[1].length,'film')+', or one every '+(new Date(+p[0],+p[1],0).getDate()/mTop[1].length).toFixed(1)+' days.'});}
-  // double features
-  const days=group(x=>x.d||null);
-  const dbl=Object.values(days).filter(a=>a.length>1).length;
-  if(dbl)facts.push({k:'Double features',h:'I\'ve doubled up on '+b(plural(dbl,'day'))+', watching two or more films before bed.'});
-  // new releases
-  const fresh=D.filter(x=>x.d&&x.f.y&&x.f.y>=+x.d.slice(0,4)-1);
-  if(fresh.length)facts.push({k:'New releases',h:b(Math.round(fresh.length/D.length*100)+'%')+' of the diary is new releases ('+plural(fresh.length,'film')+' from the year I watched them, or the year before). The rest is catching up.'});
-  // streak
+  const group=(keyFn,L)=>{const m={};(L||D).forEach(x=>{const k=keyFn(x);if(k==null||k==='')return;(m[k]=m[k]||[]).push(x);});return m;};
+  const recent=D.filter(x=>x.d).sort((a,b2)=>(a.d<b2.d?1:a.d>b2.d?-1:0)||(b2.id-a.id)); // newest log first
+  const thisYr=D.filter(x=>x.d.startsWith(String(yr)));
+  const doy=Math.max(1,Math.floor((now-new Date(yr,0,1))/86400000)+1);
+
+  // ── Momentum: what the last few films say ──
+  if(recent.length){
+    const x=recent[0],i=recent.slice(1).findIndex(y=>y.rank<x.rank); // films since something ranked higher
+    let tail='';
+    if(i>=3)tail=' That makes it the best thing I\'ve logged in my last '+(i+1)+' films.';
+    else if(i<0&&recent.length>3)tail=' Nothing in the diary ranks higher.';
+    else if(x.rank>N*0.75)tail=' They can\'t all be winners.';
+    facts.push({k:'Latest arrival',h:b(x.f.t)+' '+(x.rw?'came back in':'entered the ranking')+' at '+b('#'+x.rank+' of '+N)+'.'+tail});
+  }
+  if(recent.length>=20){
+    const L=recent.slice(0,10),a=avg(L.map(x=>x.rank)),half=L.filter(x=>x.rank<=N/2).length,mid=(N+1)/2;
+    const mood=a<mid*0.85?'A hot streak':a>mid*1.15?'A cold stretch':'Right down the middle';
+    facts.push({k:'Recent form',h:mood+': my last 10 films average '+b('#'+Math.round(a))+' all-time, and '+b(half+' of them')+' landed in the top half of the ranking.'});
+  }
+  if(rated.length>=30){
+    const R=recent.filter(x=>x.rating>0),L=R.slice(0,15),rest=R.slice(15);
+    const a=avg(L.map(x=>x.rating)),o=avg(rest.map(x=>x.rating)),d=a-o;
+    facts.push({k:'Grading curve',h:Math.abs(d)<0.2?'Steady hand: my last 15 ratings average '+b(a.toFixed(1)+'★')+', right in line with the '+o.toFixed(1)+'★ before them.'
+      :'I\'m getting '+b(d>0?'more generous':'tougher')+': my last 15 ratings average '+b(a.toFixed(1)+'★')+', against '+o.toFixed(1)+'★ before that.'});
+  }
+  if(recent.length>=20){
+    const L=recent.slice(0,15),g=Object.entries(group(x=>getFilmGenre(x.id)||null,L)).sort((a,b2)=>b2[1].length-a[1].length)[0];
+    const all=Object.entries(group(x=>getFilmGenre(x.id)||null)).sort((a,b2)=>b2[1].length-a[1].length)[0];
+    if(g&&g[1].length>=4)facts.push({k:'Current kick',h:'Lately it\'s '+b(g[0])+': '+g[1].length+' of my last 15 films'+(all&&all[0]!==g[0]?', even though '+b(all[0])+' is my most-watched genre overall.':', which is also my most-watched genre overall.')});
+  }
+
+  // ── Pace ──
   const st=streaks(D);
   if(st.best>=3)facts.push({k:'Streak',h:(st.cur>=2?'I\'m on a '+b(st.cur+'-week')+' watching streak. ':'')+'My longest run is '+b(st.best+' weeks')+' in a row with at least one film.'});
-  // pace
-  const thisYr=D.filter(x=>x.d.startsWith(String(yr)));
-  if(thisYr.length>=5){const doy=Math.max(1,Math.floor((now-new Date(yr,0,1))/86400000)+1);
-    facts.push({k:'Pace',h:'At this rate I\'ll close out '+yr+' with about '+b(Math.round(thisYr.length/doy*365)+' films')+', one every '+(doy/thisYr.length).toFixed(1)+' days.'});}
-  // longest dry spell
-  const dates=[...new Set(D.map(x=>x.d).filter(Boolean))].sort();
-  let gap=0,gapEnd='';
-  for(let i=1;i<dates.length;i++){const g=Math.round((dateOf(dates[i])-dateOf(dates[i-1]))/86400000);if(g>gap){gap=g;gapEnd=dates[i];}}
-  if(gap>=5)facts.push({k:'Dry spell',h:'The longest I\'ve gone without a film is '+b(gap+' days')+', ending '+esc(fmtDate(gapEnd))+'.'});
-  // top 10 era
-  const t10=D.slice().sort((a,b2)=>a.rank-b2.rank).slice(0,10).filter(x=>x.f.y);
-  if(t10.length===10){const pre=t10.filter(x=>x.f.y<2000).length;
+  if(thisYr.length>=5)facts.push({k:'Pace',h:'At this rate I\'ll close out '+yr+' with about '+b(Math.round(thisYr.length/doy*365)+' films')+', one every '+(doy/thisYr.length).toFixed(1)+' days.'});
+  {
+    const mk=yr+'-'+String(now.getMonth()+1).padStart(2,'0'),dom=now.getDate(),dim=new Date(yr,now.getMonth()+1,0).getDate();
+    const mon=group(x=>x.d?x.d.slice(0,7):null),cur=(mon[mk]||[]).length;
+    const past=Object.entries(mon).filter(e=>e[0]!==mk).sort((a,b2)=>b2[1].length-a[1].length)[0];
+    if(cur>=1&&dom>=5&&past){
+      const proj=Math.max(cur,Math.round(cur/dom*dim)),p=past[0].split('-');
+      facts.push({k:'This month',h:b(MONTHS[now.getMonth()])+' has '+b(plural(cur,'film'))+' so far, on pace for '+proj+'. '
+        +(proj>past[1].length?'That would be my busiest month yet.':'The record is '+past[1].length+', set in '+MONTHS[+p[1]-1]+' '+p[0]+'.')});
+    }
+  }
+  if(thisYr.length>=5){
+    const step=N>=200?50:25,next=(Math.floor(N/step)+1)*step,need=next-N;
+    const when=new Date(day0.getTime()+Math.ceil(need/(thisYr.length/doy))*86400000);
+    facts.push({k:'Next milestone',h:'Film '+b('#'+next)+' is '+b(need+' away')+'. At my current pace it lands around '+esc(when.toLocaleString('en-US',{month:'short',day:'numeric'}))+'.'});
+  }
+  if(WL.length>=5&&thisYr.length>=5){const perMonth=thisYr.length/doy*30.4;
+    facts.push({k:'The backlog',h:'There are '+b(WL.length+' films')+' on the watch list. At my current pace that\'s '+b((WL.length/perMonth).toFixed(1)+' months')+' of viewing.'});}
+  const dbl=Object.values(group(x=>x.d||null)).filter(a=>a.length>1).length;
+  if(dbl)facts.push({k:'Double features',h:'I\'ve doubled up on '+b(plural(dbl,'day'))+', watching two or more films before bed.'});
+
+  // ── The top of the ranking ──
+  const t10=D.slice().sort((a,b2)=>a.rank-b2.rank).slice(0,10);
+  if(N>=20){
+    const withD=t10.filter(x=>x.d).sort((a,b2)=>a.d<b2.d?1:-1),nw=withD[0];
+    if(nw){const n=daysAgo(nw.d),hot=withD.filter(x=>daysAgo(x.d)<=90).length;
+      facts.push({k:'Top ten watch',h:'The newest film in my top ten is '+b(nw.f.t)+', logged '+(n>60?'on '+esc(fmtDate(nw.d)):ago(n))+'. '
+        +(n>60?'The top ten has gone '+b(n+' days')+' without a new entry.':b(hot+' of the ten')+' arrived in the last 90 days.')});}
+  }
+  if(t10.filter(x=>x.f.y).length===10){const pre=t10.filter(x=>x.f.y<2000).length;
     facts.push({k:'Top ten',h:b(pre+' of my top 10')+' were released before 2000. The newest film up there is '+b(t10.slice().sort((a,b2)=>b2.f.y-a.f.y)[0].f.t)+'.'});}
-  // me vs the crowd
+
+  // ── Taste ──
+  if(rated.length>=5){const five=rated.filter(x=>x.rating>=5).length;
+    facts.push({k:'Five-star rate',h:'A perfect five stars goes to '+b(Math.round(five/rated.length*100)+'%')+' of what I rate ('+five+' of '+rated.length+').'});}
+  const dec=group(x=>x.f.y>1880?Math.floor(x.f.y/10)*10:null);
+  const decTop=Object.entries(dec).sort((a,b2)=>b2[1].length-a[1].length)[0];
+  const decBest=Object.entries(dec).filter(e=>e[1].length>=4).sort((a,b2)=>avg(a[1].map(x=>x.rank))-avg(b2[1].map(x=>x.rank)))[0];
+  if(decTop)facts.push({k:'Favorite era',h:'The '+b(decTop[0]+'s')+' are my most-watched decade with '+plural(decTop[1].length,'film')+(decBest&&decBest[0]!==decTop[0]?', but the '+b(decBest[0]+'s')+' rank best (average #'+Math.round(avg(decBest[1].map(x=>x.rank)))+').':', and they rank best too.')});
+  {
+    const have=Object.keys(dec).map(Number),first=Math.min(1930,...have),missing=[];
+    for(let d=first;d<=Math.floor(yr/10)*10;d+=10)if(!dec[d])missing.push(d+'s');
+    if(missing.length)facts.push({k:'Blind spot',h:'Nothing from the '+b(missing.length>1?missing.slice(0,-1).join(', ')+' or '+missing[missing.length-1]:missing[0])+' in the diary yet.'});
+    else{const thin=Object.entries(dec).sort((a,b2)=>a[1].length-b2[1].length)[0];
+      if(thin)facts.push({k:'Blind spot',h:'Every decade since the '+first+'s is covered. The thinnest is the '+b(thin[0]+'s')+' with '+plural(thin[1].length,'film')+'.'});}
+  }
+  const gen=Object.entries(group(x=>getFilmGenre(x.id)||null)).filter(e=>e[1].length>=4).sort((a,b2)=>avg(a[1].map(x=>x.rank))-avg(b2[1].map(x=>x.rank)));
+  if(gen.length>=2){const hi=gen[0],lo=gen[gen.length-1];
+    facts.push({k:'Soft spot',h:b(hi[0])+' ranks best with me (average #'+Math.round(avg(hi[1].map(x=>x.rank)))+'). '+b(lo[0])+' has the toughest time (average #'+Math.round(avg(lo[1].map(x=>x.rank)))+').'});}
+  const fresh=D.filter(x=>x.d&&x.f.y&&x.f.y>=+x.d.slice(0,4)-1);
+  if(fresh.length)facts.push({k:'New releases',h:b(Math.round(fresh.length/N*100)+'%')+' of the diary is new releases ('+plural(fresh.length,'film')+' from the year I watched them, or the year before). The rest is catching up.'});
   const cmp=rated.map(x=>{const m=metaOf(x.f);return m&&m.v>0&&m.n>=50?{x,diff:x.rating-m.v/2}:null;}).filter(Boolean);
   if(cmp.length>=10){const d=avg(cmp.map(c=>c.diff));
     facts.push({k:'Me vs. the crowd',h:'I rate films '+b(Math.abs(d).toFixed(1)+'★ '+(d>=0?'higher':'lower'))+' than the TMDB audience on average.'});
     const hot=cmp.slice().sort((a,b2)=>a.diff-b2.diff)[0];
     if(hot.diff<=-1)facts.push({k:'Hot take',h:'My biggest disagreement with the crowd: '+b(hot.x.f.t)+'. They say '+(metaOf(hot.x.f).v/2).toFixed(1)+'★, I say '+fmtRating(hot.x.rating)+'★.'});}
-  // how I watch: company, big screen
+
+  // ── How I watch: Tara, the theater, rewatches ──
+  const lc1=t=>t.charAt(0).toLowerCase()+t.slice(1);
   [['tara','The Tara effect'],['th','Big screen bump']].forEach(p=>{
-    const h=HOW.find(o=>o.k===p[0]),s=tagSplit(D,p[0]);
-    if(s.yes.nr<3||s.no.nr<3)return;
-    const d=s.yes.r-s.no.r;if(Math.abs(d)<0.15)return;
-    const lc1=t=>t.charAt(0).toLowerCase()+t.slice(1);
-    facts.push({k:p[1],h:b(d>0?h.yesS:h.noS)+' rate '+b(Math.abs(d).toFixed(1)+'★ higher')+' than '+lc1(d>0?h.noS:h.yesS)+' ('+s.yes.r.toFixed(1)+'★ vs. '+s.no.r.toFixed(1)+'★).'});
+    const h=HOW.find(o=>o.k===p[0]),c=howCompare(D,p[0]);
+    if(!c.ok||c.close)return;
+    facts.push({k:p[1],h:b(c.gap>0?h.yesS:h.noS)+' rank '+b(plural(Math.round(Math.abs(c.gap)),'spot')+' higher')+' than '+lc1(c.gap>0?h.noS:h.yesS)+' (average #'+Math.round(c.s.yes.rank)+' vs. #'+Math.round(c.s.no.rank)+').'});
   });
-  // backlog
-  if(WL.length>=5&&thisYr.length>=5){const doy=Math.max(1,Math.floor((now-new Date(yr,0,1))/86400000)+1);const perMonth=thisYr.length/doy*30.4;
-    facts.push({k:'The backlog',h:'There are '+b(WL.length+' films')+' on the watch list. At my current pace that\'s '+b((WL.length/perMonth).toFixed(1)+' months')+' of viewing.'});}
+  const T=recent.filter(x=>x.w.tg);
+  if(T.length>=5){
+    const withT=T.filter(x=>x.w.tara);let run=0;const kind=!!T[0].w.tara;
+    while(run<T.length&&!!T[run].w.tara===kind)run++;
+    const top=t10.filter(x=>x.w.tg&&x.w.tara).length;
+    if(withT.length)facts.push({k:'Movie dates',h:'Tara was on the couch for '+b(Math.round(withT.length/T.length*100)+'%')+' of what I\'ve tagged ('+withT.length+' of '+T.length+')'
+      +(top?', including '+b(top+' of my top ten')+'.':'.')+(run>=3?' The last '+run+' in a row were '+(kind?'with her.':'without her.'):'')});
+    // theater trips count later viewings too
+    const trips=[];D.forEach(x=>{if(x.w.th&&x.d)trips.push({d:x.d,x});(x.w.v||[]).forEach(v=>{if(v.th&&v.d)trips.push({d:v.d,x});});});
+    trips.sort((a,b2)=>a.d<b2.d?1:-1);
+    if(trips.length){const n=daysAgo(trips[0].d),ty=trips.filter(t=>t.d.startsWith(String(yr))).length;
+      facts.push({k:'Last time out',h:'My last trip to a theater was '+b(trips[0].x.f.t)+', '+ago(n)+'. That makes '+b(plural(ty,'trip'))+' in '+yr+'.'});}
+  }
+  const rws=D.filter(x=>x.rw).sort((a,b2)=>a.rank-b2.rank);
+  if(rws.length){const top=t10.filter(x=>x.rw).length;
+    facts.push({k:'Old favorites',h:b(plural(rws.length,'rewatch','rewatches'))+' in the diary so far, led by '+b(rws[0].f.t)+' at #'+rws[0].rank+'. '
+      +(top?b(top+' of my top ten')+' are films I\'d seen before.':'None of them have cracked the top ten.')});}
   return facts;
 }
 // Deterministic shuffle so the home page shows a different handful each day.
@@ -4027,7 +4222,8 @@ function _updateWLCardStream(filmId,srcs){
 // ══════════ RANKINGS ══════════
 let _reorder=false;
 function toggleReorder(){
-  _reorder=!_reorder;
+  _reorder=!_reorder;_reorderQ='';
+  if(!_reorder)refreshAll();
   document.getElementById('reorderBtn').textContent=_reorder?'Done':'Edit order';
   document.getElementById('reorderBtn').classList.toggle('primary',_reorder);
   renderRankings();
@@ -4054,6 +4250,14 @@ function renderRankings(){
   document.getElementById('reorderBtn').style.display=scoped?'none':'';
   document.getElementById('rankEmpty').style.display=D.length?'none':'block';
   document.getElementById('rankPage').classList.toggle('reorder',_reorder);
+  const bar=document.getElementById('reorderBar');
+  if(!_reorder)bar.innerHTML='';
+  else if(!bar.firstChild){
+    const stops=[];for(let n=25;n<D.length;n+=25)stops.push(n);
+    bar.innerHTML='<div class="reorder-row"><input class="reorder-find" id="reorderFind" type="search" placeholder="Find a film to move…" aria-label="Find a film" oninput="reorderFilter(this.value)" autocomplete="off">'
+      +'<div class="reorder-jump"><span>Jump to</span><button onclick="reorderJump(1)">Top</button>'+stops.map(n=>'<button onclick="reorderJump('+n+')">'+n+'</button>').join('')+'<button onclick="reorderJump(99999)">Bottom</button></div></div>'
+      +'<p class="reorder-help">Type a number to send a film straight to that spot, drag the handle for short moves, or nudge with the arrows. Changes save as you go.</p>';
+  }
   if(!D.length){el.innerHTML='';pod.innerHTML='';el.style.display='none';return;}
   el.style.display='';
   const showPodium=!_reorder&&D.length>=3;
@@ -4069,18 +4273,22 @@ function renderRankings(){
   el.innerHTML=(showPodium?D.slice(3):D).map(x=>{
     const f=x.f,rank=num(x);
     const safeT=f.t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return '<div class="rank-item">'
-      +'<div class="rank-num'+(rank<=elite?' t3':'')+'"'+(_reorder?' onclick="editRank('+f.id+','+rank+')" title="Tap to type a new rank"':'')+'>'+rank+'</div>'
+    return '<div class="rank-item'+(rank<=elite?' t3':'')+'" id="rk-'+f.id+'" data-rank="'+rank+'" data-t="'+esc(f.t.toLowerCase())+'">'
+      +'<div class="rank-num'+(rank<=elite?' t3':'')+'">'+rank+'</div>'
+      +(_reorder?'<div class="rank-edit"><span class="rank-grip" onpointerdown="rankDragStart(event,'+f.id+')" title="Drag to move" aria-hidden="true">⠿</span>'
+        +'<input class="rank-in" type="number" inputmode="numeric" min="1" max="'+D.length+'" value="'+rank+'" aria-label="Rank for '+esc(f.t)+'" onfocus="this.select()" onkeydown="if(event.key===\'Enter\')this.blur()" onchange="setRankTo('+f.id+',this.value)"></div>':'')
       +'<div class="rank-poster" onclick="openFilm('+f.id+')">'+posterHTML(f,'w185')+'</div>'
       +'<div class="rank-info" onclick="openFilm('+f.id+')"><div class="rank-title">'+esc(f.t)+tagIcons(x.w,'tags-inline')+'</div>'
       +'<div class="rank-meta">'+esc([f.y,getFilmGenre(f.id)||f.g,f.d].filter(Boolean).join(' · '))+'</div></div>'
       +'<div class="rank-side">'+(x.rating?starsHTML(x.rating):'')
       +'<div class="rank-arrows">'
+        +'<button class="rank-ab rank-top" onclick="setRankTo('+f.id+',1)"'+(rank===1?' disabled':'')+' aria-label="Move to the top" title="Move to #1">⤒</button>'
         +'<button class="rank-ab" onclick="moveRank('+f.id+',\'up\')"'+(rank===1?' disabled':'')+' aria-label="Move up">▲</button>'
         +'<button class="rank-ab" onclick="moveRank('+f.id+',\'down\')"'+(rank===D.length?' disabled':'')+' aria-label="Move down">▼</button>'
         +'<button class="rank-remove" onclick="if(confirm(\'Remove '+esc(safeT)+' from your diary?\'))removeW('+f.id+')" aria-label="Remove">✕</button>'
       +'</div></div></div>';
-  }).join('');
+  }).join('')+(_reorder?'<div class="rank-none" id="rankNone" style="display:none">No film in the diary matches that.</div>':'');
+  if(_reorder&&_reorderQ)reorderFilter(_reorderQ);
   hydratePosters();
 }
 
@@ -4091,41 +4299,56 @@ const HOW=[
   {k:'th',title:'Theater vs. at home',yes:'In a theater',no:'At home',yesS:'Films I see in a theater',noS:'Films I watch at home'},
   {k:'rw',title:'Rewatches vs. first watches',yes:'Rewatches',no:'First watches',yesS:'Rewatches',noS:'First watches'}
 ];
-const HOW_MIN=3; // rated films needed on each side before a verdict is given
+const HOW_MIN=3; // films needed on each side before a verdict is given
 // Split the tagged diary rows on one tag and average each side.
 function tagSplit(D,key){
   const T=D.filter(x=>x.w.tg);
   const side=a=>{const r=a.filter(x=>x.rating>0);return {n:a.length,nr:r.length,r:r.length?avg(r.map(x=>x.rating)):0,rank:a.length?avg(a.map(x=>x.rank)):0};};
   return {yes:side(T.filter(x=>x.w[key])),no:side(T.filter(x=>!x.w[key])),tagged:T.length};
 }
+// The verdict is decided on average all-time rank (lower is better); stars ride along.
+// gap > 0 means the "yes" side ranks higher. "close" = within 4% of the diary's length.
+function howCompare(D,key){
+  const s=tagSplit(D,key);
+  const ok=s.yes.n>=HOW_MIN&&s.no.n>=HOW_MIN;
+  const gap=s.no.rank-s.yes.rank;
+  const close=Math.abs(gap)<Math.max(2,D.length*0.04);
+  const stars=(s.yes.nr>=HOW_MIN&&s.no.nr>=HOW_MIN)?s.yes.r-s.no.r:null;
+  return {s,ok,gap,close,stars,win:ok&&!close?(gap>0?'yes':'no'):'',small:Math.min(s.yes.n,s.no.n)<10};
+}
 function renderHow(){
   const grid=document.getElementById('howGrid'),foot=document.getElementById('howFoot');
   if(!grid)return;
   const D=diary(),nTag=D.filter(x=>x.w.tg).length;
-  const tagBtn='<button class="btn sm" onclick="openTagger()">'+(nTag?'Tag the rest':'Tag the diary')+'</button>';
+  const tagBtn='<button class="btn sm" onclick="openTagger()">'+(nTag?(nTag<D.length?'Tag the rest':'Edit tags'):'Tag the diary')+'</button>';
   if(!nTag){
     grid.innerHTML='<div class="card" style="grid-column:1/-1"><p class="sec-sub">Nothing is tagged yet. Once films are marked as a rewatch, watched with Tara, or seen in a theater, the comparisons build themselves here.</p></div>';
     foot.innerHTML=D.length?tagBtn:'';
     return;
   }
   grid.innerHTML=HOW.map(h=>{
-    const s=tagSplit(D,h.k);
-    const ok=s.yes.nr>=HOW_MIN&&s.no.nr>=HOW_MIN;
-    const d=s.yes.r-s.no.r,close=Math.abs(d)<0.15;
-    const win=ok&&!close?(d>0?'yes':'no'):'';
+    const c=howCompare(D,h.k),s=c.s;
     const sideHTML=(lbl,v,w)=>'<div class="cmp-side'+(w?' win':'')+'"><div class="cmp-k">'+esc(lbl)+'</div>'
-      +'<div class="cmp-v">'+(v.nr?v.r.toFixed(2)+'<small>★</small>':'–')+'</div>'
-      +'<div class="cmp-s">'+plural(v.n,'film')+(v.n?' · avg. rank #'+Math.round(v.rank):'')+'</div></div>';
+      +'<div class="cmp-v">'+(v.n?'<span class="cmp-hash">#</span>'+Math.round(v.rank):'–')+'</div>'
+      +'<div class="cmp-s">avg. rank'+(v.nr?' · <b>'+v.r.toFixed(2)+'★</b>':'')+'<br>'+plural(v.n,'film')+'</div></div>';
     let verdict;
-    if(!ok)verdict='Not enough tagged films to call it yet. This needs at least '+HOW_MIN+' rated films on each side.';
+    if(!c.ok)verdict='Not enough tagged films to call it yet. This needs at least '+HOW_MIN+' on each side.';
     else{
-      verdict=close?'No real difference: the two sides average within '+Math.abs(d).toFixed(2)+'★ of each other.'
-        :'<b>'+esc(d>0?h.yesS:h.noS)+'</b> rate <b>'+Math.abs(d).toFixed(1)+'★ higher</b> on average.';
-      if(Math.min(s.yes.nr,s.no.nr)<10)verdict+=' Small sample, so treat it as a hint.';
+      const g=Math.round(Math.abs(c.gap));
+      const lc1=t=>t.charAt(0).toLowerCase()+t.slice(1);
+      verdict=c.close?'No real difference in the ranking: '+(g<1?'the two sides average almost exactly the same rank.':'the two sides sit within '+plural(g,'spot')+' of each other on average.')
+        :'<b>'+esc(c.gap>0?h.yesS:h.noS)+'</b> rank <b>'+plural(g,'spot')+' higher</b> on average.';
+      if(c.stars!=null){
+        const ad=Math.abs(c.stars).toFixed(1);
+        if(Math.abs(c.stars)<0.1)verdict+=' The stars are about even'+(c.close?' too.':'.');
+        else if(c.close)verdict+=' On stars, '+lc1(c.stars>0?h.yesS:h.noS)+' come out '+ad+'★ ahead.';
+        else verdict+=((c.gap>0)===(c.stars>0))?' The stars agree: '+ad+'★ higher.':' The stars lean the other way, by '+ad+'★.';
+      }
+      if(c.small)verdict+=' Small sample, so treat it as a hint.';
     }
-    return '<div class="card"><div class="card-h">'+esc(h.title)+'</div><div class="cmp">'+sideHTML(h.yes,s.yes,win==='yes')+sideHTML(h.no,s.no,win==='no')+'</div><p class="cmp-verdict">'+verdict+'</p></div>';
+    return '<div class="card"><div class="card-h">'+esc(h.title)+'</div><div class="cmp">'+sideHTML(h.yes,s.yes,c.win==='yes')+sideHTML(h.no,s.no,c.win==='no')+'</div><p class="cmp-verdict">'+verdict+'</p></div>';
   }).join('');
-  foot.innerHTML='<span>Based on '+nTag+' of '+plural(D.length,'film')+' tagged so far. Rank is the all-time rank, so lower is better.</span>'+(nTag<D.length?tagBtn:'');
+  foot.innerHTML='<span>Based on '+nTag+' of '+plural(D.length,'film')+' tagged. The big number is the average all-time rank, so lower is better.</span>'+tagBtn;
 }
 
 // ══════════ BULK TAGGER ══════════
@@ -4259,8 +4482,8 @@ function renderYIR(){
     fresh?yc('Best new release',esc(fresh.f.t),'Top-ranked film released in '+Y+' · #'+fresh.rank+' all-time'):'',
     longest?yc('Longest sit',esc(longest.f.t),esc(fmtRuntime(longest.f.rt))):'',
     worst&&worst.rating<=3?yc('Biggest letdown',esc(worst.f.t),fmtRating(worst.rating)+'★'):'',
-    tagged.length?yc('With Tara',plural(nTara,'film'),Math.round(nTara/tagged.length*100)+'% of '+plural(tagged.length,'tagged film')):'',
-    tagged.length?yc('In a theater',plural(nTh,'film'),Math.round(nTh/tagged.length*100)+'% of '+plural(tagged.length,'tagged film')):'',
+    tagged.length?yc('With Tara',plural(nTara,'film'),(nTara?'Avg. rank #'+Math.round(avg(tagged.filter(x=>x.w.tara).map(x=>x.rank)))+' · ':'')+Math.round(nTara/tagged.length*100)+'% of '+plural(tagged.length,'tagged film')):'',
+    tagged.length?yc('In a theater',plural(nTh,'film'),(nTh?'Avg. rank #'+Math.round(avg(tagged.filter(x=>x.w.th).map(x=>x.rank)))+' · ':'')+Math.round(nTh/tagged.length*100)+'% of '+plural(tagged.length,'tagged film')):'',
     nRw?yc('Rewatches',String(nRw),'Old favorites revisited, left out of the top five'):''
   ].filter(Boolean);
   host.innerHTML='<div class="yir">'
