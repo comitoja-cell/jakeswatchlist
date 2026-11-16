@@ -1533,93 +1533,198 @@ function setSyncStatus(state) { // 'syncing' | 'synced' | 'serror' | ''
   if (state === 'synced') setTimeout(() => { btn.className = ''; }, 4000);
 }
 
-// _syncTs: the cloud version this tab's copy of the diary is based on (null = not known yet).
-// DIRTY_KEY: set the moment something changes locally, cleared once the cloud has it, so a
-// change made just before the tab closes is pushed on the next visit instead of being lost.
-let _syncTs = null, _saving = false, _saveAgain = false;
-const DIRTY_KEY = 'jwl3_dirty';
+// ── How saving works ──
+// Every device shares one cloud copy of the diary, and more than one tab can be open
+// at a time (another device, a second tab, a visitor whose page is quietly filling in
+// film metadata). So a save never blindly overwrites and never throws work away:
+//   _syncTs  the cloud version this tab last synced with (null = not known yet)
+//   _base    what the diary looked like at that version
+//   _etag    the cloud's own version handle for that copy
+// A save says "store this, but only if the cloud is still at _etag". If someone else
+// saved first, the cloud refuses and returns its current copy; the tab then works out
+// what IT changed since _base, applies just those changes on top of the newer copy
+// (a three-way merge), and tries again.
+//   DIRTY_KEY is set the moment something changes locally and cleared once the cloud
+//   has it, so a change made right before the tab closes is pushed on the next visit.
+let _syncTs = null, _etag = null, _base = null, _saving = false, _saveAgain = false;
+const DIRTY_KEY = 'jwl3_dirty', BASE_KEY = 'jwl3_base';
 function _setDirty(on){try{if(on)localStorage.setItem(DIRTY_KEY,'1');else localStorage.removeItem(DIRTY_KEY);}catch(e){}}
 function _isDirty(){try{return localStorage.getItem(DIRTY_KEY)==='1';}catch(e){return false;}}
+let _baseC = null; // film metadata as of the last sync: id -> JSON (this tab only)
+const _customSnap = list => new Map((list || []).map(f => [f.id, JSON.stringify(f)]));
+function _setBase(w, wl){
+  _base = JSON.parse(JSON.stringify({ w: w || [], wl: wl || [] }));
+  _baseC = _customSnap(FILMS.filter(f => f.id > 47));
+  try { localStorage.setItem(BASE_KEY, JSON.stringify(_base)); } catch(e) {}
+}
+function _loadBase(){
+  try { const b = JSON.parse(localStorage.getItem(BASE_KEY) || 'null'); if (b && Array.isArray(b.w)) { b.wl = b.wl || []; return b; } } catch(e) {}
+  return null;
+}
 function cloudSave() {
   if (!IS_LIVE) return; // previews are read-only
   _setDirty(true);
   clearTimeout(_cloudSaveTimer);
   _cloudSaveTimer = setTimeout(_doCloudSave, 2000);
 }
-// Take the cloud's copy of the diary as this tab's copy.
-function _applyCloud(cloud){
-  const cloudTs = cloud._ts || 0;
-  W = cloud.w;
-  WL = cloud.wl || [];
-  if (Array.isArray(cloud.custom)) {
-    let i = FILMS.length;
-    while (i-- > 0) { if (FILMS[i].id > 47) FILMS.splice(i, 1); }
-    cloud.custom.forEach(f => { if (!FILMS.find(x => x.id === f.id)) FILMS.push(f); });
-  }
-  // Persist locally — always write directly, bypassing the isOwner gate in save()
+function _persistLocal(){
+  // Always write directly, bypassing the isOwner gate in save()
   try {
     localStorage.setItem('jwl3_w', JSON.stringify(W));
     localStorage.setItem('jwl3_wl', JSON.stringify(WL));
     localStorage.setItem('jwl3_custom', JSON.stringify(FILMS.filter(f => f.id > 47)));
   } catch(e) {}
+}
+function _setCustomFilms(list){
+  let i = FILMS.length;
+  while (i-- > 0) { if (FILMS[i].id > 47) FILMS.splice(i, 1); }
+  list.forEach(f => { if (!FILMS.find(x => x.id === f.id)) FILMS.push(f); });
+}
+// Read the cloud copy and its version handle. null if it can't be reached.
+async function _cloudGet(){
+  try {
+    const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const etag = res.headers.get('X-Etag') || null;
+    const data = await res.json();
+    return { data, etag };
+  } catch(e) { return null; }
+}
+// Take the cloud's copy of the diary as this tab's copy.
+function _applyCloud(cloud){
+  const cloudTs = cloud._ts || 0;
+  W = cloud.w;
+  WL = cloud.wl || [];
+  if (Array.isArray(cloud.custom)) _setCustomFilms(cloud.custom);
+  _persistLocal();
   const ts = String(cloudTs || Date.now());
   try { localStorage.setItem('jwl3_ts', ts); } catch(e) {}
   _setCookie('jwl3_ts', ts, 365);
   _syncTs = cloudTs;
+  _setBase(W, WL);
   try { refreshAll(); } catch(e) {}
 }
+// Three-way merge: start from the newer cloud copy and re-apply only what this tab
+// changed since `base`. Returns the merged diary plus any film this tab added whose
+// id was meanwhile taken by a different film on another device (those can't be kept).
+function _mergeWithCloud(base, cloud){
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const B = new Map(base.w.map(e => [e.id, e]));
+  const L = new Map(W.map(e => [e.id, e]));
+  const out = new Map((cloud.w || []).map(e => [e.id, Object.assign({}, e)]));
+  const cloudCustom = new Map((cloud.custom || []).map(f => [f.id, f]));
+  const localCustom = FILMS.filter(f => f.id > 47);
+  const clash = id => { // same id, different film
+    const lf = localCustom.find(f => f.id === id), cf = cloudCustom.get(id);
+    return !!(lf && cf && (lf.t !== cf.t || (lf.y || 0) !== (cf.y || 0)));
+  };
+  const lost = [];
+  B.forEach((_, id) => { if (!L.has(id)) out.delete(id); });            // removed in this tab
+  L.forEach((le, id) => {
+    const be = B.get(id);
+    if (!be) {                                                          // added in this tab
+      if (clash(id)) { lost.push((localCustom.find(f => f.id === id) || {}).t || 'a film'); return; }
+      out.set(id, Object.assign({}, out.get(id) || {}, le));
+      return;
+    }
+    const ce = out.get(id);
+    if (!ce) return;                                                    // removed on the other device: stays removed
+    new Set([...Object.keys(be), ...Object.keys(le)]).forEach(k => {    // fields this tab changed
+      if (same(be[k], le[k])) return;
+      if (le[k] === undefined) delete ce[k]; else ce[k] = le[k];
+    });
+  });
+  const w = [...out.values()];
+  const ranks = w.map(e => e.rank);
+  if (new Set(ranks).size !== ranks.length || ranks.some(r => !(r > 0)))  // two films landed on one rank
+    w.slice().sort((a, b) => ((a.rank > 0 ? a.rank : 1e9) - (b.rank > 0 ? b.rank : 1e9)) || (a.id - b.id)).forEach((e, i) => { e.rank = i + 1; });
+  const inW = new Set(w.map(e => e.id));
+  const bWL = new Set(base.wl), lWL = new Set(WL);
+  let wl = (cloud.wl || []).filter(id => !(bWL.has(id) && !lWL.has(id)));  // removed in this tab
+  WL.forEach(id => { if (!bWL.has(id) && !wl.includes(id) && !clash(id)) wl.push(id); }); // added in this tab
+  wl = wl.filter(id => !inW.has(id));
+  const custom = new Map(cloudCustom);
+  // Film metadata: keep the cloud's version unless this tab is the one that changed it
+  localCustom.forEach(f => {
+    if (clash(f.id)) return;
+    if (!custom.has(f.id) || (_baseC && _baseC.has(f.id) && _baseC.get(f.id) !== JSON.stringify(f))) custom.set(f.id, f);
+  });
+  return { w, wl, custom: [...custom.values()], lost };
+}
+
+// Fold a newer cloud copy into this tab, keeping this tab's own unsent changes.
+function _absorbCloud(cloud){
+  if (!_base) { _applyCloud(cloud); return; } // nothing to compare against: take theirs
+  const m = _mergeWithCloud(_base, cloud);
+  W = m.w; WL = m.wl; _setCustomFilms(m.custom);
+  _persistLocal();
+  _syncTs = Math.max(_syncTs || 0, cloud._ts || 0);
+  // From here on, "what this tab changed" is measured against the copy just merged in
+  _base = JSON.parse(JSON.stringify({ w: cloud.w || [], wl: cloud.wl || [] }));
+  _baseC = _customSnap(cloud.custom);
+  if (m.lost.length) showToast('Couldn’t add ' + m.lost[0] + ' because this tab was out of date. Please log it again.');
+}
+const _validCloud = c => !!(c && Array.isArray(c.w) && c.w.length > 0);
 
 async function _doCloudSave() {
-  // Single shared list — every device saves to the same global key.
   clearTimeout(_cloudSaveTimer); _cloudSaveTimer = null;
   if (!IS_LIVE) return;
   if (_saving) { _saveAgain = true; return; } // one save at a time; run again after
   _saving = true;
   setSyncStatus('syncing');
+  let merged = false;
   try {
-    // Stale-tab guard: if another tab or device has saved since this tab last synced,
-    // this tab's copy is out of date. Saving it would wipe their changes, so take the
-    // newer copy instead and say so.
-    if (_syncTs != null) {
-      let cur = null;
-      try {
-        const r = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID, { cache: 'no-store' });
-        if (r.ok) cur = await r.json();
-      } catch(e) {}
-      if (cur && Array.isArray(cur.w) && cur.w.length && (cur._ts || 0) > _syncTs) {
-        _applyCloud(cur);
-        _setDirty(false);
-        setSyncStatus('synced');
-        showToast('This tab was out of date, so I loaded the latest diary. Please redo that last change.');
-        return;
+    // No version handle yet (the cloud was unreachable when the page loaded): get one,
+    // and fold in anything newer than what this tab has.
+    if (_etag == null) {
+      const cur = await _cloudGet();
+      if (cur && _validCloud(cur.data)) {
+        if (_syncTs != null && (cur.data._ts || 0) > _syncTs) { _absorbCloud(cur.data); merged = true; }
+        _etag = cur.etag;
       }
     }
-    const ts = Math.max(Date.now(), (_syncTs || 0) + 1); // always moves forward, even if a device clock is behind
-    const payload = JSON.stringify({
-      w: W, wl: WL,
-      custom: FILMS.filter(f => f.id > 47),
-      _ts: ts
-    });
-    const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: payload
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    _syncTs = ts;
-    if (!_saveAgain && !_cloudSaveTimer) _setDirty(false);
-    try { localStorage.setItem('jwl3_ts', String(ts)); } catch(e) {}
-    _setCookie('jwl3_ts', String(ts), 365);
+    let done = false;
+    for (let attempt = 0; attempt < 5 && !done; attempt++) {
+      const ts = Math.max(Date.now(), (_syncTs || 0) + 1); // version stamp only ever moves forward
+      const sentW = JSON.stringify(W), sentWL = JSON.stringify(WL);
+      const payload = '{"w":' + sentW + ',"wl":' + sentWL + ',"custom":' + JSON.stringify(FILMS.filter(f => f.id > 47)) + ',"_ts":' + ts + '}';
+      const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID + '&v=2' + (_etag ? '&etag=' + encodeURIComponent(_etag) : ''), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      });
+      if (res.status === 409) {
+        // Someone else saved first. Merge this tab's changes into their copy and go again.
+        const c = await res.json().catch(() => null);
+        if (!c || !_validCloud(c.data)) throw new Error('HTTP 409');
+        // (A copy older than one this tab has already seen is a lagging read: don't merge it, just retry.)
+        if ((c.data._ts || 0) >= (_syncTs || 0)) { _absorbCloud(c.data); merged = true; }
+        _etag = c.etag || null;
+        await new Promise(r => setTimeout(r, 250 * (attempt + 1)));
+        continue;
+      }
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const j = await res.json().catch(() => ({}));
+      _etag = (j && j.etag) || null;
+      _syncTs = ts;
+      _setBase(JSON.parse(sentW), JSON.parse(sentWL)); // exactly what the cloud now holds
+      if (!_saveAgain && !_cloudSaveTimer) _setDirty(false);
+      try { localStorage.setItem('jwl3_ts', String(ts)); } catch(e) {}
+      _setCookie('jwl3_ts', String(ts), 365);
+      done = true;
+    }
+    if (!done) throw new Error('Too many save conflicts');
     setSyncStatus('synced');
   } catch(e) {
-    setSyncStatus('serror');
+    setSyncStatus('serror'); // change stays on this device (and flagged) until a save gets through
   } finally {
+    if (merged) { try { refreshAll(); } catch(e) {} }
     _saving = false;
     if (_saveAgain) { _saveAgain = false; _doCloudSave(); }
   }
 }
 // Leaving the tab: push anything still waiting on the 2-second timer right away.
-// Coming back: pick up changes made on another device, unless something is mid-edit.
+// Coming back: pick up changes made elsewhere, unless something is mid-edit.
 let _lastFocusLoad = 0;
 document.addEventListener('visibilitychange', () => {
   if (!IS_LIVE) return;
@@ -1634,30 +1739,42 @@ document.addEventListener('visibilitychange', () => {
 
 async function cloudLoad() {
   // Always fetch Jake's canonical data — this is a public watchlist.
-  // Visitors always get Jake's list. Jake's own browser uses smart logic
-  // to avoid overwriting fresher local changes.
   try {
-    const res = await fetch(SYNC_ENDPOINT + '?userId=' + JAKE_UID);
-    if (!res.ok) return;
-    const cloud = await res.json();
-    if (!cloud || !Array.isArray(cloud.w) || cloud.w.length === 0) return;
-    const cloudTs = cloud._ts || 0; // declared here so it's in scope for all visitors too
-    if (isOwner()) {
-      // Jake's own browser: only apply if cloud has better/newer data
-      const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
-      const cloudHasMore = cloud.w.length > W.length;
-      const cloudIsNewer = cloudTs > localTs && cloudTs > 0;
-      if ((!cloudHasMore || _isDirty()) && !cloudIsNewer && W.length > 0) {
-        // Local copy is current. If a change never reached the cloud (tab closed
-        // inside the save delay, or the save failed), push it now.
-        _syncTs = cloudTs;
-        if (IS_LIVE && _isDirty()) cloudSave();
-        return;
+    const got = await _cloudGet();
+    if (!got || !_validCloud(got.data)) return;
+    const cloud = got.data, cloudTs = cloud._ts || 0;
+    const first = _syncTs == null; // first load of this tab vs. a later re-check
+    const localTs = parseInt(localStorage.getItem('jwl3_ts') || _getCookie('jwl3_ts') || '0', 10);
+    const basis = first ? localTs : _syncTs;
+    const dirty = IS_LIVE && _isDirty();
+    const cloudIsNewer = cloudTs > basis && cloudTs > 0;
+    const cloudHasMore = first && !dirty && cloud.w.length > W.length;
+    // If this browser has an unsent change but no record of what it started from
+    // (first visit after this update), assume only the fields that differ are its own.
+    const guessBase = () => { const mine = new Set(W.map(w => w.id)); return { w: cloud.w.filter(w => mine.has(w.id)), wl: (cloud.wl || []).slice() }; };
+    if (W.length > 0 && !cloudIsNewer && !cloudHasMore) {
+      // This tab's copy is current. (A slow cloud read can report an older version;
+      // never step backwards because of one, and don't trust its version handle.)
+      _syncTs = Math.max(basis, cloudTs);
+      if (cloudTs >= basis) _etag = got.etag;
+      if (first) {
+        if (dirty) { _base = _loadBase() || guessBase(); cloudSave(); } // unsent change from last visit: push it
+        else _setBase(W, WL);
       }
+      return;
     }
-    // Visitors: always apply Jake's cloud data (no local state to protect)
-    // Cloud has better data — restore it
+    if (W.length > 0 && cloudIsNewer && dirty) {
+      // Newer cloud copy AND an unsent local change: merge, then save the result.
+      if (first) _base = _loadBase() || guessBase();
+      _absorbCloud(cloud);
+      _etag = got.etag;
+      try { refreshAll(); } catch(e) {}
+      _doCloudSave();
+      return;
+    }
+    // Cloud has the better copy (and for a fresh browser, the only copy)
     _applyCloud(cloud);
+    _etag = got.etag;
     _setDirty(false);
     setSyncStatus('synced');
   } catch(e) { /* cloud unavailable — local data still intact */ }
